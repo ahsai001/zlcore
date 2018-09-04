@@ -24,6 +24,10 @@ There are a lot of utility that you can use from this library :
 20. and many more in package folder 'com.zaitunlabs.zlcore.utils' especially 'CommonUtils' static class
 
 
+
+
+
+
 How to use this library:
 
 Step 1. Add the JitPack repository to your build file
