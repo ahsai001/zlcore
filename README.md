@@ -8,7 +8,7 @@ There are a lot of utility that you can use from this library :
 4. Splash Page
 5. Login Page
 6. OnBoarding Page
-7. Version Change Hostory Page
+7. Version Change History Page
 8. Push Notification Handler With/Without Notification List Page
 9. Webview Page
 10. Percentage Page
