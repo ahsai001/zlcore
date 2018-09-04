@@ -1,0 +1,134 @@
+{
+  "pageTitle": "Pendaftaran Siswa",
+  "pageType" : "scroll",
+  "logo": "https://his-travel.co.id/files/tourdestinations/3e5399d616e2f49265ee28d23f67e503-20180407033554-hakone-lake-ashi_thumbnail256x256.jpg",
+  "formTitle": "Pendaftaran Siswa Outlet",
+  "formDesc": "Silahkan diisi seluruh form berikut",
+  "formList": [
+    {
+      "id": "name",
+      "fieldName": "name",
+      "label" : "name",
+      "subLabel" : "name",
+      "widgetName": "edittext",
+      "validation": [
+        {
+          "ruleName":"notempty",
+          "errorMessage":"tolong diisi",
+          "ruleArgs":[]
+        },
+        {
+          "ruleName":"mincount",
+          "errorMessage":"",
+          "ruleArgs":[
+            {
+              "argType": "int",
+              "argValue": 3
+            }
+          ]
+        }
+      ],
+      "properties": [
+        {
+          "propKey": "InputType",
+          "propArgs":[
+            {
+              "argType": "int",
+              "argValue": 3
+            }
+          ]
+        },{
+          "propKey": "CounterEnabled",
+          "propArgs":[
+            {
+              "argType": "boolean",
+              "argValue": true
+            }
+          ]
+        },{
+          "propKey": ".setCounterMaxLength",
+          "propArgs":[
+            {
+              "argType": "java.lang.Integer",
+              "argValue": 10
+            }
+          ]
+        }
+      ]
+    },{
+      "id": "address",
+      "fieldName": "name",
+      "label" : "alamat",
+      "subLabel" : "alamat",
+      "widgetName": "edittext",
+      "validation": [
+        {
+          "ruleName":"notempty",
+          "errorMessage":"tolong diisi",
+          "ruleArgs":[]
+        }
+      ],
+      "properties": [
+        {
+          "propKey": "InputType",
+          "propArgs":[
+            {
+              "argType": "int",
+              "argValue": 112
+            }
+          ]
+        },{
+          "propKey": "CounterEnabled",
+          "propArgs":[
+            {
+              "argType": "boolean",
+              "argValue": true
+            }
+          ]
+        },{
+          "propKey": ".setCounterMaxLength",
+          "propArgs":[
+            {
+              "argType": "java.lang.Integer",
+              "argValue": 100
+            }
+          ]
+        }
+      ]
+    },{
+      "id": "submit",
+      "fieldName": "name",
+      "label" : "submit",
+      "subLabel" : "submit",
+      "widgetName": "button",
+      "validation": [],
+      "properties": [
+        {
+          "propKey": "setText",
+          "propArgs":[
+            {
+              "argType": "java.lang.CharSequence",
+              "argValue": "submit"
+            }
+          ]
+        },{
+          "propKey": "setBackground",
+          "propArgs":[
+            {
+              "argType": "selectableItem",
+              "argValue": "#2196F3"
+            }
+          ]
+        },{
+          "propKey": "TextColor",
+          "propArgs":[
+            {
+              "argType": "color",
+              "argValue": "#FFFFFF"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

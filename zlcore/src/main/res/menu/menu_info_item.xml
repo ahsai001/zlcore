@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/action_mark_as_read"
+        android:orderInCategory="100"
+        android:title="mark as read"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="101"
+        android:title="delete message"
+        app:showAsAction="never" />
+</menu>

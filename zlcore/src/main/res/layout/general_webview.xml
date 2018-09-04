@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/general_webview_container_view"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+        <WebView
+            android:id="@+id/general_webview_main_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </WebView>
+    </FrameLayout>
+
+    <android.support.v4.widget.ContentLoadingProgressBar
+        android:id="@+id/general_webview_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_marginTop="-7dp"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        android:indeterminate="true"/>
+
+    <TextView
+        android:id="@+id/general_webview_info_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
+    <FrameLayout
+        android:id="@+id/general_webview_custom_progress_panel"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

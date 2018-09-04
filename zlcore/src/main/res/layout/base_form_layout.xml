@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/form_imageview"
+        android:visibility="gone"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/form_titleview"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/form_descview"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal" />
+
+    <View
+        android:id="@+id/form_separatorview"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"/>
+
+    <LinearLayout
+        android:id="@+id/form_linear_panel"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/form_scroll_panel"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/form_scroll_container"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <com.zaitunlabs.zlcore.views.CustomVerticalStepper
+        android:id="@+id/form_stepper_panel"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </com.zaitunlabs.zlcore.views.CustomVerticalStepper>
+</LinearLayout>

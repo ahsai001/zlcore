@@ -1,0 +1,81 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert"></style>
+
+    <style name="AppTheme.InfoPopup" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowFixedHeightMajor">60%</item>
+        <item name="windowFixedHeightMinor">60%</item>
+        <item name="windowFixedWidthMajor">60%</item>
+        <item name="windowFixedWidthMinor">60%</item>
+    </style>
+
+    <style name="AppTheme.ReminderPopup" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowFixedHeightMajor">60%</item>
+        <item name="windowFixedHeightMinor">60%</item>
+        <item name="windowFixedWidthMajor">60%</item>
+        <item name="windowFixedWidthMinor">60%</item>
+    </style>
+
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <!-- Information Page Style -->
+    <style name="infoTitleRowTextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="infoImageRowTextView">
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="infoBodyRowTextView">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="infoTimeRowTextView">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">9sp</item>
+    </style>
+
+
+    <style name="TextAppearance.Design.CollapsingToolbar.Expanded.Shadow">
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowRadius">8</item>
+        <item name="android:shadowColor">@android:color/black</item>
+    </style>
+
+
+    <!-- Reminder Page Style -->
+    <style name="reminderTitleTextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="reminderBodyTextView">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+</resources>

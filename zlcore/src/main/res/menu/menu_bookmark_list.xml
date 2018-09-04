@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/action_open_remove_bookmark"
+        android:orderInCategory="101"
+        android:title="@string/action_open_remove_bookmark"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_open_bookmark"
+        android:orderInCategory="100"
+        android:title="@string/action_open_bookmark"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_remove_bookmark"
+        android:orderInCategory="102"
+        android:title="@string/action_remove_bookmark"
+        app:showAsAction="never" />
+</menu>

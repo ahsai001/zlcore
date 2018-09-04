@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_page_share"
+        android:orderInCategory="99"
+        android:title="@string/menu_item_share"
+        android:icon="@drawable/baseline_share_24"
+        app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_page_bookmark"
+        android:orderInCategory="100"
+        android:title="@string/menu_item_bookmark"
+        android:icon="@drawable/baseline_bookmark_border_24"
+        app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_reload"
+        android:orderInCategory="101"
+        android:title="Reload"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_page_browser"
+        android:orderInCategory="102"
+        android:title="Open Page in Browser"
+        app:showAsAction="never" />
+</menu>

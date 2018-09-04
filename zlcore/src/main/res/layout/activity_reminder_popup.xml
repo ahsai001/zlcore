@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activities.ReminderPopup">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:layout_scrollFlags="enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:padding="@dimen/appbar_padding_top"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/reminder_popup_titleView"
+                    android:layout_width="match_parent"
+                    style="@style/reminderTitleTextView"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/reminder_popup_bodyView"
+                    android:layout_width="match_parent"
+                    style="@style/reminderBodyTextView"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_behavior="com.zaitunlabs.zlcore.customs.ScrollAwareFABBehavior"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,101 @@
+<resources>
+    <string name="app_name">ZL Core</string>
+
+    <string name="notification_error_ssl_date_invalid">The date of the certificate is invalid</string>
+    <string name="notification_error_ssl_expired">The certificate has expired</string>
+    <string name="notification_error_ssl_idmismatch">Hostname mismatch</string>
+    <string name="notification_error_ssl_invalid">A generic error occurred</string>
+    <string name="notification_error_ssl_not_yet_valid">The certificate is not yet valid</string>
+    <string name="notification_error_ssl_untrusted">The certificate authority is not trusted</string>
+    <string name="notification_error_ssl_cert_invalid">The certificate is invalid</string>
+    <string name="notification_error_ssl_title">SSL Error Warning</string>
+    <string name="notification_error_ssl_continue_text">Continue</string>
+    <string name="notification_error_ssl_cancel_text">Cancel</string>
+
+    <string name="general_coordinator_layout_tagname">general_coordinator_layout_tagname</string>
+    <string name="snackbar_action_name_dismiss">Dismiss</string>
+    <string name="warning_connection_error">Connection Problem</string>
+    <string name="default_snackbar_dismiss">dismiss</string>
+    <string name="warning_something_wrong">Something wrong</string>
+
+
+    <!-- Strings related to login -->
+    <string name="title_activity_login">Sign in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Login</string>
+
+    <string name="error_invalid_userid">This user id is invalid</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is invalid</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
+    </string>
+
+
+    <string name="action_refresh">Refresh</string>
+
+    <string name="info_tab_title">Info</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_broadcast">Send broadcast</string>
+    <string name="title_activity_info_popup">Infomation</string>
+    <string name="title_activity_reminder_popup">Reminder</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="info_no_data">There are no data currently</string>
+
+    <string name="info_no_product">There are no products currently</string>
+    <string name="title_activity_rating">Rating</string>
+
+    <string name="content_loading">Loading...</string>
+    <string name="login_signing">Please wait, logging in</string>
+    <string name="title_activity_itinerary_detail">Itinerary Info</string>
+    <string name="warning_invalid_method">Please contact app vendor for this error</string>
+    <string name="warning_please_wait">Please wait...</string>
+    <string name="core_string_yes">YES</string>
+    <string name="core_string_no">NO</string>
+    <string name="core_string_submit">submit</string>
+    <string name="something_wrong_for_webview">Something wrong</string>
+    <string name="info_not_available">Info not available</string>
+
+
+    <!-- ACRA strings -->
+    <string name="crash_mail_to">app-report@zaitunlabs.com</string>
+    <string name="crash_toast_text">Ooooops ! I crashed, a report need to be sent to my developer to help fix the issue !</string>
+    <string name="crash_notif_ticker_text">Unexpected error, please send a report</string>
+    <string name="crash_notif_title">CrashTest has crashed</string>
+    <string name="crash_notif_text">Please click here to help fix the issue.</string>
+    <string name="crash_dialog_title">CrashTest has crashed</string>
+    <string name="crash_dialog_text">An unexpected error occurred forcing the application to stop. Please help us fix this by sending us error data, all you have to do is click OK.</string>
+    <string name="crash_dialog_comment_prompt">You might add your comments about the problem below:</string>
+    <string name="crash_dialog_ok_toast">Thank you !</string>
+
+
+    <!-- dialog splash screen app -->
+    <string name="title_dialog_init">update</string>
+    <string name="message_dialog_init">new update already exist</string>
+    <string name="download_option_dialog_init">download</string>
+    <string name="close_option_dialog_init">close</string>
+    <string name="use_existing_option_dialog_init">use existing</string>
+    <string name="module_message_list_title">Message</string>
+    <string name="title_activity_app_list">Promoted Apps</string>
+    <string name="title_activity_store">Store</string>
+    <string name="onboarding_skip">skip</string>
+    <string name="onboarding_next">next</string>
+    <string name="onboarding_get_started">get started</string>
+    <string name="onboarding_close">close</string>
+    <string name="title_activity_version_change_history">Riwayat versi aplikasi</string>
+    <string name="menu_item_bookmark">Add bookmark</string>
+    <string name="menu_item_unbookmark">Remove bookmark</string>
+    <string name="title_activity_bookmark_list">Bookmark List</string>
+    <string name="action_open_remove_bookmark">Open and remove bookmark</string>
+    <string name="action_open_bookmark">Open bookmark</string>
+    <string name="action_remove_bookmark">Remove bookmark</string>
+    <string name="menu_item_share">Share</string>
+    <string name="default_webview_share_message">I got this interesting article, i think you will be interested too</string>
+    <string name="default_webview_share_title">I got interesting article</string>
+    <string name="title_activity_base_form">BaseFormActivity</string>
+
+</resources>

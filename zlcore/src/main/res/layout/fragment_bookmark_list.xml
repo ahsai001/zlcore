@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bookmarklist_refreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.zaitunlabs.zlcore.fragments.BookmarkListActivityFragment"
+    tools:showIn="@layout/activity_bookmark_list">
+    <RelativeLayout
+        android:background="@android:color/white"
+        android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.zaitunlabs.zlcore.views.CustomRecylerView
+            android:id="@+id/bookmarklist_recylerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
+        </com.zaitunlabs.zlcore.views.CustomRecylerView>
+
+        <LinearLayout
+            android:id="@+id/bookmarklist_empty_view"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:text="@string/info_no_data"/>
+        </LinearLayout>
+    </RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

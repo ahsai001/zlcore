@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zaitunlabs.zlcore">
+
+    <!--
+    //normal permission
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+     dangerous permission
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    -->
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
+    <application>
+        <activity
+            android:name=".activities.InfoPopup"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_info_popup"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.InfoPopup" />
+        <activity
+            android:name=".activities.ReminderPopup"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_reminder_popup"
+            android:launchMode="standard"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.ReminderPopup" />
+        <activity
+            android:name=".modules.about.VersionChangeHistory"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".modules.about.AboutUs"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".core.WebViewActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".services.FCMIntentService"
+            android:exported="false" />
+        <service
+            android:name=".services.FCMLoginIntentService"
+            android:exported="false" />
+
+        <!-- for application backsound -->
+        <service android:name=".utils.audio.BackSoundService" />
+        <service android:name=".utils.audio.AudioService" />
+
+        <receiver android:name=".utils.audio.StopPlayerReceiver" />
+
+        <!-- modules sholat dan shaum -->
+        <service android:name=".modules.shaum_sholat.ShaumSholatReminderService" />
+
+        <receiver android:name=".modules.shaum_sholat.ManageShaumSholatReminderReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".modules.shaum_sholat.SholatReminderReceiver" />
+        <receiver android:name=".modules.shaum_sholat.ShaumReminderReceiver" />
+
+        <service android:name=".services.DataIntentService" />
+
+        <activity
+            android:name=".activities.MessageListActivity"
+            android:label="@string/module_message_list_title"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.AppListActivity"
+            android:label="@string/title_activity_app_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.StoreActivity"
+            android:label="@string/title_activity_store"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.VersionChangeHistoryActivity"
+            android:label="@string/title_activity_version_change_history"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.BookmarkListActivity"
+            android:label="@string/title_activity_bookmark_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+    </application>
+
+</manifest>
