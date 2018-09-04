@@ -21,7 +21,7 @@ There are a lot of utility that you can use from this library :
 17. Date String Utility
 18. Show Dialog/SnackBar Utility
 19. Show Date/Time/Contact/File/Place Picker
-20. and many more in package folder utils especially CommonUtils static class
+20. and many more in package folder 'com.zaitunlabs.zlcore.utils' especially 'CommonUtils' static class
 
 
 How to use this library:
