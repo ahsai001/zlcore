@@ -38,6 +38,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.zaitunlabs.zlcore.R;
+import com.zaitunlabs.zlcore.events.GeneralWebviewEvent;
 import com.zaitunlabs.zlcore.models.BookmarkModel;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.core.BaseFragment;
@@ -45,6 +46,8 @@ import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
 import com.zaitunlabs.zlcore.utils.PrefsData;
 import com.zaitunlabs.zlcore.utils.ViewUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -548,6 +551,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             if(getActivity() != null) {
                 getActivity().invalidateOptionsMenu();
             }
+
+            EventBus.getDefault().post(new GeneralWebviewEvent(GeneralWebviewEvent.LOAD_PAGE_STARTED));
         }
 
         @Override
@@ -611,10 +616,12 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            EventBus.getDefault().post(new GeneralWebviewEvent(GeneralWebviewEvent.LOAD_PAGE_FINISHED));
             if(isSuccess) {
                 currentUrl = url;
                 clearHistoryIfQueryExist(view,url);
                 showContent();
+                EventBus.getDefault().post(new GeneralWebviewEvent(GeneralWebviewEvent.LOAD_PAGE_SUCCESS));
             }
         }
 

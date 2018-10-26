@@ -90,6 +90,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.data.Freezable;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.zaitunlabs.zlcore.BuildConfig;
 import com.zaitunlabs.zlcore.R;
 
 import org.w3c.dom.Text;
@@ -2882,5 +2883,14 @@ public class CommonUtils {
 		}
 
 		return uniqueID;
+	}
+
+
+	public static String getLibraryVersionName(){
+		return BuildConfig.VERSION_NAME;
+	}
+
+	public static int getLibraryVersionCode(){
+		return BuildConfig.VERSION_CODE;
 	}
 }
