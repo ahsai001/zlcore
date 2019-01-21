@@ -670,7 +670,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         @Override
         public void onReceivedTitle(WebView view, String title) {
             if(isSuccess) {
-                if (!title.contains("http")) {
+                if (!title.contains("http") && !title.contains("data:text/html")) {
                     if (getActivity() != null) {
                         ((BaseActivity) getActivity()).getSupportActionBar().setTitle(title);
                     }
