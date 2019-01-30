@@ -21,9 +21,10 @@ import android.widget.ImageView.ScaleType;
 
 import com.squareup.picasso.Picasso;
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.activities.VersionChangeHistoryActivity;
+import com.zaitunlabs.zlcore.modules.version_history.VersionChangeHistoryActivity;
 import com.zaitunlabs.zlcore.core.CanvasActivity;
 import com.zaitunlabs.zlcore.core.WebViewActivity;
+import com.zaitunlabs.zlcore.modules.version_history.VersionChangeHistoryCanvas;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.ViewUtils;
 import com.zaitunlabs.zlcore.views.ASImageView;
@@ -73,7 +74,13 @@ public class AboutUs extends CanvasActivity {
 		logoX.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				CommonUtils.openBrowser(AboutUs.this,appLandingPageLink);
+				if(AboutUs.appLandingPageLink.startsWith("file:///android_asset/")){
+					WebViewActivity.start(AboutUs.this,AboutUs.appLandingPageLink, "Tentang aplikasi",
+							"maaf telah terjadi kesalahan",
+							0,"tentang aplikasi");
+				} else {
+					CommonUtils.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
+				}
 			}
 		});
 
@@ -176,7 +183,7 @@ public class AboutUs extends CanvasActivity {
 			@Override
 			public void onClick(View v) {
 				if(isZL) {
-					VersionChangeHistory.start(AboutUs.this);
+					VersionChangeHistoryCanvas.start(AboutUs.this);
 				} else {
 					VersionChangeHistoryActivity.start(AboutUs.this);
 				}

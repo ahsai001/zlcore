@@ -1,4 +1,4 @@
-package com.zaitunlabs.zlcore.modules.about;
+package com.zaitunlabs.zlcore.modules.version_history;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.idunnololz.widgets.AnimatedExpandableListView;
 import com.zaitunlabs.zlcore.R;
+import com.zaitunlabs.zlcore.modules.about.AboutUs;
+import com.zaitunlabs.zlcore.modules.about.SimpleExpandableDataModel;
+import com.zaitunlabs.zlcore.modules.about.SimpleExpandableListAdapter;
+import com.zaitunlabs.zlcore.modules.about.SimpleItemDescriptionModel;
 import com.zaitunlabs.zlcore.modules.shaum_sholat.CountDownSholatReminderUtils;
 import com.zaitunlabs.zlcore.core.CanvasActivity;
 import com.zaitunlabs.zlcore.utils.FileUtils;
@@ -36,7 +40,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-public class VersionChangeHistory extends CanvasActivity {
+public class VersionChangeHistoryCanvas extends CanvasActivity {
 	ASTextView countDownTimerHeaderText;
 	CountDownSholatReminderUtils countDownSholatReminderUtils;
 	
@@ -194,7 +198,7 @@ public class VersionChangeHistory extends CanvasActivity {
 	}
 
 	public static void start(Context context){
-		Intent historyIntent = new Intent(context, VersionChangeHistory.class);
+		Intent historyIntent = new Intent(context, VersionChangeHistoryCanvas.class);
 		context.startActivity(historyIntent);
 	}
 }

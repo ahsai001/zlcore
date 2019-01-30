@@ -34,7 +34,7 @@
             android:noHistory="true"
             android:theme="@style/AppTheme.ReminderPopup" />
         <activity
-            android:name=".modules.about.VersionChangeHistory"
+            android:name=".modules.version_history.VersionChangeHistoryCanvas"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".modules.about.AboutUs"
@@ -82,7 +82,7 @@
             android:label="@string/title_activity_store"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.VersionChangeHistoryActivity"
+            android:name=".modules.version_history.VersionChangeHistoryActivity"
             android:label="@string/title_activity_version_change_history"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

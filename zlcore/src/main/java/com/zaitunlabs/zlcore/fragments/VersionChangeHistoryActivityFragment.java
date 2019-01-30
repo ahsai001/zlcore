@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,7 @@ import com.idunnololz.widgets.AnimatedExpandableListView;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.modules.about.SimpleExpandableListAdapter;
-import com.zaitunlabs.zlcore.modules.about.VersionChangeHistory;
+import com.zaitunlabs.zlcore.modules.version_history.VersionChangeHistoryCanvas;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -48,7 +47,7 @@ public class VersionChangeHistoryActivityFragment extends BaseFragment {
         expandableListView.setCacheColorHint(Color.TRANSPARENT);
         expandableListView.setDividerHeight(3);
 
-        SimpleExpandableListAdapter adapter = new SimpleExpandableListAdapter(getActivity(), VersionChangeHistory.createData(getActivity()), false);
+        SimpleExpandableListAdapter adapter = new SimpleExpandableListAdapter(getActivity(), VersionChangeHistoryCanvas.createData(getActivity()), false);
 
         if (Build.VERSION.SDK_INT > 19) {
             AnimationSet set = new AnimationSet(true);
