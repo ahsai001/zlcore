@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -278,7 +279,9 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             }else{
                 cookieManager.removeAllCookie();
             }
-            if(rootUrl.startsWith("https://") || rootUrl.startsWith("http://")) {
+            if(rootUrl.startsWith("https://")
+                    || rootUrl.startsWith("http://")
+                    || rootUrl.startsWith("file:///android_asset/")) {
                 //url content
                 //rootUrl = CommonUtils.prettifyUrl(rootUrl);
 
@@ -324,7 +327,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 webView.loadUrl(rootUrl, headers);
             } else {
                 //html content
-                webView.loadData(rootUrl,"text/html","utf-8");
+                String encodedHtml = Base64.encodeToString(rootUrl.getBytes(), Base64.NO_PADDING);
+                webView.loadData(encodedHtml,"text/html","base64");
             }
         }else{
             if(TextUtils.isEmpty(defaultMessage)) {
