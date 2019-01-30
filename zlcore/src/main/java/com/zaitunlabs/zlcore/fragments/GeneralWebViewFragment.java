@@ -346,8 +346,11 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         webView.clearCache(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.setWebChromeClient(new SmartWebChromeClient());
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
+
+        if(isWebPageFromUrl()) {
+            webView.getSettings().setLoadWithOverviewMode(true);
+            webView.getSettings().setUseWideViewPort(true);
+        }
 
         //enable multiwindows
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
