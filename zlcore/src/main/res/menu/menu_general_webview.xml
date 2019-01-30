@@ -23,4 +23,9 @@
         android:orderInCategory="102"
         android:title="Open Page in Browser"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_page_close"
+        android:orderInCategory="103"
+        android:title="Close Page"
+        app:showAsAction="never" />
 </menu>

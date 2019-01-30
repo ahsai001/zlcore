@@ -75,7 +75,6 @@ public class BaseActivity extends AppCompatActivity {
 
 
     protected void enableUpNavigation(){
-        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

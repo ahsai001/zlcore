@@ -48,8 +48,7 @@ public class WebViewActivity extends BaseActivity {
 
         Toolbar toolbar =  (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+        enableUpNavigation();
         getSupportActionBar().setTitle(title);
 
         String usedTag = TextUtils.isEmpty(pageTag)?GeneralWebViewFragment.FRAGMENT_TAG:pageTag;
@@ -115,9 +114,10 @@ public class WebViewActivity extends BaseActivity {
             return null;
         }
 
+
         @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
+        public void setupWebview(WebView webView) {
+            super.setupWebview(webView);
             webView.addJavascriptInterface(new WebViewFragment.WebAppInterface(this.getActivity()), getString(R.string.app_name).replace(" ","").toLowerCase());
         }
 

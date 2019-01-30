@@ -92,7 +92,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private boolean isShowBookmark = false;
     private boolean isShowShare = false;
     private boolean isSuccess = true;
-    protected WebView webView;
+    private WebView webView;
     protected abstract View getCustomProgressBar();
     private FrameLayout customProgressPanel;
     private ContentLoadingProgressBar customProgressBar;
@@ -279,9 +279,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             }else{
                 cookieManager.removeAllCookie();
             }
-            if(rootUrl.startsWith("https://")
-                    || rootUrl.startsWith("http://")
-                    || rootUrl.startsWith("file:///android_asset/")) {
+            if(isWebPageFromUrl()) {
                 //url content
                 //rootUrl = CommonUtils.prettifyUrl(rootUrl);
 
@@ -339,7 +337,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         }
     }
 
-    private void setupWebview(WebView webView){
+    public void setupWebview(WebView webView){
         webView.setBackgroundColor(bgColor);
         webView.setWebViewClient(new SmartWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
@@ -567,7 +565,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {;
-            if(isPermitWhenNotFound(failingUrl)){
+            if(isPermittedWhenNotFound(failingUrl)){
                 isSuccess = true;
                 return;
             }
@@ -579,7 +577,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if(isPermitWhenNotFound(request.getUrl().getPath())){
+                if(isPermittedWhenNotFound(request.getUrl().getPath())){
                     isSuccess = true;
                     return;
                 }
@@ -604,7 +602,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if(isPermitWhenNotFound(request.getUrl().getPath())){
+                if(isPermittedWhenNotFound(request.getUrl().getPath())){
                     isSuccess = true;
                     return;
                 }
@@ -630,7 +628,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             }
         }
 
-        private boolean isPermitWhenNotFound(String url){
+        private boolean isPermittedWhenNotFound(String url){
             if(url.toLowerCase().endsWith("favicon.ico")
                     || url.toLowerCase().endsWith(".gif")
                     || url.toLowerCase().endsWith(".png")
@@ -766,20 +764,42 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         }
     }
 
+
+    public boolean isWebPageFromUrl(){
+        return (isWebPageFromNetwork() || isWebPageFromAsset());
+    }
+
+    public boolean isWebPageFromNetwork(){
+        return (rootUrl.startsWith("https://")
+                || rootUrl.startsWith("http://"));
+    }
+
+    public boolean isWebPageFromAsset(){
+        return rootUrl.startsWith("file:///android_asset/");
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if(rootUrl.startsWith("https://") || rootUrl.startsWith("http://")) {
+        if(isWebPageFromUrl()) {
             inflater.inflate(R.menu.menu_general_webview, menu);
-            if(isShowBookmark) {
-                menu.findItem(R.id.action_page_bookmark).setVisible(true);
-            } else {
-                menu.findItem(R.id.action_page_bookmark).setVisible(false);
+            if(isWebPageFromNetwork()) {
+                if (isShowBookmark) {
+                    menu.findItem(R.id.action_page_bookmark).setVisible(true);
+                } else {
+                    menu.findItem(R.id.action_page_bookmark).setVisible(false);
+                }
+
+                if (isShowShare) {
+                    menu.findItem(R.id.action_page_share).setVisible(true);
+                } else {
+                    menu.findItem(R.id.action_page_share).setVisible(false);
+                }
             }
 
-            if(isShowShare) {
-                menu.findItem(R.id.action_page_share).setVisible(true);
-            } else {
+            if(isWebPageFromAsset()){
+                menu.findItem(R.id.action_page_bookmark).setVisible(false);
                 menu.findItem(R.id.action_page_share).setVisible(false);
+                menu.findItem(R.id.action_page_browser).setVisible(false);
             }
         }
     }
@@ -787,21 +807,31 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(isShowBookmark && !TextUtils.isEmpty(currentUrl)) {
-            if (BookmarkModel.findBookmark(currentUrl) == null) {
-                menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.menu_item_bookmark));
-                menu.findItem(R.id.action_page_bookmark).setIcon(R.drawable.baseline_bookmark_border_24);
-            } else {
-                menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.menu_item_unbookmark));
-                menu.findItem(R.id.action_page_bookmark).setIcon(R.drawable.baseline_bookmark_24);
-            }
-        }
+        if(isWebPageFromUrl()) {
+            if(isWebPageFromNetwork()) {
+                if (isShowBookmark && !TextUtils.isEmpty(currentUrl)) {
+                    if (BookmarkModel.findBookmark(currentUrl) == null) {
+                        menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.menu_item_bookmark));
+                        menu.findItem(R.id.action_page_bookmark).setIcon(R.drawable.baseline_bookmark_border_24);
+                    } else {
+                        menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.menu_item_unbookmark));
+                        menu.findItem(R.id.action_page_bookmark).setIcon(R.drawable.baseline_bookmark_24);
+                    }
+                }
 
-        if(isShowShare) {
-            if(TextUtils.isEmpty(currentUrl)) {
-                menu.findItem(R.id.action_page_share).setEnabled(false);
-            } else {
-                menu.findItem(R.id.action_page_share).setEnabled(true);
+                if (isShowShare) {
+                    if (TextUtils.isEmpty(currentUrl)) {
+                        menu.findItem(R.id.action_page_share).setEnabled(false);
+                    } else {
+                        menu.findItem(R.id.action_page_share).setEnabled(true);
+                    }
+                }
+            }
+
+            if(isWebPageFromAsset()){
+                menu.findItem(R.id.action_page_bookmark).setVisible(false);
+                menu.findItem(R.id.action_page_share).setVisible(false);
+                menu.findItem(R.id.action_page_browser).setVisible(false);
             }
         }
 
@@ -816,6 +846,10 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             return true;
         } else if (id == R.id.action_page_browser) {
             CommonUtils.openBrowser(webView.getContext(),currentUrl);
+        } else if(id == R.id.action_page_close){
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
         } else if(id == R.id.action_page_bookmark){
             if(item.getTitle().toString().equalsIgnoreCase(getString(R.string.menu_item_bookmark))){
                 if(!TextUtils.isEmpty(currentUrl)) {
