@@ -28,7 +28,7 @@ public class MessageListActivity extends BaseActivity {
 
         enableUpNavigation();
 
-        getSupportActionBar().setTitle(R.string.module_message_list_title);
+        getSupportActionBar().setTitle(R.string.zlcore_module_message_list_title);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

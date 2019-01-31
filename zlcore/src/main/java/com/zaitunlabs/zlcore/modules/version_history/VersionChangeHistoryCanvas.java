@@ -69,7 +69,7 @@ public class VersionChangeHistoryCanvas extends CanvasActivity {
 		ASTextView subHeaderText = new ASTextView(this);
 		subHeaderText.setTypeface(Typeface.createFromAsset(this.getAssets(),
 				"fonts/about/albino.ttf"));
-		subHeaderText.setText(getText(R.string.title_activity_version_change_history));
+		subHeaderText.setText(getText(R.string.zlcore_title_activity_version_change_history));
 		subHeaderText.setBackgroundResource(R.drawable.subheader_about);
 		subHeaderText.setTextSize(18);
 		subHeaderText.setTextColor(Color.WHITE);

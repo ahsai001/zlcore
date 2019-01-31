@@ -63,7 +63,7 @@ public class ReminderPopup extends BaseActivity {
         }
 
 
-        getSupportActionBar().setTitle(getString(R.string.title_activity_reminder_popup));
+        getSupportActionBar().setTitle(getString(R.string.zlcore_title_activity_reminder_popup));
     }
 
     @Override

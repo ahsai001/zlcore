@@ -130,7 +130,7 @@ public class InfoPopup extends BaseActivity {
         });
 
         String counter = "";
-        getSupportActionBar().setTitle(getString(R.string.title_activity_info_popup)+" ("+infoList.size()+") ");
+        getSupportActionBar().setTitle(getString(R.string.zlcore_title_activity_info_popup)+" ("+infoList.size()+") ");
     }
 
     @Override
@@ -141,7 +141,7 @@ public class InfoPopup extends BaseActivity {
         List<InformationModel> newList = InformationModel.getAllUnreadInfo();
         infoList.addAll(newList);
 
-        getSupportActionBar().setTitle(getString(R.string.title_activity_info_popup)+" ("+infoList.size()+") ");
+        getSupportActionBar().setTitle(getString(R.string.zlcore_title_activity_info_popup)+" ("+infoList.size()+") ");
 
         mSectionsPagerAdapter.notifyDataSetChanged();
         */

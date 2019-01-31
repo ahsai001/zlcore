@@ -75,8 +75,8 @@ public class AboutUs extends CanvasActivity {
 			@Override
 			public void onClick(View v) {
 				if(AboutUs.appLandingPageLink.startsWith("file:///android_asset/")){
-					WebViewActivity.start(AboutUs.this,AboutUs.appLandingPageLink, getString(R.string.aboutus_about_app),
-							getString(R.string.warning_sorry_there_is_problem),
+					WebViewActivity.start(AboutUs.this,AboutUs.appLandingPageLink, getString(R.string.zlcore_aboutus_about_app),
+							getString(R.string.zlcore_warning_sorry_there_is_problem),
 							0,"tentang aplikasi");
 				} else {
 					CommonUtils.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
@@ -90,7 +90,7 @@ public class AboutUs extends CanvasActivity {
 		//create Developer : ZaitunLabs.com
 		ASTextView Text1 = new ASTextView(this);
 		Text1.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
-		Text1.setText(String.format(getString(R.string.aboutus_developer_name),AboutUs.developerName));
+		Text1.setText(String.format(getString(R.string.zlcore_aboutus_developer_name),AboutUs.developerName));
 		Text1.setTextSize(20);
 		Text1.setTextColor(AboutUs.textColorInt);
 		Text1.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -108,7 +108,7 @@ public class AboutUs extends CanvasActivity {
 		//create Developer : Email : team@zaitunlabs.com
 		ASTextView  Text3 = new ASTextView(this);
 		Text3.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
-		Text3.setText(String.format(getString(R.string.aboutus_developer_email),AboutUs.developerEmail));
+		Text3.setText(String.format(getString(R.string.zlcore_aboutus_developer_email),AboutUs.developerEmail));
 		Text3.setTextSize(20);
 		Text3.setTextColor(AboutUs.textColorInt);
 		Text3.setGravity(Gravity.CENTER_VERTICAL);
@@ -117,7 +117,7 @@ public class AboutUs extends CanvasActivity {
 		Text3.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				CommonUtils.sendEmail(AboutUs.this,AboutUs.developerEmail,"","",getString(R.string.aboutus_kirim_email));
+				CommonUtils.sendEmail(AboutUs.this,AboutUs.developerEmail,"","",getString(R.string.zlcore_aboutus_kirim_email));
 			}
 		});
 
@@ -125,7 +125,7 @@ public class AboutUs extends CanvasActivity {
 		//create Developer : Email : team@zaitunlabs.com
 		ASTextView  Text4 = new ASTextView(this);
 		Text4.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
-		Text4.setText(String.format(getString(R.string.aboutus_version),CommonUtils.getVersionName(this)));
+		Text4.setText(String.format(getString(R.string.zlcore_aboutus_version),CommonUtils.getVersionName(this)));
 		Text4.setTextSize(18);
 		Text4.setTextColor(AboutUs.textColorInt);
 		Text4.setGravity(Gravity.CENTER_VERTICAL);
@@ -139,7 +139,7 @@ public class AboutUs extends CanvasActivity {
 			ASTextView  aboutThisApp = new ASTextView(this);
 			aboutThisApp.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
 
-			SpannableString aboutThisAppSpanString = new SpannableString(getString(R.string.aboutus_title_link_about_app));
+			SpannableString aboutThisAppSpanString = new SpannableString(getString(R.string.zlcore_aboutus_title_link_about_app));
 			aboutThisAppSpanString.setSpan(new UnderlineSpan(), 0, aboutThisAppSpanString.length(), 0);
 			aboutThisAppSpanString.setSpan(new StyleSpan(Typeface.BOLD), 0, aboutThisAppSpanString.length(), 0);
 			aboutThisAppSpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, aboutThisAppSpanString.length(), 0);
@@ -154,8 +154,8 @@ public class AboutUs extends CanvasActivity {
 				@Override
 				public void onClick(View v) {
 					if(AboutUs.aboutThisAppUrlOrHtmlContent.startsWith("file:///android_asset/")){
-						WebViewActivity.start(AboutUs.this,AboutUs.aboutThisAppUrlOrHtmlContent, getString(R.string.aboutus_about_app),
-								getString(R.string.warning_sorry_there_is_problem),
+						WebViewActivity.start(AboutUs.this,AboutUs.aboutThisAppUrlOrHtmlContent, getString(R.string.zlcore_aboutus_about_app),
+								getString(R.string.zlcore_warning_sorry_there_is_problem),
 								0,"tentang aplikasi");
 					} else {
 						CommonUtils.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
@@ -168,7 +168,7 @@ public class AboutUs extends CanvasActivity {
 		ASTextView  history = new ASTextView(this);
 		history.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
 
-		SpannableString historySpanString = new SpannableString(getString(R.string.aboutus_app_history));
+		SpannableString historySpanString = new SpannableString(getString(R.string.zlcore_aboutus_app_history));
 		historySpanString.setSpan(new UnderlineSpan(), 0, historySpanString.length(), 0);
 		historySpanString.setSpan(new StyleSpan(Typeface.BOLD), 0, historySpanString.length(), 0);
 		historySpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, historySpanString.length(), 0);
@@ -277,7 +277,7 @@ public class AboutUs extends CanvasActivity {
 		leftBottomMenu.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				CommonUtils.shareContent(AboutUs.this, getString(R.string.aboutus_share_title), getString(shareTitleRes), getString(shareBodyRes));
+				CommonUtils.shareContent(AboutUs.this, getString(R.string.zlcore_aboutus_share_title), getString(shareTitleRes), getString(shareBodyRes));
 			}
 		});
 
@@ -308,7 +308,7 @@ public class AboutUs extends CanvasActivity {
 
 		ASTextView  shareText = new ASTextView(this);
 		shareText.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
-		shareText.setText(getString(R.string.aboutus_menu_share_title));
+		shareText.setText(getString(R.string.zlcore_aboutus_menu_share_title));
 		shareText.setTextSize(13);
 		shareText.setTextColor(AboutUs.menuTextColorInt);
 		shareText.setGravity(Gravity.CENTER);
@@ -316,7 +316,7 @@ public class AboutUs extends CanvasActivity {
 		
 		ASTextView  feedbackText = new ASTextView(this);
 		feedbackText.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
-		feedbackText.setText(getString(R.string.aboutus_menu_feedback_title));
+		feedbackText.setText(getString(R.string.zlcore_aboutus_menu_feedback_title));
 		feedbackText.setTextSize(13);
 		feedbackText.setTextColor(AboutUs.menuTextColorInt);
 		feedbackText.setGravity(Gravity.CENTER);
@@ -324,7 +324,7 @@ public class AboutUs extends CanvasActivity {
 
 		ASTextView  rateText = new ASTextView(this);
 		rateText.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
-		rateText.setText(getString(R.string.aboutus_menu_rate_title));
+		rateText.setText(getString(R.string.zlcore_aboutus_menu_rate_title));
 		rateText.setTextSize(13);
 		rateText.setTextColor(AboutUs.menuTextColorInt);
 		rateText.setGravity(Gravity.CENTER);

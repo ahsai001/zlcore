@@ -184,7 +184,7 @@ public class BaseActivity extends AppCompatActivity {
         if(!canExit){
             canExit = true;
             if(TextUtils.isEmpty(message)) {
-                CommonUtils.showSnackBar(this, getString(R.string.warning_press_once_again_to_close_app));
+                CommonUtils.showSnackBar(this, getString(R.string.zlcore_warning_press_once_again_to_close_app));
             } else {
                 CommonUtils.showSnackBar(this, message);
             }

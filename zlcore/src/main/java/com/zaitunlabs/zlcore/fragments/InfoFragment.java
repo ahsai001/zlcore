@@ -263,7 +263,7 @@ public class InfoFragment extends BaseFragment {
             mAdapter.markAllAsRead();
             InfoUtils.notifyInfoCounter();
             getActivity().invalidateOptionsMenu();
-            CommonUtils.showSnackBar(getActivity(),getString(R.string.infofragment_mark_all_as_read_success));
+            CommonUtils.showSnackBar(getActivity(),getString(R.string.zlcore_infofragment_mark_all_as_read_success));
             return true;
         } else if (item.getItemId() == R.id.action_delete_all){
             InformationModel.deleteAllInfo();
@@ -271,7 +271,7 @@ public class InfoFragment extends BaseFragment {
             mAdapter.notifyDataSetChanged();
             InfoUtils.notifyInfoCounter();
             getActivity().invalidateOptionsMenu();
-            CommonUtils.showSnackBar(getActivity(),getString(R.string.infofragment_delete_all_messages_success));
+            CommonUtils.showSnackBar(getActivity(),getString(R.string.zlcore_infofragment_delete_all_messages_success));
             return true;
         }
         return super.onOptionsItemSelected(item);

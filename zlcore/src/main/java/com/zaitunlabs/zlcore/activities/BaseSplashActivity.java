@@ -115,18 +115,18 @@ public abstract class BaseSplashActivity extends BaseActivity {
                 CommonUtils.showDialog3Option(BaseSplashActivity.this,
                         checkVersionModel.getTitle(),
                         checkVersionModel.getMessage(),
-                        getString(R.string.download_option_dialog_init), new Runnable() {
+                        getString(R.string.zlcore_download_option_dialog_init), new Runnable() {
                             @Override
                             public void run() {
                                 CommonUtils.openBrowser(BaseSplashActivity.this, checkVersionModel.getDetail());
                                 finish();
                             }
-                        }, getString(R.string.close_option_dialog_init), new Runnable() {
+                        }, getString(R.string.zlcore_close_option_dialog_init), new Runnable() {
                             @Override
                             public void run() {
                                 finish();
                             }
-                        }, getString(R.string.use_existing_option_dialog_init), new Runnable() {
+                        }, getString(R.string.zlcore_use_existing_option_dialog_init), new Runnable() {
                             @Override
                             public void run() {
                                 readyDoNextAction();

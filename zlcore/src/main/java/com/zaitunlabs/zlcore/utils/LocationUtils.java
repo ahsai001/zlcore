@@ -101,7 +101,7 @@ public class LocationUtils implements GoogleApiClient.ConnectionCallbacks, Googl
                 if(updateLocationCallback != null){
                     updateLocationCallback.failed("");
                 }
-                CommonUtils.showToast(mContext, mContext.getString(R.string.warning_failed_get_location_with_gps));
+                CommonUtils.showToast(mContext, mContext.getString(R.string.zlcore_warning_failed_get_location_with_gps));
             }
             stop();
         }

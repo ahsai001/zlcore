@@ -49,8 +49,8 @@ public class BaseApplication extends Application {
 			ConfigurationBuilder configurationBuilder = new ConfigurationBuilder(this);
 			configurationBuilder.setReportSenderFactoryClasses(CustomACRASenderFactory.class);
 			configurationBuilder.setMailTo(ZLCoreConstanta.getCrashMailTo(this));
-			configurationBuilder.setResToastText(R.string.crash_toast_text);
-			configurationBuilder.setResDialogText(R.string.crash_dialog_text);
+			configurationBuilder.setResToastText(R.string.zlcore_crash_toast_text);
+			configurationBuilder.setResDialogText(R.string.zlcore_crash_dialog_text);
 			configurationBuilder.setReportingInteractionMode(ReportingInteractionMode.NOTIFICATION);
 			ACRA.init(this, configurationBuilder);
 		}

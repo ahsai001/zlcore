@@ -84,12 +84,12 @@ public abstract class BaseOnBoardingActivity extends BaseActivity {
             public void onPageSelected(int position) {
                 if(position == getFragmentList().size() - 1){
                     if(onBoardingOnlyShown){
-                        next.setText(R.string.onboarding_close);
+                        next.setText(R.string.zlcore_onboarding_close);
                     } else {
-                        next.setText(R.string.onboarding_get_started);
+                        next.setText(R.string.zlcore_onboarding_get_started);
                     }
                 } else {
-                    next.setText(R.string.onboarding_next);
+                    next.setText(R.string.zlcore_onboarding_next);
                 }
             }
 

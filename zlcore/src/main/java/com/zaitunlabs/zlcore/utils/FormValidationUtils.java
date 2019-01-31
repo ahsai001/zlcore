@@ -280,7 +280,7 @@ public class FormValidationUtils {
     public static class NotEmptyValidatorRule extends AbstractValidatorRule{
         public NotEmptyValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_please_fill_this));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_fill_this));
         }
 
         public NotEmptyValidatorRule(Context context, String errorMessage) {
@@ -297,7 +297,7 @@ public class FormValidationUtils {
         private String mDomainName = "";
         public EmailValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_email_is_invalid));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_email_is_invalid));
         }
 
         public EmailValidatorRule(Context context, String errorMessage) {
@@ -331,7 +331,7 @@ public class FormValidationUtils {
         private Pattern mPattern;
         public RegExpValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_please_insert_with_valid_format));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_insert_with_valid_format));
         }
 
         public RegExpValidatorRule(Context context, String errorMessage) {
@@ -343,7 +343,7 @@ public class FormValidationUtils {
             if (mPattern != null) {
                 return mPattern.matcher(value).matches();
             }
-            throw new ValidatorException(view.getContext().getString(R.string.form_validations_utils_need_set_regex_pattern));
+            throw new ValidatorException(view.getContext().getString(R.string.zlcore_form_validations_utils_need_set_regex_pattern));
         }
 
         public void setPattern(String pattern) {
@@ -359,7 +359,7 @@ public class FormValidationUtils {
     public static class AlphaNumericValidatorRule extends AbstractValidatorRule{
         public AlphaNumericValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_please_fill_alpha_numeric_only));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_fill_alpha_numeric_only));
         }
 
         public AlphaNumericValidatorRule(Context context, String errorMessage) {
@@ -376,7 +376,7 @@ public class FormValidationUtils {
     public static class NumericValidatorRule extends AbstractValidatorRule{
         public NumericValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_please_fill_numeric_only));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_fill_numeric_only));
         }
 
         public NumericValidatorRule(Context context, String errorMessage) {
@@ -401,7 +401,7 @@ public class FormValidationUtils {
         public SameValueValidatorRule(Context context, String comparedFieldName) {
             super(context);
             this.comparedFieldName = comparedFieldName;
-            setErrorMessage(String.format(context.getString(R.string.form_validations_utils_value_is_different),comparedFieldName));
+            setErrorMessage(String.format(context.getString(R.string.zlcore_form_validations_utils_value_is_different),comparedFieldName));
         }
 
         public SameValueValidatorRule(Context context, String errorMessage, String comparedFieldName) {
@@ -421,7 +421,7 @@ public class FormValidationUtils {
         private int count;
         public CountValidatorRule(Context context, int count) {
             super(context);
-            setErrorMessage(String.format(context.getString(R.string.form_validations_utils_data_must_be_count_digits),count,(count>1?"digits":"digit")));
+            setErrorMessage(String.format(context.getString(R.string.zlcore_form_validations_utils_data_must_be_count_digits),count,(count>1?"digits":"digit")));
             this.count = count;
         }
 
@@ -439,7 +439,7 @@ public class FormValidationUtils {
     public static class PhoneValidatorRule extends AbstractValidatorRule{
         public PhoneValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_phone_format_is_invalid));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_phone_format_is_invalid));
         }
 
         public PhoneValidatorRule(Context context, String errorMessage) {
@@ -456,7 +456,7 @@ public class FormValidationUtils {
     public static class MustCheckedValidatorRule extends AbstractValidatorRule{
         public MustCheckedValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_you_must_check_this));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_you_must_check_this));
         }
 
         public MustCheckedValidatorRule(Context context, String errorMessage) {
@@ -492,7 +492,7 @@ public class FormValidationUtils {
     public static class URLValidatorRule extends AbstractValidatorRule{
         public URLValidatorRule(Context context) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_url_format_is_invalid));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_url_format_is_invalid));
         }
 
         public URLValidatorRule(Context context, String errorMessage) {
@@ -511,7 +511,7 @@ public class FormValidationUtils {
         private Locale locale;
         public DateValidatorRule(Context context, String dateFormat, Locale locale) {
             super(context);
-            setErrorMessage(context.getString(R.string.form_validations_utils_date_format_is_invalid));
+            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_date_format_is_invalid));
             this.dateFormat = dateFormat;
             this.locale = locale;
         }

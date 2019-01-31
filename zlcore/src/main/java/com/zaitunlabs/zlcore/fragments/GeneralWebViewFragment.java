@@ -251,12 +251,12 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
         shareTitle = CommonUtils.getStringFragmentArgument(getArguments(),ARG_SHARE_TITLE, null);
         if(TextUtils.isEmpty(shareTitle)){
-            shareTitle = getString(R.string.default_webview_share_title);
+            shareTitle = getString(R.string.zlcore_default_webview_share_title);
         }
 
         shareMessage = CommonUtils.getStringFragmentArgument(getArguments(),ARG_SHARE_MESSAGE, null);
         if(TextUtils.isEmpty(shareMessage)){
-            shareMessage = getString(R.string.default_webview_share_message);
+            shareMessage = getString(R.string.zlcore_default_webview_share_message);
         }
 
         if(!TextUtils.isEmpty(requestedUrl)){
@@ -330,7 +330,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             }
         }else{
             if(TextUtils.isEmpty(defaultMessage)) {
-                showInfo(getResText(R.string.info_not_available));
+                showInfo(getResText(R.string.zlcore_info_not_available));
             }else{
                 showInfo(defaultMessage);
             }
@@ -572,7 +572,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 isSuccess = true;
                 return;
             }
-            showInfo(getResText(R.string.something_wrong_for_webview));
+            showInfo(getResText(R.string.zlcore_something_wrong_for_webview));
             isSuccess = false;
             view.loadUrl("about:blank");
         }
@@ -585,7 +585,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                     return;
                 }
             }
-            showInfo(getResText(R.string.something_wrong_for_webview));
+            showInfo(getResText(R.string.zlcore_something_wrong_for_webview));
             isSuccess = false;
             view.loadUrl("about:blank");
         }
@@ -610,7 +610,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                     return;
                 }
             }
-            showInfo(getResText(R.string.something_wrong_for_webview));
+            showInfo(getResText(R.string.zlcore_something_wrong_for_webview));
             isSuccess = false;
             view.loadUrl("about:blank");
         }
@@ -814,10 +814,10 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             if(isWebPageFromNetwork()) {
                 if (isShowBookmark && !TextUtils.isEmpty(currentUrl)) {
                     if (BookmarkModel.findBookmark(currentUrl) == null) {
-                        menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.menu_item_bookmark));
+                        menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.zlcore_menu_item_bookmark));
                         menu.findItem(R.id.action_page_bookmark).setIcon(R.drawable.baseline_bookmark_border_24);
                     } else {
-                        menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.menu_item_unbookmark));
+                        menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.zlcore_menu_item_unbookmark));
                         menu.findItem(R.id.action_page_bookmark).setIcon(R.drawable.baseline_bookmark_24);
                     }
                 }
@@ -854,17 +854,17 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 getActivity().finish();
             }
         } else if(id == R.id.action_page_bookmark){
-            if(item.getTitle().toString().equalsIgnoreCase(getString(R.string.menu_item_bookmark))){
+            if(item.getTitle().toString().equalsIgnoreCase(getString(R.string.zlcore_menu_item_bookmark))){
                 if(!TextUtils.isEmpty(currentUrl)) {
                     BookmarkModel.bookmark(currentPageTitle, "", currentUrl);
                 }
-                item.setTitle(getString(R.string.menu_item_unbookmark));
+                item.setTitle(getString(R.string.zlcore_menu_item_unbookmark));
                 item.setIcon(R.drawable.baseline_bookmark_24);
-            } else if(item.getTitle().toString().equalsIgnoreCase(getString(R.string.menu_item_unbookmark))){
+            } else if(item.getTitle().toString().equalsIgnoreCase(getString(R.string.zlcore_menu_item_unbookmark))){
                 if(!TextUtils.isEmpty(currentUrl)) {
                     BookmarkModel.unBookmark(currentPageTitle, "", currentUrl);
                 }
-                item.setTitle(getString(R.string.menu_item_bookmark));
+                item.setTitle(getString(R.string.zlcore_menu_item_bookmark));
                 item.setIcon(R.drawable.baseline_bookmark_border_24);
             }
         } else if(id == R.id.action_page_share){

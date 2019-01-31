@@ -213,7 +213,7 @@ public class CanvasActivity extends BaseActivity{
 	
 	public void onCreateMovableMenu(ASMovableMenu menu){
 		ASTextView label = new ASTextView(this);
-		label.setText(getString(R.string.canvasactivity_volume_background_sound));
+		label.setText(getString(R.string.zlcore_canvasactivity_volume_background_sound));
 		label.setGravity(Gravity.LEFT);
 		label.setTextColor(Color.BLACK);
 

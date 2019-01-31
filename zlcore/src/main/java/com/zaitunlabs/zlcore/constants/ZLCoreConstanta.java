@@ -37,6 +37,6 @@ public class ZLCoreConstanta {
     }
 
     public static String getCrashMailTo(Context context) {
-        return (CRASH_MAIL_TO==null?context.getString(R.string.crash_mail_to):CRASH_MAIL_TO);
+        return (CRASH_MAIL_TO==null?context.getString(R.string.zlcore_crash_mail_to):CRASH_MAIL_TO);
     }
 }

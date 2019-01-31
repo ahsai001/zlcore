@@ -1,6 +1,6 @@
 package com.zaitunlabs.zlcore.modules.shaum_sholat;
 
-import android.content.BroadcastReceiver;
+import  android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
@@ -30,31 +30,31 @@ public class SholatReminderReceiver extends BroadcastReceiver {
                int reminderIntervalTime = 5;
                switch (prefCode){
                    case ShaumSholatReminderService.START_SHUBUH_TIME:
-                       contentOfNotif = context.getString(R.string.sholat_reminder_subuh);
+                       contentOfNotif = context.getString(R.string.zlcore_sholat_reminder_subuh);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_SYURUK_TIME:
-                       contentOfNotif = context.getString(R.string.sholat_reminder_syuruk);
+                       contentOfNotif = context.getString(R.string.zlcore_sholat_reminder_syuruk);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_DZUHUR_TIME:
-                       contentOfNotif = context.getString(R.string.sholat_reminder_dzuhur);
+                       contentOfNotif = context.getString(R.string.zlcore_sholat_reminder_dzuhur);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_JUMAT_TIME:
-                       contentOfNotif = context.getString(R.string.sholat_reminder_jumat);
+                       contentOfNotif = context.getString(R.string.zlcore_sholat_reminder_jumat);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_JUMAT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_ASHR_TIME:
-                       contentOfNotif = context.getString(R.string.sholat_reminder_ashr);
+                       contentOfNotif = context.getString(R.string.zlcore_sholat_reminder_ashr);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_MAGHRIB_TIME:
-                       contentOfNotif = context.getString(R.string.sholat_reminder_maghrib);
+                       contentOfNotif = context.getString(R.string.zlcore_sholat_reminder_maghrib);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_ISYA_TIME:
-                       contentOfNotif = context.getString(R.string.sholat_reminder_isya);
+                       contentOfNotif = context.getString(R.string.zlcore_sholat_reminder_isya);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                }

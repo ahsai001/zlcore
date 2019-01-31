@@ -20,7 +20,7 @@ public class GoToTopView extends ASTextView{
 	public GoToTopView(Context context, IGoToTopAction action) {
 		super(context);
 		this.action = action;
-		init(context.getString(R.string.gototopview_up_wording));
+		init(context.getString(R.string.zlcore_gototopview_up_wording));
 	}
 	
 	private void init(String title){

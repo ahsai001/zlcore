@@ -310,27 +310,27 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
 
                 // Check for a valid password, if the user entered one.
                 if (TextUtils.isEmpty(password)) {
-                    mPasswordView.setError(getString(R.string.error_field_required));
+                    mPasswordView.setError(getString(R.string.zlcore_error_field_required));
                     focusView = mPasswordView;
                     cancel = true;
                 }
 
                 if (!isPasswordValid(password)) {
                     mPasswordView.setError(TextUtils.isEmpty(getPasswordInvalidMessage())?
-                            getString(R.string.error_invalid_password):getPasswordInvalidMessage());
+                            getString(R.string.zlcore_error_invalid_password):getPasswordInvalidMessage());
                     focusView = mPasswordView;
                     cancel = true;
                 }
 
                 if (TextUtils.isEmpty(userId)) {
-                    mUserIDView.setError(getString(R.string.error_field_required));
+                    mUserIDView.setError(getString(R.string.zlcore_error_field_required));
                     focusView = mUserIDView;
                     cancel = true;
                 }
 
                 if (!isUserIDValid(userId)) {
                     mUserIDView.setError(TextUtils.isEmpty(getUserIdInvalidMessage())?
-                            getString(R.string.error_invalid_userid):getUserIdInvalidMessage());
+                            getString(R.string.zlcore_error_invalid_userid):getUserIdInvalidMessage());
                     focusView = mUserIDView;
                     cancel = true;
                 }
@@ -414,7 +414,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
         }, new Runnable() {
             @Override
             public void run() {
-                CommonUtils.showToast(BaseLoginActivity.this, getString(R.string.warning_please_give_permission));
+                CommonUtils.showToast(BaseLoginActivity.this, getString(R.string.zlcore_warning_please_give_permission));
                 finish();
             }
         }, Manifest.permission.READ_PHONE_STATE);

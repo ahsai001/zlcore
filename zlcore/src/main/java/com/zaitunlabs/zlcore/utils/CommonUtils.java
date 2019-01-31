@@ -228,7 +228,7 @@ public class CommonUtils {
 		android.support.v7.app.AlertDialog alert = null;
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
-				context.getString(R.string.general_wording_close), new OnClickListener() {
+				context.getString(R.string.zlcore_general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 						if(nextCode != null){
@@ -246,7 +246,7 @@ public class CommonUtils {
 		android.support.v7.app.AlertDialog alert = null;
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
-				context.getString(R.string.general_wording_close), new OnClickListener() {
+				context.getString(R.string.zlcore_general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 					}
@@ -261,7 +261,7 @@ public class CommonUtils {
 		android.support.v7.app.AlertDialog alert = null;
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
-				context.getString(R.string.general_wording_close), new OnClickListener() {
+				context.getString(R.string.zlcore_general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 					}
@@ -806,7 +806,7 @@ public class CommonUtils {
 		Uri uri = Uri.parse(uriText);
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, uri);
 		if(sendTitle == null)
-			sendTitle = context.getString(R.string.common_utils_send_email);
+			sendTitle = context.getString(R.string.zlcore_common_utils_send_email);
 		try {
 			
 			if(CommonUtils.isApplicationContext(context)){
@@ -835,7 +835,7 @@ public class CommonUtils {
 		shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
 		shareIntent.putExtra(Intent.EXTRA_TEXT, body);
 		if(shareTitle == null)
-			shareTitle = context.getString(R.string.common_utils_default_share_title);
+			shareTitle = context.getString(R.string.zlcore_common_utils_default_share_title);
 		try{
 			if(CommonUtils.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(shareIntent, shareTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
@@ -868,7 +868,7 @@ public class CommonUtils {
 
 		emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 		if(sendTitle == null)
-			sendTitle = context.getString(R.string.common_utils_send_email);
+			sendTitle = context.getString(R.string.zlcore_common_utils_send_email);
 		try{
 			if(CommonUtils.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
@@ -1307,11 +1307,11 @@ public class CommonUtils {
 	}
 
 	public static Snackbar showSnackBar(Context context, String message, boolean isIndefinite){
-		return showSnackBar(context,message,context.getString(R.string.default_snackbar_dismiss),isIndefinite);
+		return showSnackBar(context,message,context.getString(R.string.zlcore_default_snackbar_dismiss),isIndefinite);
 	}
 
 	public static Snackbar showSnackBar(Context context, String message, String dismissString, boolean isIndefinite){
-		return showSnackBar(context, context.getString(R.string.general_coordinator_layout_tagname),message,dismissString, isIndefinite);
+		return showSnackBar(context, context.getString(R.string.zlcore_general_coordinator_layout_tagname),message,dismissString, isIndefinite);
 	}
 
 	private static View getCoordLayout(View rootView, String coordinatorLayoutTagname){
@@ -1415,20 +1415,20 @@ public class CommonUtils {
 			} else if (type == INFORMATION_TYPE_SNACKBAR) {
 				if (context instanceof Fragment) {
 					showSnackBar((Fragment) context,
-							((Fragment) context).getString(R.string.general_coordinator_layout_tagname),
+							((Fragment) context).getString(R.string.zlcore_general_coordinator_layout_tagname),
 							message,
-							((Fragment) context).getString(R.string.snackbar_action_name_dismiss));
+							((Fragment) context).getString(R.string.zlcore_snackbar_action_name_dismiss));
 				} else if (context instanceof Context) {
 					showSnackBar((Context) context,
-							((Fragment) context).getString(R.string.general_coordinator_layout_tagname),
+							((Fragment) context).getString(R.string.zlcore_general_coordinator_layout_tagname),
 							message,
-							((Fragment) context).getString(R.string.snackbar_action_name_dismiss),false);
+							((Fragment) context).getString(R.string.zlcore_snackbar_action_name_dismiss),false);
 				}
 			} else if (type == INFORMATION_TYPE_DIALOG) {
 				if (context instanceof Fragment) {
-					showInfo(((Fragment) context).getContext(), ((Fragment) context).getContext().getString(R.string.general_wording_information_title), message);
+					showInfo(((Fragment) context).getContext(), ((Fragment) context).getContext().getString(R.string.zlcore_general_wording_information_title), message);
 				} else if (context instanceof Context) {
-					showInfo((Context) context, ((Fragment) context).getContext().getString(R.string.general_wording_information_title), message);
+					showInfo((Context) context, ((Fragment) context).getContext().getString(R.string.zlcore_general_wording_information_title), message);
 				}
 			} else {
 				if (context instanceof Fragment) {
@@ -1811,7 +1811,7 @@ public class CommonUtils {
 	public static android.support.v7.app.AlertDialog showLoadingDialog(Context context, String message,
 																	   boolean isIndeterminate, boolean cancelable){
 		if(TextUtils.isEmpty(message)){
-			message = context.getString(R.string.warning_please_wait);
+			message = context.getString(R.string.zlcore_warning_please_wait);
 		}
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
 		builder.setView(R.layout.progressbar_horizontal_left);
@@ -1833,7 +1833,7 @@ public class CommonUtils {
 
 	public static Snackbar showLoadingSnackBar(Context context, String message, boolean isIndeterminate, boolean cancelable){
 		if(TextUtils.isEmpty(message)){
-			message = context.getString(R.string.warning_please_wait);
+			message = context.getString(R.string.zlcore_warning_please_wait);
 		}
 		View rootView = ((Activity)context).getWindow().getDecorView().getRootView();
 		Snackbar snackbar = Snackbar.make(rootView, message,
@@ -1853,7 +1853,7 @@ public class CommonUtils {
 		snackbarLayout.addView(customProgressView);
 
 		if(cancelable) {
-			snackbar.setAction(context.getString(R.string.general_wording_dismiss), new View.OnClickListener() {
+			snackbar.setAction(context.getString(R.string.zlcore_general_wording_dismiss), new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					//do nothing, just dismiss

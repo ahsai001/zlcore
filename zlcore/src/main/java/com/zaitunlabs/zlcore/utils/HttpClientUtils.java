@@ -212,34 +212,34 @@ public class HttpClientUtils {
         String sslMessage = "";
         switch(error.getPrimaryError()) {
             case SslError.SSL_DATE_INVALID:
-                sslMessage = context.getText(R.string.notification_error_ssl_date_invalid).toString();
+                sslMessage = context.getText(R.string.zlcore_notification_error_ssl_date_invalid).toString();
                 break;
             case SslError.SSL_EXPIRED:
-                sslMessage = context.getText(R.string.notification_error_ssl_expired).toString();
+                sslMessage = context.getText(R.string.zlcore_notification_error_ssl_expired).toString();
                 break;
             case SslError.SSL_IDMISMATCH:
-                sslMessage = context.getText(R.string.notification_error_ssl_idmismatch).toString();
+                sslMessage = context.getText(R.string.zlcore_notification_error_ssl_idmismatch).toString();
                 break;
             case SslError.SSL_INVALID:
-                sslMessage = context.getText(R.string.notification_error_ssl_invalid).toString();
+                sslMessage = context.getText(R.string.zlcore_notification_error_ssl_invalid).toString();
                 break;
             case SslError.SSL_NOTYETVALID:
-                sslMessage = context.getText(R.string.notification_error_ssl_not_yet_valid).toString();
+                sslMessage = context.getText(R.string.zlcore_notification_error_ssl_not_yet_valid).toString();
                 break;
             case SslError.SSL_UNTRUSTED:
-                sslMessage = context.getText(R.string.notification_error_ssl_untrusted).toString();
+                sslMessage = context.getText(R.string.zlcore_notification_error_ssl_untrusted).toString();
                 break;
             default:
-                sslMessage = context.getText(R.string.notification_error_ssl_cert_invalid).toString();
+                sslMessage = context.getText(R.string.zlcore_notification_error_ssl_cert_invalid).toString();
         }
 
-        CommonUtils.showDialog2Option(context, context.getText(R.string.notification_error_ssl_title).toString(), sslMessage,
-                context.getText(R.string.notification_error_ssl_continue_text).toString(), new Runnable() {
+        CommonUtils.showDialog2Option(context, context.getText(R.string.zlcore_notification_error_ssl_title).toString(), sslMessage,
+                context.getText(R.string.zlcore_notification_error_ssl_continue_text).toString(), new Runnable() {
                     @Override
                     public void run() {
                         handler.proceed();
                     }
-                }, context.getText(R.string.notification_error_ssl_cancel_text).toString(), new Runnable() {
+                }, context.getText(R.string.zlcore_notification_error_ssl_cancel_text).toString(), new Runnable() {
                     @Override
                     public void run() {
                         handler.cancel();
