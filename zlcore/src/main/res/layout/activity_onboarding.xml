@@ -25,7 +25,7 @@
             android:textColor="@android:color/white"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/onboarding_skip"
+            android:text="@string/zlcore_onboarding_skip"
             android:id="@+id/onboarding_skip"
             />
 
@@ -35,7 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/onboarding_next"
+            android:text="@string/zlcore_onboarding_next"
             android:id="@+id/onboarding_next"
             />
 

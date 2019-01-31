@@ -4,11 +4,11 @@
     <item
         android:id="@+id/action_mark_as_read"
         android:orderInCategory="100"
-        android:title="@string/menu_item_mark_as_read"
+        android:title="@string/zlcore_menu_item_mark_as_read"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_delete"
         android:orderInCategory="101"
-        android:title="@string/menu_item_delete_message"
+        android:title="@string/zlcore_menu_item_delete_message"
         app:showAsAction="never" />
 </menu>

@@ -4,28 +4,28 @@
     <item
         android:id="@+id/action_page_share"
         android:orderInCategory="99"
-        android:title="@string/menu_item_share"
+        android:title="@string/zlcore_menu_item_share"
         android:icon="@drawable/baseline_share_24"
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_page_bookmark"
         android:orderInCategory="100"
-        android:title="@string/menu_item_bookmark"
+        android:title="@string/zlcore_menu_item_bookmark"
         android:icon="@drawable/baseline_bookmark_border_24"
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_reload"
         android:orderInCategory="101"
-        android:title="@string/menu_item_reload"
+        android:title="@string/zlcore_menu_item_reload"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_page_browser"
         android:orderInCategory="102"
-        android:title="@string/menu_item_open_page_in_browser"
+        android:title="@string/zlcore_menu_item_open_page_in_browser"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_page_close"
         android:orderInCategory="103"
-        android:title="@string/menu_item_close_page"
+        android:title="@string/zlcore_menu_item_close_page"
         app:showAsAction="never" />
 </menu>

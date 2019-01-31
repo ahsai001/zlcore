@@ -22,14 +22,14 @@
         <activity
             android:name=".activities.InfoPopup"
             android:excludeFromRecents="true"
-            android:label="@string/title_activity_info_popup"
+            android:label="@string/zlcore_title_activity_info_popup"
             android:launchMode="singleTask"
             android:noHistory="true"
             android:theme="@style/AppTheme.InfoPopup" />
         <activity
             android:name=".activities.ReminderPopup"
             android:excludeFromRecents="true"
-            android:label="@string/title_activity_reminder_popup"
+            android:label="@string/zlcore_title_activity_reminder_popup"
             android:launchMode="standard"
             android:noHistory="true"
             android:theme="@style/AppTheme.ReminderPopup" />

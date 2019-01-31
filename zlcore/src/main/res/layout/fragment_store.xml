@@ -32,7 +32,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textColor="@android:color/black"
-                android:text="@string/info_no_product"/>
+                android:text="@string/zlcore_info_no_product"/>
         </LinearLayout>
     </RelativeLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

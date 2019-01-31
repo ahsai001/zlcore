@@ -12,6 +12,6 @@
         android:id="@+id/detail_itinerary_textview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/content_loading"/>
+        android:text="@string/zlcore_content_loading"/>
 
 </android.support.v4.widget.NestedScrollView>

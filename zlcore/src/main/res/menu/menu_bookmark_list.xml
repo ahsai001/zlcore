@@ -4,16 +4,16 @@
     <item
         android:id="@+id/action_open_remove_bookmark"
         android:orderInCategory="101"
-        android:title="@string/action_open_remove_bookmark"
+        android:title="@string/zlcore_action_open_remove_bookmark"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_open_bookmark"
         android:orderInCategory="100"
-        android:title="@string/action_open_bookmark"
+        android:title="@string/zlcore_action_open_bookmark"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_remove_bookmark"
         android:orderInCategory="102"
-        android:title="@string/action_remove_bookmark"
+        android:title="@string/zlcore_action_remove_bookmark"
         app:showAsAction="never" />
 </menu>

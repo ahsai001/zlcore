@@ -38,7 +38,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal"
-                    android:text="@string/login_signing"
+                    android:text="@string/zlcore_login_signing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -97,7 +97,7 @@
                                 android:id="@+id/login_form_userid"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/prompt_email"
+                                android:hint="@string/zlcore_prompt_email"
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:singleLine="true" />
@@ -114,9 +114,9 @@
                                 android:id="@+id/login_form_password"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/prompt_password"
+                                android:hint="@string/zlcore_prompt_password"
                                 android:imeActionId="@+id/login"
-                                android:imeActionLabel="@string/action_sign_in_short"
+                                android:imeActionLabel="@string/zlcore_action_sign_in_short"
                                 android:imeOptions="actionGo"
                                 android:inputType="textPassword"
                                 android:maxLines="1"
@@ -148,7 +148,7 @@
                             android:layout_marginTop="32dp"
                             android:layout_gravity="center_horizontal"
                             android:minWidth="200dp"
-                            android:text="@string/action_sign_in"
+                            android:text="@string/zlcore_action_sign_in"
                             android:textStyle="bold" />
                         <TextView
                             android:id="@+id/login_form_credential_infoView"
