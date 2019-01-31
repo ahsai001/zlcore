@@ -80,7 +80,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         //image
         if(!TextUtils.isEmpty(info.getPhotoUrl()) && URLUtil.isValidUrl(info.getPhotoUrl())){
             holder.imageView.setVisibility(View.VISIBLE);
-            Picasso.with(holder.imageView.getContext()).load(info.getPhotoUrl()).error(R.drawable.ic_error).into(holder.imageView);
+            Picasso.get().load(info.getPhotoUrl()).error(R.drawable.ic_error).into(holder.imageView);
         }else{
             holder.imageView.setVisibility(View.GONE);
             holder.imageView.setImageBitmap(null);

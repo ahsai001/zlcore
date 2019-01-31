@@ -71,7 +71,7 @@ public class AppListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             AppListDataModel appListDataModel = appList.get(position);
             ((AppListViewHolder) holder).titleView.setText(appListDataModel.getTitle());
             ((AppListViewHolder) holder).bodyView.setText(appListDataModel.getDesc());
-            Picasso.with(((AppListViewHolder) holder).imageView.getContext()).load(appListDataModel.getImage())
+            Picasso.get().load(appListDataModel.getImage())
                     .placeholder(R.drawable.logo_zl).error(R.drawable.ic_error)
                     .into(((AppListViewHolder) holder).imageView);
         }

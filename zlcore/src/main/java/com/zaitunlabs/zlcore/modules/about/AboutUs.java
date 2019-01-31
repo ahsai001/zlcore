@@ -67,7 +67,7 @@ public class AboutUs extends CanvasActivity {
 		//RoundedImageView logo = new RoundedImageView(this);
 		logoX.setScaleType(ScaleType.FIT_XY);
 		logoX.setAdjustViewBounds(true);
-		Picasso.with(this).load(logoDrawableRes).into(logoX);
+		Picasso.get().load(logoDrawableRes).into(logoX);
 		canvas.addViewWithFrame(logoX, 40, 12, 20, 20);
 
 
@@ -205,7 +205,7 @@ public class AboutUs extends CanvasActivity {
 		//RoundedImageView logo = new RoundedImageView(this);
 		logo.setScaleType(ScaleType.FIT_XY);
 		logo.setAdjustViewBounds(true);
-		Picasso.with(this).load(developerResLogo).into(logo);
+		Picasso.get().load(developerResLogo).into(logo);
 		logoTradeMarkCanvas.addViewWithFrame(logo, 15, 0, 20, 100);
 
 		logo.setOnClickListener(new View.OnClickListener() {

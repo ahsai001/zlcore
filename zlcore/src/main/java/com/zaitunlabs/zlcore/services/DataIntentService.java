@@ -84,7 +84,7 @@ public class DataIntentService extends IntentService {
                 title, desc, icon, notifID);
 
         ANRequest.MultiPartBuilder builder = AndroidNetworking.upload(url)
-                .setOkHttpClient(HttpClientUtils.getHTTPClientForUpload(this, APIConstant.API_VERSION));
+                .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, true));
 
 
         if(headers != null){

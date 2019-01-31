@@ -233,9 +233,9 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
 
         iconView = (CircleImageView) findViewById(R.id.login_form_icon);
         if(!TextUtils.isEmpty(getIconUrl()) && URLUtil.isValidUrl(getIconUrl())){
-            Picasso.with(BaseLoginActivity.this).load(getIconUrl()).noPlaceholder().error(R.drawable.ic_error).into(iconView);
+            Picasso.get().load(getIconUrl()).noPlaceholder().error(R.drawable.ic_error).into(iconView);
         } else if(getIconResId() > 0){
-            Picasso.with(BaseLoginActivity.this).load(getIconResId()).noPlaceholder().into(iconView);
+            Picasso.get().load(getIconResId()).noPlaceholder().into(iconView);
         }
 
         loginTypeSelectorPanel = (LinearLayout) findViewById(R.id.loginTypeSelectorPanel);

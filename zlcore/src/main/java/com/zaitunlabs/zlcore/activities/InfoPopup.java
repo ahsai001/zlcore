@@ -225,7 +225,7 @@ public class InfoPopup extends BaseActivity {
             String photo = CommonUtils.getStringFragmentArgument(getArguments(),ARG_PHOTO,"");
             if(!TextUtils.isEmpty(photo) && URLUtil.isValidUrl(photo)){
                 imageView.setVisibility(View.VISIBLE);
-                Picasso.with(imageView.getContext()).load(photo).error(R.drawable.ic_error).into(imageView);
+                Picasso.get().load(photo).error(R.drawable.ic_error).into(imageView);
             }else{
                 imageView.setVisibility(View.GONE);
                 imageView.setImageBitmap(null);

@@ -71,7 +71,7 @@ public class StoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             StoreDataModel appListDataModel = appList.get(position);
             ((StoreViewHolder) holder).titleView.setText(appListDataModel.getTitle());
             ((StoreViewHolder) holder).bodyView.setText(appListDataModel.getDesc());
-            Picasso.with(((StoreViewHolder) holder).imageView.getContext()).load(appListDataModel.getImage())
+            Picasso.get().load(appListDataModel.getImage())
                     .placeholder(R.drawable.logo_zl).error(R.drawable.ic_error)
                     .into(((StoreViewHolder) holder).imageView);
         }

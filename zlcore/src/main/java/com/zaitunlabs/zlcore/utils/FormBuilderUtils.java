@@ -485,7 +485,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
         boolean needShowSeparator = false;
 
         if(!TextUtils.isEmpty(logo) && URLUtil.isValidUrl(logo)) {
-            Picasso.with(context).load(logo).into(formImageView);
+            Picasso.get().load(logo).into(formImageView);
             needShowSeparator = true;
             formImageView.setVisibility(View.VISIBLE);
         } else {
