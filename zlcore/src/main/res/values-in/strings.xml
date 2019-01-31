@@ -26,7 +26,7 @@
     <string name="zlcore_action_sign_in">Masuk</string>
     <string name="zlcore_action_sign_in_short">Masuk</string>
 
-    <string name="zlcore_error_invalid_userid">ID user tidak valid</string>
+    <string name="zlcore_error_invalid_userid">ID pengguna tidak valid</string>
     <string name="zlcore_error_invalid_email">Alamat email tidak valid</string>
     <string name="zlcore_error_invalid_password">Kata kunci tidak valid</string>
     <string name="zlcore_error_incorrect_password">Kata kunci tidak benar</string>
@@ -53,8 +53,8 @@
     <string name="zlcore_title_activity_itinerary_detail">Itinerary Info</string>
     <string name="zlcore_warning_invalid_method">Silakan hubungi pembuat aplikasi untuk masalah ini</string>
     <string name="zlcore_warning_please_wait">Harap tunggu...</string>
-    <string name="zlcore_core_string_yes">YES</string>
-    <string name="zlcore_core_string_no">NO</string>
+    <string name="zlcore_core_string_yes">Ya</string>
+    <string name="zlcore_core_string_no">Tidak</string>
     <string name="zlcore_core_string_submit">submit</string>
     <string name="zlcore_something_wrong_for_webview">Maaf ada masalah</string>
     <string name="zlcore_info_not_available">Info tidak tersedia</string>
@@ -81,7 +81,7 @@
 
 
     <string name="zlcore_module_message_list_title">Informasi</string>
-    <string name="zlcore_title_activity_app_list">Applikasi menarik</string>
+    <string name="zlcore_title_activity_app_list">Aplikasi pilihan</string>
     <string name="zlcore_title_activity_store">Toko</string>
 
     <string name="zlcore_onboarding_skip">lewati</string>
@@ -114,15 +114,15 @@
     <string name="zlcore_action_search">Temukan</string>
     <string name="zlcore_aboutus_about_app">Tentang Aplikasi</string>
     <string name="zlcore_warning_sorry_there_is_problem">Maaf, telah terjadi kesalahan</string>
-    <string name="zlcore_aboutus_developer_name">Developer : %s</string>
+    <string name="zlcore_aboutus_developer_name">Pengembang : %s</string>
     <string name="zlcore_aboutus_developer_email">Email : %s</string>
     <string name="zlcore_aboutus_kirim_email">Kirim Email</string>
     <string name="zlcore_aboutus_version">Versi : %s</string>
     <string name="zlcore_aboutus_title_link_about_app">&#160;&#160;Tentang aplikasi&#160;&#160;</string>
     <string name="zlcore_aboutus_app_history">&#160;&#160;Riwayat versi aplikasi&#160;&#160;</string>
     <string name="zlcore_aboutus_share_title">share menggunakan :</string>
-    <string name="zlcore_aboutus_menu_share_title">Share</string>
-    <string name="zlcore_aboutus_menu_feedback_title">Feedback</string>
+    <string name="zlcore_aboutus_menu_share_title">Bagikan</string>
+    <string name="zlcore_aboutus_menu_feedback_title">Umpan Balik</string>
     <string name="zlcore_aboutus_menu_rate_title">Rate</string>
 
 
@@ -166,7 +166,7 @@
     <string name="zlcore_login_utils_logout_button_title">Keluar</string>
     <string name="zlcore_login_utils_relogin_confirmation_title">Konfirmasi Masuk Kembali</string>
     <string name="zlcore_login_utils_relogin_confirmation_message">Anda perlu masuk kembali untuk melanjutkan?</string>
-    <string name="zlcore_general_wording_ok">OK</string>
+    <string name="zlcore_general_wording_ok">Ya</string>
     <string name="zlcore_permission_utils_permission_title">Perizinan</string>
     <string name="zlcore_permission_utils_permission_message">Aplikasi perlu semua perizinan ini untuk berfungsi dengan baik</string>
     <string name="zlcore_permission_utils_permission_message_enable_from_setting">Maaf, karena anda sudah mencentang \'jangan tanya lagi\' dan kami perlu semua perizinan untuk berfungsi dengan baik, harap berikan izin melalui pengaturan aplikasi ini</string>
@@ -174,5 +174,5 @@
     <string name="zlcore_gototopview_up_wording">Ke atas</string>
 
 
-    <string name="zlcore_aboutus_tentang_aplikasi" type="id">Tentang Aplikasi</string>
+    <string name="zlcore_aboutus_tentang_aplikasi">Tentang Aplikasi</string>
 </resources>

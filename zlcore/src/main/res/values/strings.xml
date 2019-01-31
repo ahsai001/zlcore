@@ -133,7 +133,7 @@
     <string name="zlcore_base_recyclerview_adapter_delete_confirmation_message">Are you sure want to delete it?</string>
     <string name="zlcore_general_wording_delete">Delete</string>
     <string name="zlcore_general_wording_cancel">Cancel</string>
-    <string name="zlcore_canvasactivity_volume_background_sound">Background sound volume :</string>
+    <string name="zlcore_canvasactivity_volume_background_sound">Backsound volume :</string>
     <string name="zlcore_infofragment_mark_all_as_read_success">Mark all as read success</string>
     <string name="zlcore_infofragment_delete_all_messages_success">Delete all messages success</string>
     <string name="zlcore_shaum_reminder_notification">Tomorrow is %s, don\'t forget the preparation for fasting</string>
@@ -176,5 +176,5 @@
 
 
 
-    <string name="zlcore_aboutus_tentang_aplikasi" type="id">About Application</string>
+    <string name="zlcore_aboutus_tentang_aplikasi">About Application</string>
 </resources>
