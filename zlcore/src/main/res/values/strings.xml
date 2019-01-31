@@ -125,5 +125,56 @@
     <string name="aboutus_menu_feedback_title">Feedback</string>
     <string name="aboutus_menu_rate_title">Rate</string>
 
+
+
+    <string name="warning_please_give_permission">Please give permission to run this application</string>
+    <string name="warning_press_once_again_to_close_app">Tap once more to close this application</string>
+    <string name="base_recyclerview_adapter_delete_confirmation">Delete Confirmation</string>
+    <string name="base_recyclerview_adapter_delete_confirmation_message">Are you sure want to delete it?</string>
+    <string name="general_wording_delete">Delete</string>
+    <string name="general_wording_cancel">Cancel</string>
+    <string name="canvasactivity_volume_background_sound">Background sound volume :</string>
+    <string name="infofragment_mark_all_as_read_success">Mark all as read success</string>
+    <string name="infofragment_delete_all_messages_success">Delete all messages success</string>
+    <string name="shaum_reminder_notification">Tomorrow is %s, don\'t forget the preparation for fasting</string>
+    <string name="sholat_reminder_subuh">Attention, a few more minutes before shubuh prayer time</string>
+    <string name="sholat_reminder_syuruk">Attention, a few more minutes before syuruk time</string>
+    <string name="sholat_reminder_dzuhur">Attention, a few more minutes before dzuhur prayer time</string>
+    <string name="sholat_reminder_jumat">Attention, a few dozen minutes ahead of jum\'at prayer time</string>
+    <string name="sholat_reminder_ashr">Attention, a few more minutes before ashar prayer time</string>
+    <string name="sholat_reminder_maghrib">Attention, a few more minutes before maghrib prayer time</string>
+    <string name="sholat_reminder_isya">Attention, a few more minutes before isya prayer time</string>
+    <string name="general_wording_close">Close</string>
+    <string name="common_utils_send_email">Send email...</string>
+    <string name="common_utils_default_share_title">How do you want to share?</string>
+    <string name="general_wording_information_title">Information</string>
+    <string name="general_wording_dismiss">Dismiss</string>
+    <string name="form_validations_utils_please_fill_this">Please fill this</string>
+    <string name="form_validations_utils_email_is_invalid">Email is invalid</string>
+    <string name="form_validations_utils_please_insert_with_valid_format">Please insert with valid format</string>
+    <string name="form_validations_utils_need_set_regex_pattern">You need to set Regexp Pattern first</string>
+    <string name="form_validations_utils_please_fill_alpha_numeric_only">Please fill with alpha numeric only</string>
+    <string name="form_validations_utils_please_fill_numeric_only">Please fill with numeric only</string>
+    <string name="form_validations_utils_value_is_different">The value is different with %s</string>
+    <string name="form_validations_utils_data_must_be_count_digits">Data must be %d %s</string>
+    <string name="form_validations_utils_phone_format_is_invalid">Phone format is invalid</string>
+    <string name="form_validations_utils_you_must_check_this">You must check this</string>
+    <string name="form_validations_utils_url_format_is_invalid">Url format is invalid</string>
+    <string name="form_validations_utils_date_format_is_invalid">Date format is invalid</string>
+    <string name="warning_failed_get_location_with_gps">(Couldn\'t get the location. Make sure location is enabled on the device)</string>
+    <string name="login_utils_logout_confirmation_title">Logout Confirmation</string>
+    <string name="login_utils_logout_confirmation_message">Are you sure want to logout?</string>
+    <string name="login_utils_logout_button_title">Logout</string>
+    <string name="login_utils_relogin_confirmation_title">Re-login Confirmation</string>
+    <string name="login_utils_relogin_confirmation_message">You need to re-login to continue?</string>
+    <string name="general_wording_ok">OK</string>
+    <string name="permission_utils_permission_title">Permission</string>
+    <string name="permission_utils_permission_message">we need all these permissions to run properly</string>
+    <string name="permission_utils_permission_message_enable_from_setting">Sorry, because you already check never ask again and we need all these permissions to run properly, please enable permission in this application setting</string>
+    <string name="permission_utils_permission_go_to_setting_title">Setting</string>
+    <string name="gototopview_up_wording">Up</string>
+
+
+
     <item name="aboutus_tentang_aplikasi" type="id">About Application</item>
 </resources>

@@ -243,46 +243,6 @@ public class InfoFragment extends BaseFragment {
         InfoUtils.notifyInfoCounter();
     }
 
-    private void prepareMovieData() {
-        InformationModel movie = new InformationModel("Mad Max: Fury Road", "Action & Adventure", "http://tempatwisatadibandung.info/wp-content/uploads/2015/08/gunung-tangkuban-perahu.jpg", "https://www.google.com",2);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Inside Out", "Animation, Kids & Family fsdf sdfasdf asdfasd fasdf asdfa sdfasdfasdf asdfasdf asdfasdfa sdfadsf asdfasdfa sdfasdfa sdfadfa sdfasdfa sdfasdfa sdfasdf ", "2015", "https://www.facebook.com",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Star Wars: Episode VII - The Force Awakens", "Action", "2015", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Shaun the Sheep", "Animation", "http://image-serve.hipwee.com/wp-content/uploads/2016/08/hipwee-pendaki-perempuan-tewas-saat-berendam-di-air-panas-gunung-rinjani.jpg", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("The Martian", "Science Fiction & Fantasy sd fasd asdf asdf asdfadsfasdfasdfasdfasdf ads fadsfasdfsadfasdfasdfadsff adsfadsfasdfasdfas daf sdf adsf adsf adfadf", "2015", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Mission: Impossible Rogue Nation", "Action", "2015", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Up", "Animation", "2009", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Star Trek", "Science Fiction", "2009", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("The LEGO Movie", "Animation", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRRkXzYclfsunkRxpD3ZVw_10oB1kRk1sfozwSTBZJjkZWSPlCdA", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Iron Man", "Action & Adventure", "2008", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Aliens", "Science Fiction", "1986", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Chicken Run", "Animation", "2000", "",1);
-        movie.saveWithTimeStamp();
-
-        movie = new InformationModel("Back to the Future", "Science Fiction", "1985", "",1);
-        movie.saveWithTimeStamp();
-    }
 
 
     @Override
@@ -303,7 +263,7 @@ public class InfoFragment extends BaseFragment {
             mAdapter.markAllAsRead();
             InfoUtils.notifyInfoCounter();
             getActivity().invalidateOptionsMenu();
-            CommonUtils.showSnackBar(getActivity(),"mark all as read success");
+            CommonUtils.showSnackBar(getActivity(),getString(R.string.infofragment_mark_all_as_read_success));
             return true;
         } else if (item.getItemId() == R.id.action_delete_all){
             InformationModel.deleteAllInfo();
@@ -311,7 +271,7 @@ public class InfoFragment extends BaseFragment {
             mAdapter.notifyDataSetChanged();
             InfoUtils.notifyInfoCounter();
             getActivity().invalidateOptionsMenu();
-            CommonUtils.showSnackBar(getActivity(),"delete all messages success");
+            CommonUtils.showSnackBar(getActivity(),getString(R.string.infofragment_delete_all_messages_success));
             return true;
         }
         return super.onOptionsItemSelected(item);

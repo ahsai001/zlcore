@@ -511,42 +511,42 @@ public class CanvasSection extends FrameLayout {
 		String actString = "";
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_DOWN");
 			actString = "MotionEvent.ACTION_DOWN";
 			break;
 		case MotionEvent.ACTION_MOVE:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_MOVE");
 			actString = "MotionEvent.ACTION_MOVE";
 			break;
 		case MotionEvent.ACTION_UP:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_UP");
 			actString = "MotionEvent.ACTION_UP";
 			break;
 		case MotionEvent.ACTION_CANCEL:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_CANCEL");
 			actString = "MotionEvent.ACTION_CANCEL";
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_OUTSIDE");
 			actString = "MotionEvent.ACTION_OUTSIDE";
 			break;
 		case MotionEvent.ACTION_POINTER_DOWN:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_DOWN");
 			actString = "MotionEvent.ACTION_POINTER_DOWN";
 			break;
 		case MotionEvent.ACTION_POINTER_UP:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_UP");
 			actString = "MotionEvent.ACTION_POINTER_UP";
 			break;
 		default:
-			DebugUtils.logE("dispatchTouchEvent",
+			DebugUtils.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.DEFAULT");
 			actString = "MotionEvent.DEFAULT";
 			break;
@@ -580,42 +580,42 @@ public class CanvasSection extends FrameLayout {
 		String actString = "";
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_DOWN");
 			actString = "MotionEvent.ACTION_DOWN";
 			break;
 		case MotionEvent.ACTION_MOVE:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_MOVE");
 			actString = "MotionEvent.ACTION_MOVE";
 			break;
 		case MotionEvent.ACTION_UP:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_UP");
 			actString = "MotionEvent.ACTION_UP";
 			break;
 		case MotionEvent.ACTION_CANCEL:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_CANCEL");
 			actString = "MotionEvent.ACTION_CANCEL";
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_OUTSIDE");
 			actString = "MotionEvent.ACTION_OUTSIDE";
 			break;
 		case MotionEvent.ACTION_POINTER_DOWN:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_DOWN");
 			actString = "MotionEvent.ACTION_POINTER_DOWN";
 			break;
 		case MotionEvent.ACTION_POINTER_UP:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_UP");
 			actString = "MotionEvent.ACTION_POINTER_UP";
 			break;
 		default:
-			DebugUtils.logE("onInterceptTouchEvent",
+			DebugUtils.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.DEFAULT");
 			actString = "MotionEvent.DEFAULT";
 			break;

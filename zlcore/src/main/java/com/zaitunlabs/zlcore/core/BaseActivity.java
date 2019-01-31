@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.transition.Transition;
 
+import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.utils.ApplicationWacther;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 
@@ -183,7 +184,7 @@ public class BaseActivity extends AppCompatActivity {
         if(!canExit){
             canExit = true;
             if(TextUtils.isEmpty(message)) {
-                CommonUtils.showSnackBar(this, "tekan sekali lagi untuk menutup aplikasi");
+                CommonUtils.showSnackBar(this, getString(R.string.warning_press_once_again_to_close_app));
             } else {
                 CommonUtils.showSnackBar(this, message);
             }

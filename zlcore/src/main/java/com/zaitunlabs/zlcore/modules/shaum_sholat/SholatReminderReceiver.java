@@ -30,31 +30,31 @@ public class SholatReminderReceiver extends BroadcastReceiver {
                int reminderIntervalTime = 5;
                switch (prefCode){
                    case ShaumSholatReminderService.START_SHUBUH_TIME:
-                       contentOfNotif = "Perhatian, sebentar lagi menjelang waktu sholat subuh";
+                       contentOfNotif = context.getString(R.string.sholat_reminder_subuh);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_SYURUK_TIME:
-                       contentOfNotif = "Perhatian, sebentar lagi menjelang waktu syuruk";
+                       contentOfNotif = context.getString(R.string.sholat_reminder_syuruk);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_DZUHUR_TIME:
-                       contentOfNotif = "Perhatian, sebentar lagi menjelang waktu sholat dzuhur";
+                       contentOfNotif = context.getString(R.string.sholat_reminder_dzuhur);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_JUMAT_TIME:
-                       contentOfNotif = "Perhatian, beberapa puluh menit lagi menjelang waktu sholat jum'at";
+                       contentOfNotif = context.getString(R.string.sholat_reminder_jumat);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_JUMAT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_ASHR_TIME:
-                       contentOfNotif = "Perhatian, sebentar lagi menjelang waktu sholat ashar";
+                       contentOfNotif = context.getString(R.string.sholat_reminder_ashr);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_MAGHRIB_TIME:
-                       contentOfNotif = "Perhatian, sebentar lagi menjelang waktu sholat maghrib";
+                       contentOfNotif = context.getString(R.string.sholat_reminder_maghrib);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                    case ShaumSholatReminderService.START_ISYA_TIME:
-                       contentOfNotif = "Perhatian, sebentar lagi menjelang waktu sholat isya";
+                       contentOfNotif = context.getString(R.string.sholat_reminder_isya);
                        reminderIntervalTime = ShaumSholatReminderService.PARAM_DEFAULT_TIME_REMINDER;
                        break;
                }

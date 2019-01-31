@@ -7,6 +7,8 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.zaitunlabs.zlcore.R;
+
 public class GoToTopView extends ASTextView{
 	private int alpha = 200;
 	private IGoToTopAction action = null;
@@ -18,12 +20,12 @@ public class GoToTopView extends ASTextView{
 	public GoToTopView(Context context, IGoToTopAction action) {
 		super(context);
 		this.action = action;
-		init("ke atas");
+		init(context.getString(R.string.gototopview_up_wording));
 	}
 	
 	private void init(String title){
 		this.setBackgroundColor(Color.argb(alpha, 255, 255, 255));
-		this.setText("ke atas");
+		this.setText(title);
 		this.setTypeface(null, Typeface.BOLD);
 		this.setTextColor(Color.BLACK);
 		this.setTextSize(12);

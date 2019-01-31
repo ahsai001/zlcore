@@ -14,6 +14,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
+import com.zaitunlabs.zlcore.R;
+
 import java.util.ArrayList;
 
 /**
@@ -74,15 +76,15 @@ public class PermissionUtils {
 
             if(needRequested.size() > 0){
                 if(showDialogInit) {
-                    CommonUtils.showDialog2Option(getContext(), initTitle==null?"Permission":initTitle, initBody==null?"we need all these permissions to run properly":initBody,
-                            "OK", new Runnable() {
+                    CommonUtils.showDialog2Option(getContext(), initTitle==null?getContext().getString(R.string.permission_utils_permission_title):initTitle, initBody==null?getContext().getString(R.string.permission_utils_permission_message):initBody,
+                            getContext().getString(R.string.general_wording_ok), new Runnable() {
                                 @Override
                                 public void run() {
                                     //need request permission
                                     String[] needRequestedPermission = needRequested.toArray(new String[needRequested.size()]);
                                     requestPermisssion(activityOrFragment, needRequestedPermission, requestCode);
                                 }
-                            }, "Cancel", new Runnable() {
+                            }, getContext().getString(R.string.general_wording_cancel), new Runnable() {
                                 @Override
                                 public void run() {
                                     if (taskIfDenied != null) taskIfDenied.run();
@@ -149,14 +151,13 @@ public class PermissionUtils {
                     }
                 }
                 if(isAnyNeverAskAgainChecked){
-                    CommonUtils.showDialog2Option(getContext(), "Permission", "Sorry, because you already check never ask again " +
-                                    "and we need all these permissions to run properly, please enable permission in this application setting",
-                            "cancel", new Runnable() {
+                    CommonUtils.showDialog2Option(getContext(), getContext().getString(R.string.permission_utils_permission_title), getContext().getString(R.string.permission_utils_permission_message_enable_from_setting),
+                            getContext().getString(R.string.general_wording_cancel), new Runnable() {
                                 @Override
                                 public void run() {
 
                                 }
-                            }, "go to setting", new Runnable() {
+                            }, getContext().getString(R.string.permission_utils_permission_go_to_setting_title), new Runnable() {
                                 @Override
                                 public void run() {
                                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);

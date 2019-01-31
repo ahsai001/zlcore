@@ -127,7 +127,7 @@ public class DateStringUtils {
             messageDate = sf.parse(messageDateInString);
         } catch (ParseException e) {
             //do nothing
-            DebugUtils.logD("smartcall-x", "exception parse date");
+            DebugUtils.logD("smart-x", "exception parse date");
         }
         return messageDate;
     }

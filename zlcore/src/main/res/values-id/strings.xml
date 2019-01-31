@@ -125,5 +125,54 @@
     <string name="aboutus_menu_feedback_title">Feedback</string>
     <string name="aboutus_menu_rate_title">Rate</string>
 
+
+    <string name="warning_please_give_permission">Harap berikan izin agar aplikasi ini dapat berjalan</string>
+    <string name="warning_press_once_again_to_close_app">Tekan sekali lagi untuk menutup aplikasi</string>
+    <string name="base_recyclerview_adapter_delete_confirmation">Konfirmasi Hapus</string>
+    <string name="base_recyclerview_adapter_delete_confirmation_message">Apakah anda yakin untuk menghapus nya?</string>
+    <string name="general_wording_delete">Hapus</string>
+    <string name="general_wording_cancel">Batalkan</string>
+    <string name="canvasactivity_volume_background_sound">Volume Suara Latar :</string>
+    <string name="infofragment_mark_all_as_read_success">Berhasil menandai semua sebagai sukses</string>
+    <string name="infofragment_delete_all_messages_success">Berhasil menghapus semua informasi</string>
+    <string name="shaum_reminder_notification">Besok adalah hari %s, jangan lupa persiapannya bagi yang akan melakukan shaum/puasa</string>
+    <string name="sholat_reminder_subuh">Perhatian, sebentar lagi menjelang waktu sholat subuh</string>
+    <string name="sholat_reminder_syuruk">Perhatian, sebentar lagi menjelang waktu syuruk</string>
+    <string name="sholat_reminder_dzuhur">Perhatian, sebentar lagi menjelang waktu sholat dzuhur</string>
+    <string name="sholat_reminder_jumat">Perhatian, beberapa puluh menit lagi menjelang waktu sholat jum\'at</string>
+    <string name="sholat_reminder_ashr">Perhatian, sebentar lagi menjelang waktu sholat ashar</string>
+    <string name="sholat_reminder_maghrib">Perhatian, sebentar lagi menjelang waktu sholat maghrib</string>
+    <string name="sholat_reminder_isya">Perhatian, sebentar lagi menjelang waktu sholat isya</string>
+    <string name="general_wording_close">Tutup</string>
+    <string name="common_utils_send_email">Kirim email...</string>
+    <string name="common_utils_default_share_title">Bagaimana cara kamu berbagi?</string>
+    <string name="general_wording_information_title">Informasi</string>
+    <string name="general_wording_dismiss">Tutup</string>
+    <string name="form_validations_utils_please_fill_this">Harap diisi</string>
+    <string name="form_validations_utils_email_is_invalid">Email tidak valid</string>
+    <string name="form_validations_utils_please_insert_with_valid_format">Harap input dengan format yang valid</string>
+    <string name="form_validations_utils_need_set_regex_pattern">Anda perlu membuat patter terlebih dahulu</string>
+    <string name="form_validations_utils_please_fill_alpha_numeric_only">Harap diisi dengan alfa numerik saja</string>
+    <string name="form_validations_utils_please_fill_numeric_only">Harap diisi dengan numerik saja</string>
+    <string name="form_validations_utils_value_is_different">Isinya berbeda dengan %s</string>
+    <string name="form_validations_utils_data_must_be_count_digits">Data seharusnya %d %s</string>
+    <string name="form_validations_utils_phone_format_is_invalid">Format nomor handphone tidak valid</string>
+    <string name="form_validations_utils_you_must_check_this">Anda harus mencentang ini</string>
+    <string name="form_validations_utils_url_format_is_invalid">Format url tidak valid</string>
+    <string name="form_validations_utils_date_format_is_invalid">Format tanggal tidak valid</string>
+    <string name="warning_failed_get_location_with_gps">(Gagal mendapatkan lokasi. Pastikan lokasi sudah aktif di gawai anda)</string>
+    <string name="login_utils_logout_confirmation_title">Konfirmasi Keluar</string>
+    <string name="login_utils_logout_confirmation_message">Apakah yakin ingin keluar?</string>
+    <string name="login_utils_logout_button_title">Keluar</string>
+    <string name="login_utils_relogin_confirmation_title">Konfirmasi Masuk Kembali</string>
+    <string name="login_utils_relogin_confirmation_message">Anda perlu masuk kembali untuk melanjutkan?</string>
+    <string name="general_wording_ok">OK</string>
+    <string name="permission_utils_permission_title">Perizinan</string>
+    <string name="permission_utils_permission_message">Aplikasi perlu semua perizinan ini untuk berfungsi dengan baik</string>
+    <string name="permission_utils_permission_message_enable_from_setting">Maaf, karena anda sudah mencentang \'jangan tanya lagi\' dan kami perlu semua perizinan untuk berfungsi dengan baik, harap berikan izin melalui pengaturan aplikasi ini</string>
+    <string name="permission_utils_permission_go_to_setting_title">Pengaturan</string>
+    <string name="gototopview_up_wording">Ke atas</string>
+
+
     <item name="aboutus_tentang_aplikasi" type="id">Tentang Aplikasi</item>
 </resources>

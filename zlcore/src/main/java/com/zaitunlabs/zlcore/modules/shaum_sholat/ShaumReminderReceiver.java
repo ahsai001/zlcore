@@ -12,8 +12,6 @@ import com.zaitunlabs.zlcore.utils.CommonUtils;
  * Created by ahmad s on 3/14/2016.
  */
 public class ShaumReminderReceiver extends BroadcastReceiver {
-    private final int NOTIFICATION_ID_FOR_REMINDER = 100;
-
     final public static String reminderReceiverTAG = "ShaumReminderReceiver";
 
     @Override
@@ -24,7 +22,7 @@ public class ShaumReminderReceiver extends BroadcastReceiver {
                String shaumDay = CommonUtils.getStringIntent(intent, ShaumSholatReminderService.PARAM_SHAUM_DAY, null);
                if(!TextUtils.isEmpty(shaumDay)) {
                    CommonUtils.showNotification(context, context.getString(R.string.app_name),
-                           "Besok adalah hari "+shaumDay+", jangan lupa persiapannya bagi yang akan melakukan shaum/puasa", null, null, R.string.app_name, R.mipmap.icon, false, false);
+                           String.format(context.getString(R.string.shaum_reminder_notification),shaumDay), null, null, R.string.app_name, R.mipmap.icon, false, false);
                }
            }
        });

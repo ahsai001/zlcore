@@ -1,27 +1,19 @@
 package com.zaitunlabs.zlcore.core;
 
-import java.util.ArrayList;
-
-import android.R.menu;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.SeekBar;
 
 
-import com.zaitunlabs.zlcore.utils.ApplicationWacther;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.utils.audio.BackSoundService;
 import com.zaitunlabs.zlcore.utils.audio.BackSoundVolumeEvent;
 import com.zaitunlabs.zlcore.views.ASMovableMenu;
@@ -221,7 +213,7 @@ public class CanvasActivity extends BaseActivity{
 	
 	public void onCreateMovableMenu(ASMovableMenu menu){
 		ASTextView label = new ASTextView(this);
-		label.setText("Volume Suara Latar :");
+		label.setText(getString(R.string.canvasactivity_volume_background_sound));
 		label.setGravity(Gravity.LEFT);
 		label.setTextColor(Color.BLACK);
 

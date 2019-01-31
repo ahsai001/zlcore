@@ -414,7 +414,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
         }, new Runnable() {
             @Override
             public void run() {
-                CommonUtils.showToast(BaseLoginActivity.this, "Please give permission to run this application");
+                CommonUtils.showToast(BaseLoginActivity.this, getString(R.string.warning_please_give_permission));
                 finish();
             }
         }, Manifest.permission.READ_PHONE_STATE);

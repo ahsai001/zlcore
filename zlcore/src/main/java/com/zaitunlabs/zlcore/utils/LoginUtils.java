@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
+import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.activities.BaseLoginActivity;
 
 /**
@@ -13,9 +14,9 @@ import com.zaitunlabs.zlcore.activities.BaseLoginActivity;
 
 public class LoginUtils {
     public static AlertDialog logout(final Activity activity, final Class loginClass, final Class classAfterLogin, final Runnable runAfterLogout){
-        return CommonUtils.showDialog2Option(activity, "Logout Confirmation",
-                "Are you sure want to logout?",
-                "logout", new Runnable() {
+        return CommonUtils.showDialog2Option(activity, activity.getString(R.string.login_utils_logout_confirmation_title),
+                activity.getString(R.string.login_utils_logout_confirmation_message),
+                activity.getString(R.string.login_utils_logout_button_title), new Runnable() {
                     @Override
                     public void run() {
                         PrefsData.setLogout();
@@ -25,7 +26,7 @@ public class LoginUtils {
                         BaseLoginActivity.start(activity, PrefsData.getLoginType(), loginClass, classAfterLogin);
                         activity.finish();
                     }
-                }, "cancel", new Runnable() {
+                }, activity.getString(R.string.general_wording_cancel), new Runnable() {
                     @Override
                     public void run() {
 
@@ -34,9 +35,9 @@ public class LoginUtils {
     }
 
     public static AlertDialog logout(Activity activity, final Runnable runAfterLogout){
-        return CommonUtils.showDialog2Option(activity, "Logout Confirmation",
-                "Are you sure want to logout?",
-                "logout", new Runnable() {
+        return CommonUtils.showDialog2Option(activity, activity.getString(R.string.login_utils_logout_confirmation_title),
+                activity.getString(R.string.login_utils_logout_confirmation_message),
+                activity.getString(R.string.login_utils_logout_button_title), new Runnable() {
                     @Override
                     public void run() {
                         PrefsData.setLogout();
@@ -44,7 +45,7 @@ public class LoginUtils {
                             runAfterLogout.run();
                         }
                     }
-                }, "cancel", new Runnable() {
+                }, activity.getString(R.string.general_wording_cancel), new Runnable() {
                     @Override
                     public void run() {
 
@@ -53,9 +54,9 @@ public class LoginUtils {
     }
 
     public static AlertDialog relogin(final Activity activity, final Class loginClass, final Runnable runBeforeShowingLogin, final Class classAfterLogin){
-        return CommonUtils.showDialog1Option(activity, "Re-login Confirmation",
-                "You need to re-login to continue?",
-                "OK", new Runnable() {
+        return CommonUtils.showDialog1Option(activity, activity.getString(R.string.login_utils_relogin_confirmation_title),
+                activity.getString(R.string.login_utils_relogin_confirmation_message),
+                activity.getString(R.string.general_wording_ok), new Runnable() {
                     @Override
                     public void run() {
                         PrefsData.setLogout();
@@ -69,8 +70,8 @@ public class LoginUtils {
     }
 
     public static AlertDialog relogin(final Activity activity, final Class loginClass, final Runnable runBeforeShowingLogin, final int requestCode){
-        return CommonUtils.showDialog1Option(activity, "Re-login Confirmation",
-                "You need to re-login to continue?",
+        return CommonUtils.showDialog1Option(activity, activity.getString(R.string.login_utils_relogin_confirmation_title),
+                activity.getString(R.string.login_utils_relogin_confirmation_message),
                 "OK", new Runnable() {
                     @Override
                     public void run() {

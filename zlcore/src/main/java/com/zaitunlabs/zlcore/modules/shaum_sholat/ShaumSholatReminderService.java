@@ -9,12 +9,14 @@ import android.location.Location;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.text.TextUtils;
 
+import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.IntegerIDUtils;
 import com.zaitunlabs.zlcore.utils.LocationUtils;
 import com.zaitunlabs.zlcore.utils.Prefs;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.Map;
 
 import id.web.michsan.praytimes.Configuration;
@@ -227,12 +229,8 @@ public class ShaumSholatReminderService extends IntentService {
         Calendar shaumCalendar = Calendar.getInstance();
         int dayOfWeek = shaumCalendar.get(Calendar.DAY_OF_WEEK);
         if(dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.WEDNESDAY){
-            if(dayOfWeek == Calendar.SUNDAY){
-                dayOfShaum = "senin";
-            } else if(dayOfWeek == Calendar.WEDNESDAY){
-                dayOfShaum = "kamis";
-            }
-
+            shaumCalendar.add(Calendar.DAY_OF_WEEK,1);
+            dayOfShaum = CommonUtils.getDayName(shaumCalendar, null).toLowerCase();
         }
 
         if(!TextUtils.isEmpty(dayOfShaum)) {

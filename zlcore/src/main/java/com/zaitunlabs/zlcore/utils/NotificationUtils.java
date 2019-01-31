@@ -55,7 +55,7 @@ public class NotificationUtils {
     public static void onMessageReceived(Context context, Map<String, String> data, String notifTitle, String notifBody,
                                          Class homePageClass, Class messageListClass, Bundle messageListClassData, int appNameResId, int iconResId) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "smartFirebaseMessagingServiceTAG");
+        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "zlcore:smartFirebaseMessagingServiceTAG");
 
         wl.acquire();
 

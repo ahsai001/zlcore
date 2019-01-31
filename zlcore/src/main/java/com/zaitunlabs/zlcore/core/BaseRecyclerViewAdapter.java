@@ -118,14 +118,15 @@ implements SwipeDragCallback.SwipeDragInterface {
     public void onItemSwipe(RecyclerView.ViewHolder viewHolder, int direction) {
         final int position = viewHolder.getAdapterPosition();
         CommonUtils.showDialog2Option(viewHolder.itemView.getContext(),
-                "Delete Confirmation", "are you sure want to delete it?",
-                "delete", new Runnable() {
+                viewHolder.itemView.getContext().getString(R.string.base_recyclerview_adapter_delete_confirmation),
+                viewHolder.itemView.getContext().getString(R.string.base_recyclerview_adapter_delete_confirmation_message),
+                viewHolder.itemView.getContext().getString(R.string.general_wording_delete), new Runnable() {
                     @Override
                     public void run() {
                         modelList.remove(position);
                         notifyItemRemoved(position);
                     }
-                }, "cancel", new Runnable() {
+                }, viewHolder.itemView.getContext().getString(R.string.general_wording_cancel), new Runnable() {
                     @Override
                     public void run() {
                         notifyItemChanged(position);

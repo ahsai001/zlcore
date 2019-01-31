@@ -9,6 +9,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 
 /**
@@ -100,7 +101,7 @@ public class LocationUtils implements GoogleApiClient.ConnectionCallbacks, Googl
                 if(updateLocationCallback != null){
                     updateLocationCallback.failed("");
                 }
-                CommonUtils.showToast(mContext, "(Couldn't get the location. Make sure location is enabled on the device)");
+                CommonUtils.showToast(mContext, mContext.getString(R.string.warning_failed_get_location_with_gps));
             }
             stop();
         }

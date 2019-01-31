@@ -228,7 +228,7 @@ public class CommonUtils {
 		android.support.v7.app.AlertDialog alert = null;
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
-				"Close", new OnClickListener() {
+				context.getString(R.string.general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 						if(nextCode != null){
@@ -246,7 +246,7 @@ public class CommonUtils {
 		android.support.v7.app.AlertDialog alert = null;
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
-				"Close", new OnClickListener() {
+				context.getString(R.string.general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 					}
@@ -261,7 +261,7 @@ public class CommonUtils {
 		android.support.v7.app.AlertDialog alert = null;
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
-				"Close", new OnClickListener() {
+				context.getString(R.string.general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 					}
@@ -806,7 +806,7 @@ public class CommonUtils {
 		Uri uri = Uri.parse(uriText);
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, uri);
 		if(sendTitle == null)
-			sendTitle = "Send email...";
+			sendTitle = context.getString(R.string.common_utils_send_email);
 		try {
 			
 			if(CommonUtils.isApplicationContext(context)){
@@ -835,7 +835,7 @@ public class CommonUtils {
 		shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
 		shareIntent.putExtra(Intent.EXTRA_TEXT, body);
 		if(shareTitle == null)
-			shareTitle = "How do you want to share?";
+			shareTitle = context.getString(R.string.common_utils_default_share_title);
 		try{
 			if(CommonUtils.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(shareIntent, shareTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
@@ -868,7 +868,7 @@ public class CommonUtils {
 
 		emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 		if(sendTitle == null)
-			sendTitle = "Send email...";
+			sendTitle = context.getString(R.string.common_utils_send_email);
 		try{
 			if(CommonUtils.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
@@ -1426,9 +1426,9 @@ public class CommonUtils {
 				}
 			} else if (type == INFORMATION_TYPE_DIALOG) {
 				if (context instanceof Fragment) {
-					showInfo(((Fragment) context).getContext(), "info", message);
+					showInfo(((Fragment) context).getContext(), ((Fragment) context).getContext().getString(R.string.general_wording_information_title), message);
 				} else if (context instanceof Context) {
-					showInfo((Context) context, "info", message);
+					showInfo((Context) context, ((Fragment) context).getContext().getString(R.string.general_wording_information_title), message);
 				}
 			} else {
 				if (context instanceof Fragment) {
@@ -1811,7 +1811,7 @@ public class CommonUtils {
 	public static android.support.v7.app.AlertDialog showLoadingDialog(Context context, String message,
 																	   boolean isIndeterminate, boolean cancelable){
 		if(TextUtils.isEmpty(message)){
-			message = "Please wait...";
+			message = context.getString(R.string.warning_please_wait);
 		}
 		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
 		builder.setView(R.layout.progressbar_horizontal_left);
@@ -1833,7 +1833,7 @@ public class CommonUtils {
 
 	public static Snackbar showLoadingSnackBar(Context context, String message, boolean isIndeterminate, boolean cancelable){
 		if(TextUtils.isEmpty(message)){
-			message = "Please wait...";
+			message = context.getString(R.string.warning_please_wait);
 		}
 		View rootView = ((Activity)context).getWindow().getDecorView().getRootView();
 		Snackbar snackbar = Snackbar.make(rootView, message,
@@ -1853,7 +1853,7 @@ public class CommonUtils {
 		snackbarLayout.addView(customProgressView);
 
 		if(cancelable) {
-			snackbar.setAction("dismiss", new View.OnClickListener() {
+			snackbar.setAction(context.getString(R.string.general_wording_dismiss), new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					//do nothing, just dismiss
@@ -2868,7 +2868,7 @@ public class CommonUtils {
 	private static String uniqueID = null;
 	private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
 
-	public synchronized static String id(Context context) {
+	public synchronized static String getRandomUUID(Context context) {
 		if (uniqueID == null) {
 			SharedPreferences sharedPrefs = context.getSharedPreferences(
 					PREF_UNIQUE_ID, Context.MODE_PRIVATE);
@@ -2892,5 +2892,12 @@ public class CommonUtils {
 
 	public static int getLibraryVersionCode(){
 		return BuildConfig.VERSION_CODE;
+	}
+
+
+
+	public static String getDayName(Calendar calendar, Locale locale){
+		return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG,
+				(locale == null ? Locale.getDefault() : locale));
 	}
 }

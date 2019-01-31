@@ -227,18 +227,18 @@ public abstract class ASShiftRepositionHandler {
 			//update section coordinate
 			updatePosition(commonTypeValue.left, commonTypeValue.top);
 
-			DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new xy "+x+" "+y);
-			DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new common xy "+commonTypeValue.left+" "+commonTypeValue.top);
+			DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new xy "+x+" "+y);
+			DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new common xy "+commonTypeValue.left+" "+commonTypeValue.top);
 
 			if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
 				view.setTranslationX(fromDownDX);
 				view.setTranslationY(fromDownDY);
-				DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setTranslation");
+				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setTranslation");
 			}else{
 				param.leftMargin = x;
 				param.topMargin = y;
 				view.setLayoutParams(param);
-				DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setLayoutParams");
+				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setLayoutParams");
 			}
 			postStepUpdate(view, (int)param.width, (int)param.height, true);
 		}
@@ -270,17 +270,17 @@ public abstract class ASShiftRepositionHandler {
 			int oldHeight = ((CanvasSection)view).getSectionHeight();
 
 			oldParamTypeValue = convertRectFromCommonToParamType(new Rect(oldX, oldY, oldX+oldWidth, oldY+oldHeight));
-			DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" get oldParamTypeValue");
+			DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" get oldParamTypeValue");
 		}
 
 
 		paramTypeValue = convertRectFromCommonToParamType(new Rect(left, top, left+width, top+height));
 
 
-		DebugUtils.logW("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove common xy "+paramTypeValue.left+" "+paramTypeValue.top);
+		DebugUtils.logD("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove common xy "+paramTypeValue.left+" "+paramTypeValue.top);
 		//DebugUtils.logW("JEJAK", ">>>>>>>>>>>cc 3 old xy "+oldParamTypeValue.left+" "+oldParamTypeValue.top);
 
-		DebugUtils.logW("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove update "+left+" "+top);
+		DebugUtils.logD("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove update "+left+" "+top);
 
 		//update section coordinate
 		updatePosition(left, top);
@@ -293,10 +293,10 @@ public abstract class ASShiftRepositionHandler {
 			if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
 				LayoutParams params = (LayoutParams) view.getLayoutParams();
 				//DebugUtils.logW("JEJAK", ">>>>>>>>>>> 2 "+params.leftMargin+" "+params.topMargin);
-				DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation");
+				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation");
 				anim = new TranslateAnimation(oldParamTypeValue.left - params.leftMargin, paramTypeValue.left - params.leftMargin, oldParamTypeValue.top - params.topMargin, paramTypeValue.top - params.topMargin);
 			}else{
-				DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation");
+				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation");
 				anim = new ResizeMoveAnimation(view, paramTypeValue.left, paramTypeValue.top, paramTypeValue.width(), paramTypeValue.height());
 			}
 
@@ -320,7 +320,7 @@ public abstract class ASShiftRepositionHandler {
 				        param.leftMargin = (int) paramTypeValue.left;
 				        param.topMargin = (int) paramTypeValue.top;
 				        view.setLayoutParams(param);
-				        DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" onAnimationEnd");
+				        DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" onAnimationEnd");
 				        postStepUpdate(view, (int)param.width, (int)param.height, false);
 					//}
 					if(dimensionStateListener != null){
@@ -340,7 +340,7 @@ public abstract class ASShiftRepositionHandler {
 			if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
 				anim.setDuration(400);
 			    view.startAnimation(anim);
-			    DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation 2");
+			    DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation 2");
 			}else{
 				((ResizeMoveAnimation)anim).setAnimListener(new ResizeMoveAnimation.ASAnimListener() {
 					@Override
@@ -350,7 +350,7 @@ public abstract class ASShiftRepositionHandler {
 					}
 				});
 				anim.startNow();
-				DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation 2");
+				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation 2");
 			}
 		}else{
 			//view.setDrawingCacheEnabled(false);
