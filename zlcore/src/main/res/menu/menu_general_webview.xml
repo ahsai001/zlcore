@@ -16,16 +16,16 @@
     <item
         android:id="@+id/action_reload"
         android:orderInCategory="101"
-        android:title="Reload"
+        android:title="@string/menu_item_reload"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_page_browser"
         android:orderInCategory="102"
-        android:title="Open Page in Browser"
+        android:title="@string/menu_item_open_page_in_browser"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_page_close"
         android:orderInCategory="103"
-        android:title="Close Page"
+        android:title="@string/menu_item_close_page"
         app:showAsAction="never" />
 </menu>

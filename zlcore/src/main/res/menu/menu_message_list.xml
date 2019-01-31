@@ -5,11 +5,11 @@
     <item
         android:id="@+id/action_mark_all_as_read"
         android:orderInCategory="100"
-        android:title="mark all as read"
+        android:title="@string/menu_item_mark_all_as_read"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_delete_all"
         android:orderInCategory="100"
-        android:title="delete all"
+        android:title="@string/menu_item_delete_all_messages"
         app:showAsAction="never" />
 </menu>

@@ -31,8 +31,7 @@
     <string name="error_invalid_password">This password is invalid</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
-    </string>
+    <string name="permission_rationale">Contacts permissions are needed for providing email completions.</string>
 
 
     <string name="action_refresh">Refresh</string>
@@ -75,18 +74,23 @@
 
     <!-- dialog splash screen app -->
     <string name="title_dialog_init">update</string>
-    <string name="message_dialog_init">new update already exist</string>
+    <string name="message_dialog_init">New update is already exist</string>
     <string name="download_option_dialog_init">download</string>
     <string name="close_option_dialog_init">close</string>
     <string name="use_existing_option_dialog_init">use existing</string>
-    <string name="module_message_list_title">Message</string>
+
+
+    <string name="module_message_list_title">Information</string>
     <string name="title_activity_app_list">Promoted Apps</string>
     <string name="title_activity_store">Store</string>
+
     <string name="onboarding_skip">skip</string>
     <string name="onboarding_next">next</string>
     <string name="onboarding_get_started">get started</string>
     <string name="onboarding_close">close</string>
-    <string name="title_activity_version_change_history">Riwayat versi aplikasi</string>
+
+    <string name="title_activity_version_change_history">Application Version History</string>
+
     <string name="menu_item_bookmark">Add bookmark</string>
     <string name="menu_item_unbookmark">Remove bookmark</string>
     <string name="title_activity_bookmark_list">Bookmark List</string>
@@ -96,6 +100,30 @@
     <string name="menu_item_share">Share</string>
     <string name="default_webview_share_message">I got this interesting article, i think you will be interested too</string>
     <string name="default_webview_share_title">I got interesting article</string>
-    <string name="title_activity_base_form">BaseFormActivity</string>
 
+    <string name="title_activity_base_form">Base Form Activity</string>
+
+    <string name="menu_item_reload">Reload</string>
+    <string name="menu_item_open_page_in_browser">Open page in browser</string>
+    <string name="menu_item_close_page">Close page</string>
+    <string name="menu_item_mark_as_read">Mark as read</string>
+    <string name="menu_item_delete_message">Delete message</string>
+    <string name="menu_item_mark_as_unread">Mark as unread</string>
+    <string name="menu_item_mark_all_as_read">Mark all as read</string>
+    <string name="menu_item_delete_all_messages">Delete all messages</string>
+    <string name="action_search">Search</string>
+    <string name="aboutus_about_app">About Application</string>
+    <string name="warning_sorry_there_is_problem">Sorry, there is problem</string>
+    <string name="aboutus_developer_name">Developer : %s</string>
+    <string name="aboutus_developer_email">Email : %s</string>
+    <string name="aboutus_kirim_email">Send Email</string>
+    <string name="aboutus_version">Version : %s</string>
+    <string name="aboutus_title_link_about_app">&#160;&#160;About Application&#160;&#160;</string>
+    <string name="aboutus_app_history">&#160;&#160;Application Version History&#160;&#160;</string>
+    <string name="aboutus_share_title">Share using :</string>
+    <string name="aboutus_menu_share_title">Share</string>
+    <string name="aboutus_menu_feedback_title">Feedback</string>
+    <string name="aboutus_menu_rate_title">Rate</string>
+
+    <item name="aboutus_tentang_aplikasi" type="id">About Application</item>
 </resources>

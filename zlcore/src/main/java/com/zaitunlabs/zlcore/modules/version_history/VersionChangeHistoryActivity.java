@@ -11,7 +11,6 @@ import android.view.View;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
-import com.zaitunlabs.zlcore.fragments.VersionChangeHistoryActivityFragment;
 
 public class VersionChangeHistoryActivity extends BaseActivity {
     @Override

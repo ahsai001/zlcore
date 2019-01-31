@@ -72,14 +72,13 @@ public class BaseFragment extends Fragment{
     @Override
     public void onDestroyView() {
         DebugUtils.logV(TAG,"onDestroyView");
-        super.onDestroyView();
-        for (AsyncTask asyncTask :
-                asyncTaskList) {
+        for (AsyncTask asyncTask : asyncTaskList) {
             if (asyncTask.getStatus() == AsyncTask.Status.RUNNING){
                 asyncTask.cancel(true);
             }
             asyncTaskList.remove(asyncTask);
         }
+        super.onDestroyView();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.zaitunlabs.zlcore.core;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,6 +12,9 @@ import android.transition.Transition;
 
 import com.zaitunlabs.zlcore.utils.ApplicationWacther;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ahsai on 7/14/2017.
@@ -46,18 +50,26 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
         ApplicationWacther.getInstance(this).reportActivityStopEvent(this);
+        super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         //unregister this new activity from watcher
         ApplicationWacther.getInstance(this).unregisterActivity(this);
         if(isTaskRoot()){
 
         }
+
+        for (AsyncTask asyncTask : asyncTaskList) {
+            if (asyncTask.getStatus() == AsyncTask.Status.RUNNING){
+                asyncTask.cancel(true);
+            }
+            asyncTaskList.remove(asyncTask);
+        }
+
+        super.onDestroy();
     }
 
 
@@ -184,5 +196,15 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+
+    private List<AsyncTask> asyncTaskList = new ArrayList<>();
+    protected void addAsync(AsyncTask asyncTask){
+        asyncTaskList.add(asyncTask);
+    }
+
+    protected void removeAsync(AsyncTask asyncTask){
+        asyncTaskList.remove(asyncTask);
     }
 }

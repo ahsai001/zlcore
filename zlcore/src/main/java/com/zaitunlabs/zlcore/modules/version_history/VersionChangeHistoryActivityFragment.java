@@ -1,4 +1,4 @@
-package com.zaitunlabs.zlcore.fragments;
+package com.zaitunlabs.zlcore.modules.version_history;
 
 import android.graphics.Color;
 import android.os.Build;
@@ -19,7 +19,6 @@ import com.idunnololz.widgets.AnimatedExpandableListView;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.modules.about.SimpleExpandableListAdapter;
-import com.zaitunlabs.zlcore.modules.version_history.VersionChangeHistoryCanvas;
 
 /**
  * A placeholder fragment containing a simple view.

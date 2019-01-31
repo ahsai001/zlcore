@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.zaitunlabs.zlcore.fragments.VersionChangeHistoryActivityFragment"
+    tools:context="com.zaitunlabs.zlcore.modules.version_history.VersionChangeHistoryActivityFragment"
     tools:showIn="@layout/activity_version_change_history">
 
     <com.idunnololz.widgets.AnimatedExpandableListView
