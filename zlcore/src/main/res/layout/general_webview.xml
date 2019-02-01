@@ -13,7 +13,7 @@
         </WebView>
     </FrameLayout>
 
-    <android.support.v4.widget.ContentLoadingProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/general_webview_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

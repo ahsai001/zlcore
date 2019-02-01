@@ -1,8 +1,8 @@
 package com.zaitunlabs.zlcore.utils;
 
 import android.content.Context;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.view.ContextThemeWrapper;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -10,7 +10,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.activeandroid.annotation.Table;
 import com.zaitunlabs.zlcore.customs.DataList;
 
 import java.util.ArrayList;

@@ -2,9 +2,8 @@ package com.zaitunlabs.zlcore.core;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.multidex.MultiDex;
-import android.text.TextUtils;
+
+import androidx.multidex.MultiDex;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
@@ -22,7 +21,6 @@ import com.zaitunlabs.zlcore.utils.audio.BackSoundService;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
 import org.acra.collector.CrashReportData;
 import org.acra.config.ACRAConfiguration;
 import org.acra.config.ConfigurationBuilder;

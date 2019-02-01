@@ -1,9 +1,7 @@
 package com.zaitunlabs.zlcore.utils;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.ColorRes;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.annotation.ColorRes;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.lang.ref.WeakReference;
 

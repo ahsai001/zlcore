@@ -1,9 +1,8 @@
 package com.zaitunlabs.zlcore.utils;
 
 import android.app.Activity;
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.activities.BaseLoginActivity;

@@ -6,7 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.support.v4.content.WakefulBroadcastReceiver;
+import androidx.legacy.content.WakefulBroadcastReceiver;
 import android.text.TextUtils;
 
 import com.zaitunlabs.zlcore.utils.CommonUtils;
@@ -16,7 +16,6 @@ import com.zaitunlabs.zlcore.utils.Prefs;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 import java.util.Map;
 
 import id.web.michsan.praytimes.Configuration;

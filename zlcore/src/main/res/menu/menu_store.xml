@@ -9,7 +9,7 @@
         app:showAsAction="never" />
     <item
         android:title="@string/zlcore_action_search"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|always"
         android:icon="@drawable/ic_search_white_24dp"
         android:id="@+id/listing_search"/>

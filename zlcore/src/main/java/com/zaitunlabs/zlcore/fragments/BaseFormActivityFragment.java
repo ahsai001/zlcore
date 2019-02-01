@@ -1,13 +1,10 @@
 package com.zaitunlabs.zlcore.fragments;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
+
+import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -23,7 +20,6 @@ import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.FormBuilderUtils;
 import com.zaitunlabs.zlcore.utils.FormValidationUtils;
-import com.zaitunlabs.zlcore.utils.ViewUtils;
 
 import java.util.Map;
 

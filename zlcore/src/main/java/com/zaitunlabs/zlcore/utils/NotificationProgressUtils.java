@@ -1,10 +1,9 @@
 package com.zaitunlabs.zlcore.utils;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
 
 /**
  * Created by ahsai on 2/14/2018.

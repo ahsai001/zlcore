@@ -42,16 +42,15 @@ import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.Html;
@@ -87,13 +86,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.data.Freezable;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.zaitunlabs.zlcore.BuildConfig;
 import com.zaitunlabs.zlcore.R;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -224,9 +220,9 @@ public class CommonUtils {
 	}
 
 
-	public static android.support.v7.app.AlertDialog showInfo(Context context, String title, String msg, final Runnable nextCode) {
-		android.support.v7.app.AlertDialog alert = null;
-		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
+	public static androidx.appcompat.app.AlertDialog showInfo(Context context, String title, String msg, final Runnable nextCode) {
+		androidx.appcompat.app.AlertDialog alert = null;
+		androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
 				context.getString(R.string.zlcore_general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -242,9 +238,9 @@ public class CommonUtils {
 		return alert;
 	}
 
-	public static android.support.v7.app.AlertDialog showInfo(Context context, String title, String msg) {
-		android.support.v7.app.AlertDialog alert = null;
-		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
+	public static androidx.appcompat.app.AlertDialog showInfo(Context context, String title, String msg) {
+		androidx.appcompat.app.AlertDialog alert = null;
+		androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
 				context.getString(R.string.zlcore_general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -257,9 +253,9 @@ public class CommonUtils {
 		return alert;
 	}
 
-	public static android.support.v7.app.AlertDialog showGlobalInfo(Context context, String title, String msg) {
-		android.support.v7.app.AlertDialog alert = null;
-		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
+	public static androidx.appcompat.app.AlertDialog showGlobalInfo(Context context, String title, String msg) {
+		androidx.appcompat.app.AlertDialog alert = null;
+		androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context,com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false).setPositiveButton(
 				context.getString(R.string.zlcore_general_wording_close), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -275,24 +271,24 @@ public class CommonUtils {
 	}
 
 
-	public static android.support.v7.app.AlertDialog showDialog1Option(Context context, String title, String msg, String strOption1, final Runnable option1) {
+	public static androidx.appcompat.app.AlertDialog showDialog1Option(Context context, String title, String msg, String strOption1, final Runnable option1) {
 		return showDialog3OptionWithIcon(context, null, title,msg,strOption1,option1,null,null,null,null);
 	}
 
-	public static android.support.v7.app.AlertDialog showDialog2Option(Context context, String title, String msg, String strOption1, final Runnable option1, String strOption2, final Runnable option2) {
+	public static androidx.appcompat.app.AlertDialog showDialog2Option(Context context, String title, String msg, String strOption1, final Runnable option1, String strOption2, final Runnable option2) {
 		return showDialog3OptionWithIcon(context, null, title,msg,strOption1,option1,strOption2,option2,null,null);
 	}
 
-	public static android.support.v7.app.AlertDialog showDialog3Option(Context context,String title, String msg, String strOption1, final Runnable option1, String strOption2, final Runnable option2, String strOption3, final Runnable option3) {
+	public static androidx.appcompat.app.AlertDialog showDialog3Option(Context context, String title, String msg, String strOption1, final Runnable option1, String strOption2, final Runnable option2, String strOption3, final Runnable option3) {
 		return showDialog3OptionWithIcon(context, null, title,msg,strOption1,option1,strOption2,option2,strOption3,option3);
 	}
 
-	public static android.support.v7.app.AlertDialog showDialog3OptionWithIcon(Context context, Drawable icon,String title, String msg, String strOption1, final Runnable option1, String strOption2, final Runnable option2, String strOption3, final Runnable option3) {
+	public static androidx.appcompat.app.AlertDialog showDialog3OptionWithIcon(Context context, Drawable icon, String title, String msg, String strOption1, final Runnable option1, String strOption2, final Runnable option2, String strOption3, final Runnable option3) {
 		return showDialog3OptionWithIcon(context,icon,title,msg,strOption1,option1,true,strOption2,option2,true,strOption3,option3,true);
 	}
 
-	public static android.support.v7.app.AlertDialog showDialog3OptionWithIcon(Context context, Drawable icon, String title, String msg, String strOption1, final Runnable option1, final boolean dismissByOption1, String strOption2, final Runnable option2, final boolean dismissByOption2, String strOption3, final Runnable option3, final boolean dismissByOption3) {
-		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,
+	public static androidx.appcompat.app.AlertDialog showDialog3OptionWithIcon(Context context, Drawable icon, String title, String msg, String strOption1, final Runnable option1, final boolean dismissByOption1, String strOption2, final Runnable option2, final boolean dismissByOption2, String strOption3, final Runnable option3, final boolean dismissByOption3) {
+		androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context,
 				com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setMessage(fromHtml(msg)).setCancelable(false);
 		if(icon != null) {
@@ -311,7 +307,7 @@ public class CommonUtils {
 			builder.setNegativeButton(strOption3, null);
 		}
 
-		final android.support.v7.app.AlertDialog alert = builder.create();
+		final androidx.appcompat.app.AlertDialog alert = builder.create();
 		alert.setTitle(title);
 		alert.show();
 
@@ -356,19 +352,19 @@ public class CommonUtils {
 		return alert;
 	}
 
-	public static android.support.v7.app.AlertDialog showDialog2OptionCustomView(Context context, View customView,
-														  String title,
-														  String strOption1, final Runnable option1,
-														  String strOption2, final Runnable option2) {
+	public static androidx.appcompat.app.AlertDialog showDialog2OptionCustomView(Context context, View customView,
+                                                                                 String title,
+                                                                                 String strOption1, final Runnable option1,
+                                                                                 String strOption2, final Runnable option2) {
 		return showDialog2OptionCustomView(context,customView,title,strOption1,option1,true,strOption2,option2,true);
 	}
 
 
-	public static android.support.v7.app.AlertDialog showDialog2OptionCustomView(Context context, View customView,
-												String title,
-												String strOption1, final Runnable option1, final boolean dismissByOption1,
-												String strOption2, final Runnable option2, final boolean dismissByOption2) {
-		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,
+	public static androidx.appcompat.app.AlertDialog showDialog2OptionCustomView(Context context, View customView,
+                                                                                 String title,
+                                                                                 String strOption1, final Runnable option1, final boolean dismissByOption1,
+                                                                                 String strOption2, final Runnable option2, final boolean dismissByOption2) {
+		androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context,
 				com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 		builder.setCancelable(false);
 		builder.setView(customView);
@@ -381,7 +377,7 @@ public class CommonUtils {
 			builder.setPositiveButton(strOption1, null);
 		}
 
-		final android.support.v7.app.AlertDialog alert = builder.create();
+		final androidx.appcompat.app.AlertDialog alert = builder.create();
 
 		alert.setTitle(title);
 		alert.show();
@@ -1298,7 +1294,7 @@ public class CommonUtils {
 
 	public static void makeSnackBarMultiLine(Snackbar snackbar, int line){
 		View snackbarView = snackbar.getView();
-		TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+		TextView textView = (TextView) snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
 		textView.setMaxLines(line);
 	}
 
@@ -1800,20 +1796,20 @@ public class CommonUtils {
 		context.startActivity(intent);
 	}
 
-	public static android.support.v7.app.AlertDialog showLoadingDialog(Context context){
+	public static androidx.appcompat.app.AlertDialog showLoadingDialog(Context context){
 		return showLoadingDialog(context,null, true, false);
 	}
 
-	public static android.support.v7.app.AlertDialog showLoadingDialog(Context context, String message){
+	public static androidx.appcompat.app.AlertDialog showLoadingDialog(Context context, String message){
 		return showLoadingDialog(context,message, true, false);
 	}
 
-	public static android.support.v7.app.AlertDialog showLoadingDialog(Context context, String message,
-																	   boolean isIndeterminate, boolean cancelable){
+	public static androidx.appcompat.app.AlertDialog showLoadingDialog(Context context, String message,
+                                                                       boolean isIndeterminate, boolean cancelable){
 		if(TextUtils.isEmpty(message)){
 			message = context.getString(R.string.zlcore_warning_please_wait);
 		}
-		android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+		androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
 		builder.setView(R.layout.progressbar_horizontal_left);
 		builder.setCancelable(cancelable);
 		AlertDialog dialog = builder.create();
@@ -1842,7 +1838,7 @@ public class CommonUtils {
 		Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout)snackbar.getView();
 
 		// Hide the text
-		TextView textView = (TextView) snackbarLayout.findViewById(android.support.design.R.id.snackbar_text);
+		TextView textView = (TextView) snackbarLayout.findViewById(com.google.android.material.R.id.snackbar_text);
 		int color = textView.getCurrentTextColor();
 		textView.setVisibility(View.INVISIBLE);
 
@@ -2065,7 +2061,7 @@ public class CommonUtils {
 			dismissByOption3 = CommonUtils.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION3, true);
 			requestCode = CommonUtils.getIntFragmentArgument(getArguments(), ARG_REQUEST_CODE, 0);
 
-			android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity(),
+			androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity(),
 					com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
 			builder.setMessage(fromHtml(message)).setCancelable(false);
 

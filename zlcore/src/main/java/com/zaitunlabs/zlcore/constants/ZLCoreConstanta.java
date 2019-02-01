@@ -1,7 +1,6 @@
 package com.zaitunlabs.zlcore.constants;
 
 import android.content.Context;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.text.TextUtils;
 
 import com.zaitunlabs.zlcore.R;

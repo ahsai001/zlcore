@@ -10,9 +10,9 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -41,13 +41,10 @@ import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
 import com.zaitunlabs.zlcore.utils.PermissionUtils;
 import com.zaitunlabs.zlcore.utils.PrefsData;
-import com.zaitunlabs.zlcore.utils.SecurityUtils;
 import com.zaitunlabs.zlcore.utils.ViewUtils;
 
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

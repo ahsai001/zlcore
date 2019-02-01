@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.http.SslError;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.webkit.SslErrorHandler;
@@ -37,7 +37,6 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 

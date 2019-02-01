@@ -1,12 +1,11 @@
 package com.zaitunlabs.zlcore.views;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 public class ASTextView extends AppCompatTextView{
 	private int width = 0;
