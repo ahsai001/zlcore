@@ -57,7 +57,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
 
     protected abstract String getCheckVersionUrl();
 
-    protected abstract void doNextAction();
+    protected abstract boolean doNextAction();
 
     protected abstract int getMinimumSplashTimeInMS();
 
@@ -194,8 +194,9 @@ public abstract class BaseSplashActivity extends BaseActivity {
     }
 
     private void readyDoNextAction(){
-        doNextAction();
-        finish();
+        if(doNextAction()) {
+            finish();
+        }
     }
 
 
