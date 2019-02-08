@@ -147,7 +147,10 @@ public class InfoFragment extends BaseFragment {
                                 CommonUtils.openBrowser(view.getContext(), info.getInfoUrl());
                             } else if(info.getInfoUrl().startsWith("webview://")){
                                 String htmlContent = info.getInfoUrl().replace("webview://","");
-                                htmlContent = CommonUtils.decodeBase64(htmlContent);
+                                if(htmlContent.startsWith("base64/")) {
+                                    htmlContent = htmlContent.replace("base64/", "");
+                                    htmlContent = CommonUtils.decodeBase64(htmlContent);
+                                }
                                 WebViewActivity.start(view.getContext(),htmlContent,info.getTitle(), "",
                                         ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info.getId());
                             } else {
