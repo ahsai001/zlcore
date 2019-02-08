@@ -101,6 +101,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -2895,5 +2896,16 @@ public class CommonUtils {
 	public static String getDayName(Calendar calendar, Locale locale){
 		return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG,
 				(locale == null ? Locale.getDefault() : locale));
+	}
+
+
+	public static String encodeBase64(String plainText){
+		byte[] data = plainText.getBytes(Charset.forName("UTF-8"));
+		return android.util.Base64.encodeToString(data, Base64.DEFAULT);
+	}
+
+	public static String decodeBase64(String encodedText){
+		byte[] data = Base64.decode(encodedText, Base64.DEFAULT);
+		return new String(data, Charset.forName("UTF-8"));
 	}
 }

@@ -52,8 +52,11 @@ public class NotificationUtils {
         }
     }
 
+
     public static void onMessageReceived(Context context, Map<String, String> data, String notifTitle, String notifBody,
-                                         Class homePageClass, Class messageListClass, Bundle messageListClassData, int appNameResId, int iconResId) {
+                                         Class homePageClass, Class messageListClass, Bundle messageListClassData,
+                                         int appNameResId, int iconResId,
+                                         Map<String, CustomTypeCallBackHandler> customTypeCallBackList) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "zlcore:smartFirebaseMessagingServiceTAG");
 
@@ -76,17 +79,29 @@ public class NotificationUtils {
             //notif+ dan popup harus ada messagelistactivity
 
             String needlogin = data.get("needlogin"); //need login to notif, remind and saved, yes or no
-            String action = data.get("action"); //url or activity
+            String action = data.get("action"); //url or full path activity
             String isHeadsUp = data.get("headsup"); //yes or no
 
             if(needlogin.toLowerCase().equals("yes") && !PrefsData.isAccountLogin())return;
+
+
+            CustomTypeCallBackHandler customTypeCallBackHandler = null;
+            if(customTypeCallBackList != null && customTypeCallBackList.containsKey(type.toLowerCase())){
+                customTypeCallBackHandler = customTypeCallBackList.get(type);
+            }
+
+
 
             if(type.toLowerCase().equals("wakeup")) {
                 //do nothing, just to wakeup this app,
             } else if(type.toLowerCase().equals("reminder")) {
                 //just show reminder, not notif, not popup, and not saved
                 ReminderPopup.start(context,title,body);
+            } else if(customTypeCallBackHandler != null && !customTypeCallBackHandler.isShowInNotification()){
+                //custom handle without notification
+                customTypeCallBackHandler.handleCustomType();
             } else {
+                //handle with notification
                 int intType = 1;
                 Intent targetIntent = null;
 
@@ -126,6 +141,12 @@ public class NotificationUtils {
                     intType = 3;
                     targetIntent = new Intent(context.getApplicationContext(), messageListClass);
                     infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
+                } else if(customTypeCallBackHandler != null && customTypeCallBackHandler.isShowInNotification()){
+                    intType = customTypeCallBackHandler.getInformationTypeId();
+                    targetIntent = customTypeCallBackHandler.handleCustomType();
+                    if(customTypeCallBackHandler.isShowInInformationList()) {
+                        infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
+                    }
                 }
 
                 if(type.toLowerCase().equals("popup")){
@@ -152,8 +173,16 @@ public class NotificationUtils {
         wl.release();
     }
 
+
+    public static interface CustomTypeCallBackHandler {
+        Intent handleCustomType();
+        boolean isShowInNotification();
+        boolean isShowInInformationList();
+        int getInformationTypeId();
+    }
+
     public static interface CallBackIntentFromNotification {
-        public void showMessagesPage(Bundle bundle);
+        void showMessagesPage(Bundle bundle);
     }
 
     public static void handleIntentFromNotification(final Intent intent, CallBackIntentFromNotification callBackIntentFromNotification ){

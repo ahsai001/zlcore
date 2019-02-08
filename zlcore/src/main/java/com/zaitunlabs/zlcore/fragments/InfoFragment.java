@@ -4,21 +4,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.Html;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStructure;
 import android.webkit.URLUtil;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.adapters.InfoAdapter;
+import com.zaitunlabs.zlcore.core.WebViewActivity;
 import com.zaitunlabs.zlcore.models.InformationModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.events.InfoPositionEvent;
@@ -65,12 +72,6 @@ public class InfoFragment extends BaseFragment {
         mAdapter = new InfoAdapter(infoList);
 
         List<InformationModel> list = InformationModel.getAllInfo();
-
-        /*
-        if(list.size() == 0){
-            prepareMovieData();
-            list = InformationModel.getAllInfo();
-        }*/
 
         if(list.size() > 0) {
             infoList.addAll(list);
@@ -144,6 +145,11 @@ public class InfoFragment extends BaseFragment {
                         if(!TextUtils.isEmpty(info.getInfoUrl())) {
                             if (URLUtil.isValidUrl(info.getInfoUrl())){
                                 CommonUtils.openBrowser(view.getContext(), info.getInfoUrl());
+                            } else if(info.getInfoUrl().startsWith("webview://")){
+                                String htmlContent = info.getInfoUrl().replace("webview://","");
+                                htmlContent = CommonUtils.decodeBase64(htmlContent);
+                                WebViewActivity.start(view.getContext(),htmlContent,info.getTitle(), "",
+                                        ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info.getId());
                             } else {
                                 //may be this is activity name
                                 try {
