@@ -43,31 +43,32 @@ dependencies {
     implementation group: 'ch.acra', name: 'acra', version: '4.9.2'
 
     //networking
-    //compile 'com.loopj.android:android-async-http:1.4.9'
+    //implementation 'com.loopj.android:android-async-http:1.4.9'
     //implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     //implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     //image downloader and caching
+    //implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
     //communication internal
 
     //database local
 
     //custom UI
-    //compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
+    //implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
 
     //chart lib
-    //compile 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-    //compile 'com.jjoe64:graphview:4.2.1'
+    //implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    //implementation 'com.jjoe64:graphview:4.2.1'
 
     //Animations
-    //compile 'com.labo.kaji:fragmentanimations:0.1.1'
+    //implementation 'com.labo.kaji:fragmentanimations:0.1.1'
 
     //custom tools
 
     //location
-    //compile 'io.nlopez.smartlocation:library:3.3.3'
-    //compile 'com.github.quentin7b:android-location-tracker:3.2'
+    //implementation 'io.nlopez.smartlocation:library:3.3.3'
+    //implementation 'com.github.quentin7b:android-location-tracker:3.2'
 
     //play service
 
@@ -77,6 +78,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
+
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
@@ -87,7 +89,7 @@ dependencies {
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     implementation 'com.ernestoyaquello.stepperform:vertical-stepper-form:1.0.0'
     implementation 'net.opacapp:multiline-collapsingtoolbar:27.1.1'
-    implementation 'com.andkulikov:transitionseverywhere:2.0.0-alpha01'
+    //implementation 'com.andkulikov:transitionseverywhere:2.0.0-alpha01'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'id.web.michsan.praytimes:praytimes:2.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
