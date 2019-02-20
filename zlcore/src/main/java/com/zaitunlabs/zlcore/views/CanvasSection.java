@@ -231,7 +231,6 @@ public class CanvasSection extends FrameLayout {
 			backgroundView.setVisibility(View.GONE);
 		}
 		if (!noScroll) {
-			//vScroll = new X(this.getContext());
 			vScroll = new ScrollView(context) {
 				/*
 				GestureDetector mGestureDetector = new GestureDetector(this.getContext(), new GestureDetector.SimpleOnGestureListener(){
@@ -1016,9 +1015,9 @@ public class CanvasSection extends FrameLayout {
 	}
 	
 
-	public void ShiftTarget(final CanvasSection shiftedSection,
-			final boolean isVertical, final boolean isHorizontal,
-			final boolean isJumpToNearest, final boolean isClickable) {
+	public void shiftTarget(final CanvasSection shiftedSection,
+							final boolean isVertical, final boolean isHorizontal,
+							final boolean isJumpToNearest, final boolean isClickable) {
 		this.setASGestureListener(new ASGestureListener() {
 			@Override
 			public boolean upEventOccurred(float x, float y) {

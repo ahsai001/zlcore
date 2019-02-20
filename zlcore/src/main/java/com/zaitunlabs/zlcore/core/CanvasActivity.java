@@ -50,7 +50,11 @@ public class CanvasActivity extends BaseActivity{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(menuPage != null)menuPage.ChangeStateToLastDimension();
+		if(menuPage != null){
+			if(!menuPage.isMenuOpened()) {
+				menuPage.ChangeStateToLastDimension();
+			}
+		}
 	}
 	
 	@Override
@@ -165,9 +169,6 @@ public class CanvasActivity extends BaseActivity{
 	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		if(menuPage!=null && menuPage.isMenuOpened()){
-			menuPage.closeMenu(false);
-		}
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 	

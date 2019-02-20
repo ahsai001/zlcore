@@ -41,7 +41,7 @@ public class CanvasLayout extends RelativeLayout{
 	}
 	
 	public View getFillParentView(){
-		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+		setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
 		return this;
 	}
 	
@@ -84,7 +84,7 @@ public class CanvasLayout extends RelativeLayout{
 		int viewHeight = (int) Math.round((heightRatio * ((height == CanvasSection.SAME_AS_OTHER_SIDE)?((widthRatio * width)/heightRatio):height)));
 		int leftX = (int) Math.round(widthRatio * left);
 		int topY = (int) Math.round(heightRatio * top);
-		
+
 		DebugUtils.logW("LAYOUT", "height : "+viewHeight);
 		DebugUtils.logW("LAYOUT", "leftX : "+leftX);
 		
@@ -123,7 +123,7 @@ public class CanvasLayout extends RelativeLayout{
 	public CanvasSection createNewSectionWithFrame(int left, int top, int width, int height){
 		return createNewSectionWithFrame(left, top, width, height, true);
 	}
-	
+
 	public void ResizeSectionWithFrame(CanvasSection v,int left, int top, int width, int height){
 		final CanvasSection section = getSectionInCanvas(v);
 		if(section != null){
@@ -131,18 +131,18 @@ public class CanvasLayout extends RelativeLayout{
 			final int viewHeight = (int) (heightRatio * height);
 			final int leftX = (int) (widthRatio * left);
 			final int topY = (int) (heightRatio * top);
-			
+
 			//update section coordinate
 			section.setSectionX(left);
 			section.setSectionY(top);
 			section.setSectionWidth(width);
 			section.setSectionHeight(height);
-					
+
 			ResizeMoveAnimation anim = new ResizeMoveAnimation(section, leftX, topY, viewWidth, viewHeight);
 			anim.start();
 		}
 	}
-	
+
 	private CanvasSection getSectionInCanvas(CanvasSection neeedleSection){
 		int sectionNumber = getChildCount();
 		CanvasSection result = null;

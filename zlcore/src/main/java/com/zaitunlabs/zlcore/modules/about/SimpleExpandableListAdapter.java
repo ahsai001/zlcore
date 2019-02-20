@@ -7,8 +7,6 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListAdapter;
 import android.widget.TextView;
 
 import com.idunnololz.widgets.AnimatedExpandableListView;
@@ -52,14 +50,14 @@ public class SimpleExpandableListAdapter extends AnimatedExpandableListView.Anim
 	@Override
 	public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 		final String children = (String) getChild(groupPosition, childPosition);
-		TextView text = null;
+		TextView textView = null;
 		if (convertView == null) {
 			convertView = new TextView(activity);
 		}
-		text = (TextView) convertView;
-		text.setText(children);
+		textView = (TextView) convertView;
+		textView.setText(children);
 
-		LinkUtils.autoLink(text, new LinkUtils.OnClickListener() {
+		LinkUtils.autoLink(textView, new LinkUtils.OnClickListener() {
 
 			@Override
 			public void onLinkClicked(String link) {
@@ -74,17 +72,17 @@ public class SimpleExpandableListAdapter extends AnimatedExpandableListView.Anim
 		});
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
-			text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+			textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 		}
-		text.setGravity(Gravity.CENTER);
-		text.setSingleLine(false);
-		text.setPadding(0,20,0,20);
+		textView.setGravity(Gravity.CENTER);
+		textView.setSingleLine(false);
+		textView.setPadding(0,20,0,20);
 		if(isZL) {
-			text.setTextColor(Color.WHITE);
-			text.setBackgroundColor(Color.argb(150, 0, 0, 0));
+			textView.setTextColor(Color.WHITE);
+			textView.setBackgroundColor(Color.argb(150, 0, 0, 0));
 		} else {
-			text.setTextColor(Color.BLACK);
-			text.setBackgroundColor(Color.argb(50,0,0,0));
+			textView.setTextColor(Color.BLACK);
+			textView.setBackgroundColor(Color.argb(50,0,0,0));
 		}
 		return convertView;
 	}

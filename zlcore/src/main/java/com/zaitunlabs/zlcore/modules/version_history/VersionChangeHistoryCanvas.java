@@ -8,6 +8,7 @@ import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -88,10 +89,12 @@ public class VersionChangeHistoryCanvas extends CanvasActivity {
 		CanvasSection mainSection = canvas.createNewSectionWithFrame(0, 22,
 				100, 78, true).setSectionAsLinearLayout(LinearLayout.VERTICAL);
 
-		final AnimatedExpandableListView listView = new AnimatedExpandableListView(this);
+		//final AnimatedExpandableListView listView = new AnimatedExpandableListView(this);
+		View customView = LayoutInflater.from(this).inflate(R.layout.fragment_version_change_history,null);
+		final AnimatedExpandableListView listView = customView.findViewById(R.id.version_change_history_expandableListView);
 		listView.setCacheColorHint(Color.TRANSPARENT);
 		listView.setDividerHeight(3);
-		mainSection.addViewInLinearLayout(listView);
+		mainSection.addViewInLinearLayout(customView);
 
 		SimpleExpandableListAdapter adapter = new SimpleExpandableListAdapter(this,createData(this), true);
 		
@@ -132,9 +135,9 @@ public class VersionChangeHistoryCanvas extends CanvasActivity {
 				// expandGroupWithAnimation(int) to animate group
 				// expansion/collapse.
 				if (expandableListView.isGroupExpanded(groupPosition)) {
-					listView.collapseGroupWithAnimation(groupPosition);
+					listView.collapseGroup(groupPosition);
 				} else {
-					listView.expandGroupWithAnimation(groupPosition);
+					listView.expandGroup(groupPosition);
 				}
 				return true;
 			}

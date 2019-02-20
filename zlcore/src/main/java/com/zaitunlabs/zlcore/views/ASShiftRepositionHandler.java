@@ -105,7 +105,7 @@ public abstract class ASShiftRepositionHandler {
 				}
 			} while (searchNextState);
 			p = dimensionList.get(dimensionState);
-			ResizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, dimensionState);
+			resizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, dimensionState);
 		}
 		return p;
 	}
@@ -127,7 +127,7 @@ public abstract class ASShiftRepositionHandler {
 			}
 			this.dimensionState = lastNearestIndex;
 			p = dimensionList.get(this.dimensionState);
-			ResizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, this.dimensionState);
+			resizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, this.dimensionState);
 		}
 		return this.dimensionState;
 	}
@@ -149,7 +149,7 @@ public abstract class ASShiftRepositionHandler {
 			}
 			this.dimensionState = lastNearestIndex;
 			p = dimensionList.get(this.dimensionState);
-			ResizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, this.dimensionState);
+			resizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, this.dimensionState);
 		}
 		return this.dimensionState;
 	}
@@ -161,7 +161,7 @@ public abstract class ASShiftRepositionHandler {
 				this.dimensionState = dimensionStateIndex;
 			}
 			p = dimensionList.get(dimensionStateIndex);
-			ResizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, dimensionStateIndex);
+			resizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, dimensionStateIndex);
 		}
 		return p;
 	}
@@ -177,13 +177,13 @@ public abstract class ASShiftRepositionHandler {
 			dy = (getParentWidth() * dx) / getParentHeight();
 		}
 		
-		ResizeMoveViewWithFrame(p.left, p.top, dx, dy, animation, dimensionStateIndex);
+		resizeMoveViewWithFrame(p.left, p.top, dx, dy, animation, dimensionStateIndex);
 		return p;
 	}
 	
 	public Rect changeStateToLastDimension(boolean animation){
 		Rect p = dimensionList.get(this.dimensionState);
-		ResizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, this.dimensionState);
+		resizeMoveViewWithFrame(p.left, p.top, p.width(), p.height(), animation, this.dimensionState);
 		return p;
 	}
 	
@@ -259,8 +259,8 @@ public abstract class ASShiftRepositionHandler {
 		//view.setDrawingCacheEnabled(true);
 	}
 
-	protected void ResizeMoveViewWithFrame(final int left, final int top, final int width,
-			final int height, boolean animation, final int destinationIndex) {
+	protected void resizeMoveViewWithFrame(final int left, final int top, final int width,
+										   final int height, boolean animation, final int destinationIndex) {
 		final Rect paramTypeValue;
 		Rect oldParamTypeValue = null;
 		if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
