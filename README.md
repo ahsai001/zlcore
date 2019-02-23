@@ -46,5 +46,5 @@ Step 2. Add the dependency
 	dependencies {
 	        implementation 'com.github.ahsai001:zlcore:1.0.3.3' //use this for non-androidx version
 		//or
-		implementation 'com.github.ahsai001:zlcore:1.1.22.24' //use this for androidx version, use this for updated version of this lib
+		implementation 'com.github.ahsai001:zlcore:1.1.23.26' //use this for androidx version, use this for updated version of this lib
 	}
