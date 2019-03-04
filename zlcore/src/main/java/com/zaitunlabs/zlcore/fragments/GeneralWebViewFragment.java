@@ -13,6 +13,8 @@ import android.provider.Settings;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.KeyEvent;
@@ -22,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.CookieManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
@@ -46,6 +49,7 @@ import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
 import com.zaitunlabs.zlcore.utils.PrefsData;
+import com.zaitunlabs.zlcore.utils.SwipeRefreshLayoutUtils;
 import com.zaitunlabs.zlcore.utils.ViewUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -82,6 +86,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private String requestedUrl;
     private String currentPageTitle = "";
 
+    private SwipeRefreshLayoutUtils swipeRefreshLayoutUtils;
+
     private int bgColor;
 
     private String defaultMessage = null;
@@ -94,8 +100,15 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private boolean isSuccess = true;
     private WebView webView;
     protected abstract View getCustomProgressBar();
+    protected abstract View getCustomInfoView();
+    protected abstract int getCustomInfoTextView();
     private FrameLayout customProgressPanel;
+    private FrameLayout customInfoPanel;
     private ContentLoadingProgressBar customProgressBar;
+
+
+
+    private ViewTreeObserver.OnScrollChangedListener onScrollChangedListener;
 
     public void setArg(int position, String url, String defaultMessage){
         setArg(position,url,defaultMessage,-1);
@@ -160,6 +173,21 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             customProgressPanel.addView(customProgress);
             customProgressBar = ViewUtils.findViewByClassReference(customProgress,ContentLoadingProgressBar.class);
         }
+
+        customInfoPanel = rootView.findViewById(R.id.general_webview_custom_info_panel);
+        View customInfoView = getCustomInfoView();
+        if(customInfoView != null){
+            customInfoPanel.addView(customInfoView);
+            infoView = customInfoView.findViewById(getCustomInfoTextView());
+        }
+
+        swipeRefreshLayoutUtils = SwipeRefreshLayoutUtils.init((SwipeRefreshLayout) rootView, new Runnable() {
+            @Override
+            public void run() {
+                reloadLastValidLink();
+                swipeRefreshLayoutUtils.refreshDone();
+            }
+        });
         return rootView;
     }
 
@@ -189,6 +217,10 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         if(infoView != null) {
             infoView.setVisibility(View.GONE);
         }
+
+        if(customInfoPanel != null){
+            customInfoPanel.setVisibility(View.GONE);
+        }
     }
 
     private void showInfo(CharSequence info){
@@ -214,11 +246,19 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             infoView.setText(info);
             infoView.setVisibility(View.VISIBLE);
         }
+
+        if(customInfoPanel != null){
+            customInfoPanel.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showProgressBar(int progressValue){
         if(infoView != null) {
             infoView.setVisibility(View.GONE);
+        }
+
+        if(customInfoPanel != null){
+            customInfoPanel.setVisibility(View.GONE);
         }
 
         if(webContainer != null) {
@@ -372,6 +412,15 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        ((SwipeRefreshLayout)rootView).getViewTreeObserver().addOnScrollChangedListener(onScrollChangedListener = new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (webView.getScrollY() == 0)
+                    ((SwipeRefreshLayout)rootView).setEnabled(true);
+                else
+                    ((SwipeRefreshLayout)rootView).setEnabled(false);
+            }
+        });
     }
 
     @Override
@@ -482,6 +531,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
     @Override
     public void onStop() {
+        ((SwipeRefreshLayout)rootView).getViewTreeObserver().removeOnScrollChangedListener(onScrollChangedListener);
         super.onStop();
     }
 

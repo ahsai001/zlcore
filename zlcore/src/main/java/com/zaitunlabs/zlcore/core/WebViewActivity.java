@@ -114,6 +114,16 @@ public class WebViewActivity extends BaseActivity {
             return null;
         }
 
+        @Override
+        protected View getCustomInfoView() {
+            return null;
+        }
+
+        @Override
+        protected int getCustomInfoTextView() {
+            return 0;
+        }
+
 
         @Override
         public void setupWebview(WebView webView) {
