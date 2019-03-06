@@ -1,6 +1,7 @@
 package com.zaitunlabs.zlcore.fragments;
 
 import android.annotation.TargetApi;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
 import android.provider.Settings;
 import androidx.annotation.Nullable;
@@ -26,9 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.SslErrorHandler;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
@@ -57,6 +61,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Set;
+
+import static android.content.Context.DOWNLOAD_SERVICE;
 
 /**
  * Created by ahmad s on 3/17/2016.
@@ -377,7 +383,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         }
     }
 
-    public void setupWebview(WebView webView){
+    public void setupWebview(final WebView webView){
         webView.setBackgroundColor(bgColor);
         webView.setWebViewClient(new SmartWebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
@@ -392,12 +398,63 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             webView.getSettings().setUseWideViewPort(true);
         }
 
+        //enable zoom
+        /*
+        webView.getSettings().setSupportZoom(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        */
+
+
         //enable multiwindows
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webView.getSettings().setSupportMultipleWindows(true);
 
         //enable file chooser
         webView.getSettings().setAllowFileAccess(true);
+
+        //enable downloading file
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(final String url, final String userAgent, final String contentDisposition, final String mimeType, long contentLength) {
+                CommonUtils.showDialog3Option(webView.getContext(), getString(R.string.zlcore_generalwebview_download_confirmation_title),
+                        getString(R.string.zlcore_generalwebview_download_confirmation_message),
+                        getString(R.string.zlcore_generalwebview_download_dialog_download_option), new Runnable() {
+                            @Override
+                            public void run() {
+                                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                                request.setMimeType(mimeType);
+                                //------------------------COOKIE!!------------------------
+                                String cookies = CookieManager.getInstance().getCookie(url);
+                                request.addRequestHeader("cookie", cookies);
+                                //------------------------COOKIE!!------------------------
+                                request.addRequestHeader("User-Agent", userAgent);
+                                request.setDescription(getString(R.string.zlcore_generalwebview_download_wording_description));
+                                request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
+                                request.allowScanningByMediaScanner();
+                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType));
+                                DownloadManager dm = (DownloadManager)webView.getContext().getSystemService(DOWNLOAD_SERVICE);
+                                dm.enqueue(request);
+                                CommonUtils.showToast(webView.getContext(),getString(R.string.zlcore_generalwebview_download_wording_toast_message));
+                            }
+                        }, getString(R.string.zlcore_general_wording_cancel), new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        }, getString(R.string.zlcore_generalwebview_download_dialog_open_other_app_option), new Runnable() {
+                            @Override
+                            public void run() {
+                                //download file using web browser
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse(url));
+                                startActivity(i);
+                            }
+                        });
+
+            }
+        });
     }
 
 
@@ -568,7 +625,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             String rootUrlHost = Uri.parse(rootUrl).getHost();
-            if (Uri.parse(url).getHost().endsWith(rootUrlHost)) {
+            String requestUrlHost = Uri.parse(url).getHost();
+            if (!TextUtils.isEmpty(requestUrlHost) && requestUrlHost.endsWith(rootUrlHost)) {
                 // This is my web site, so do not override; let my WebView load the page
                 return false;
             }
@@ -583,7 +641,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             String rootUrlHost = Uri.parse(rootUrl).getHost();
-            if (Uri.parse(request.getUrl().toString()).getHost().endsWith(rootUrlHost)) {
+            String requestUrlHost = Uri.parse(request.getUrl().toString()).getHost();
+            if (!TextUtils.isEmpty(requestUrlHost) && requestUrlHost.endsWith(rootUrlHost)) {
                 // This is my web site, so do not override; let my WebView load the page
                 return false;
             }

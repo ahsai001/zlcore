@@ -175,4 +175,11 @@
 
 
     <string name="zlcore_aboutus_tentang_aplikasi">Tentang Aplikasi</string>
+
+    <string name="zlcore_generalwebview_download_confirmation_title">Konfirmasi unduh</string>
+    <string name="zlcore_generalwebview_download_confirmation_message">Apa yang kamu inginkan?</string>
+    <string name="zlcore_generalwebview_download_dialog_download_option">unduh</string>
+    <string name="zlcore_generalwebview_download_dialog_open_other_app_option">buka di aplikasi lain</string>
+    <string name="zlcore_generalwebview_download_wording_description">Unduh berkas</string>
+    <string name="zlcore_generalwebview_download_wording_toast_message">Unduh berkas</string>
 </resources>

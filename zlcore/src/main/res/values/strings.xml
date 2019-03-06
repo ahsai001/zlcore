@@ -177,4 +177,10 @@
 
 
     <string name="zlcore_aboutus_tentang_aplikasi">About Application</string>
+    <string name="zlcore_generalwebview_download_confirmation_title">Download Confirmation</string>
+    <string name="zlcore_generalwebview_download_confirmation_message">What do you want?</string>
+    <string name="zlcore_generalwebview_download_dialog_download_option">download</string>
+    <string name="zlcore_generalwebview_download_dialog_open_other_app_option">open in other apps</string>
+    <string name="zlcore_generalwebview_download_wording_description">Downloading file</string>
+    <string name="zlcore_generalwebview_download_wording_toast_message">Downloading file</string>
 </resources>
