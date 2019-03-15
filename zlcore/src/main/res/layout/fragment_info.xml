@@ -23,9 +23,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                        android:textColor="@android:color/black"
+                    android:textColor="@android:color/black"
                     android:gravity="center"
-                    android:text="@string/zlcore_info_no_data"/>
-
+                    android:text="@string/zlcore_info_no_info"/>
         </LinearLayout>
 </RelativeLayout>

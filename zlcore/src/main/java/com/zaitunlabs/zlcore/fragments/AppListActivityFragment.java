@@ -181,7 +181,7 @@ public class AppListActivityFragment extends BaseFragment {
         AndroidNetworking.get(APIConstant.API_OTHER_APPS +"/"+countPerPage+"/"+loadingPage)
                 .setOkHttpClient(HttpClientUtils.getHTTPClient(context, APIConstant.API_VERSION))
                 .setPriority(Priority.HIGH)
-                .setTag("others app")
+                .setTag("othersapp")
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
@@ -241,6 +241,13 @@ public class AppListActivityFragment extends BaseFragment {
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        AndroidNetworking.cancel("othersapp");
+        super.onDestroyView();
     }
 
     @Override

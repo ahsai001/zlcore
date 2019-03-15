@@ -21,8 +21,12 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Modifier;
 
-public class FCMIntentService extends IntentService {
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
+
+public class FCMIntentService extends JobIntentService {
     private final String TAG = FCMIntentService.class.getSimpleName();
+    public static final int JOB_ID = 11000011;
 
     private static final String ACTION_SEND_TOKEN = "com.zaitunlabs.zlcore.services.action.SEND_TOKEN";
     private static boolean isProcessing = false;
@@ -30,16 +34,14 @@ public class FCMIntentService extends IntentService {
     public static final String PARAM_APPID = "param_appid";
     public static final String PARAM_NEED_LOGIN = "param_need_login";
 
-    public FCMIntentService() {
-        super("FCMIntentService");
-    }
+
 
     public static void startSending(Context context, String appid, boolean needLogin) {
         Intent intent = new Intent(context, FCMIntentService.class);
         intent.setAction(ACTION_SEND_TOKEN);
         intent.putExtra(PARAM_APPID,appid);
         intent.putExtra(PARAM_NEED_LOGIN,needLogin);
-        context.startService(intent);
+        JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
     }
 
     public static void startSending(final Context context, final String appid, final boolean needLogin, long delayInMillis) {
@@ -50,12 +52,11 @@ public class FCMIntentService extends IntentService {
                 intent.setAction(ACTION_SEND_TOKEN);
                 intent.putExtra(PARAM_APPID,appid);
                 intent.putExtra(PARAM_NEED_LOGIN,needLogin);
-                context.startService(intent);
+                JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
             }
         }, delayInMillis);
     }
 
-    @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
@@ -83,7 +84,7 @@ public class FCMIntentService extends IntentService {
                         .addUrlEncodeFormBodyParameter("fcmid",PrefsData.getPushyToken())
                         .addUrlEncodeFormBodyParameter("appid",appid)
                         .setPriority(Priority.HIGH)
-                        .setTag("register fcm")
+                        .setTag("registerfcm"+this.toString())
                         .build()
                         .getAsJSONObject(new JSONObjectRequestListener() {
                             @Override
@@ -141,5 +142,16 @@ public class FCMIntentService extends IntentService {
                 isProcessing = false;
             }
         }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        onHandleIntent(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        AndroidNetworking.cancel("registerfcm"+this.toString());
+        super.onDestroy();
     }
 }

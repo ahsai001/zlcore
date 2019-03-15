@@ -507,6 +507,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
 
     @Override
     protected void onDestroy() {
+        AndroidNetworking.cancel("login");
         super.onDestroy();
     }
 

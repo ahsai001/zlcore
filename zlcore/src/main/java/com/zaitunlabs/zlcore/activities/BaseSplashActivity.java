@@ -164,6 +164,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
                     .setOkHttpClient(HttpClientUtils.getHTTPClient(BaseSplashActivity.this, APIConstant.API_VERSION))
                     .addBodyParameter("appid", APIConstant.API_APPID)
                     .setPriority(Priority.HIGH)
+                    .setTag("checkversion")
                     .build()
                     .getAsJSONObject(new JSONObjectRequestListener() {
                         @Override
@@ -224,6 +225,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        AndroidNetworking.cancel("checkversion");
         super.onDestroy();
     }
 

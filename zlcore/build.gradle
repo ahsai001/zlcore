@@ -2,12 +2,11 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 28
-    //buildToolsVersion "26.0.2"
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 23
-        versionName "1.1.25.28"
+        versionCode 24
+        versionName "1.1.26.34"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -73,11 +72,11 @@ dependencies {
     //play service
 
 
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha03'
     implementation 'com.google.android.material:material:1.1.0-alpha04'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha03'
 
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
     implementation 'com.squareup.picasso:picasso:2.71828'

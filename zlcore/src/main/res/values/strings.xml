@@ -44,7 +44,7 @@
     <string name="zlcore_action_settings">Settings</string>
     <string name="zlcore_section_format">Hello World from section: %1$d</string>
     <string name="zlcore_info_no_data">There are no data currently</string>
-
+    <string name="zlcore_info_no_info">There are no info currently</string>
     <string name="zlcore_info_no_product">There are no products currently</string>
     <string name="zlcore_title_activity_rating">Rating</string>
 

@@ -252,6 +252,12 @@ public class StoreActivityFragment extends BaseFragment {
 
 
     @Override
+    public void onDestroyView() {
+        AndroidNetworking.cancel("store");
+        super.onDestroyView();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_store,menu);
 

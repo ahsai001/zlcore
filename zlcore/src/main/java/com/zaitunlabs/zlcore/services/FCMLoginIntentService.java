@@ -21,23 +21,29 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Modifier;
 
-public class FCMLoginIntentService extends IntentService {
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
+
+public class FCMLoginIntentService extends JobIntentService {
     private final String TAG = FCMLoginIntentService.class.getSimpleName();
+    public static final int JOB_ID = 11000013;
 
     private static final String ACTION_SEND_TOKEN = "com.zaitunlabs.zlcore.services.action.SEND_TOKEN";
     private static boolean isProcessing = false;
 
     public static final String PARAM_APPID = "param_appid";
 
-    public FCMLoginIntentService() {
-        super("FCMLoginIntentService");
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        onHandleIntent(intent);
     }
 
     public static void startSending(Context context, String appid) {
         Intent intent = new Intent(context, FCMLoginIntentService.class);
         intent.setAction(ACTION_SEND_TOKEN);
         intent.putExtra(PARAM_APPID,appid);
-        context.startService(intent);
+        JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
     }
 
     public static void startSending(final Context context, final String appid, long delayInMillis) {
@@ -47,12 +53,11 @@ public class FCMLoginIntentService extends IntentService {
                 Intent intent = new Intent(context, FCMLoginIntentService.class);
                 intent.setAction(ACTION_SEND_TOKEN);
                 intent.putExtra(PARAM_APPID,appid);
-                context.startService(intent);
+                JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
             }
         }, delayInMillis);
     }
 
-    @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
@@ -79,7 +84,7 @@ public class FCMLoginIntentService extends IntentService {
                         .addUrlEncodeFormBodyParameter("fcmid",PrefsData.getPushyToken())
                         .addUrlEncodeFormBodyParameter("appid",appid)
                         .setPriority(Priority.HIGH)
-                        .setTag("update login fcm")
+                        .setTag("updateloginfcm"+this.toString())
                         .build()
                         .getAsJSONObject(new JSONObjectRequestListener() {
                             @Override
@@ -108,5 +113,12 @@ public class FCMLoginIntentService extends IntentService {
                 isProcessing = false;
             }
         }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        AndroidNetworking.cancel("updateloginfcm"+this.toString());
+        super.onDestroy();
     }
 }

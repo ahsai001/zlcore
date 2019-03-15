@@ -44,7 +44,7 @@
     <string name="zlcore_action_settings">Pengaturan</string>
     <string name="zlcore_section_format">Hello World from section: %1$d</string>
     <string name="zlcore_info_no_data">Tidak ada data saat ini</string>
-
+    <string name="zlcore_info_no_info">Tidak ada info saat ini</string>
     <string name="zlcore_info_no_product">Tidak ada produk untuk saat ini</string>
     <string name="zlcore_title_activity_rating">Rating</string>
 

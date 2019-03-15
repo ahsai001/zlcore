@@ -3,7 +3,10 @@ package com.zaitunlabs.zlcore.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.JobIntentService;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.ANRequest;
@@ -30,8 +33,10 @@ import java.util.Map;
  * Created by ahsai on 2/19/2018.
  */
 
-public class DataIntentService extends IntentService {
+public class DataIntentService extends JobIntentService {
     private final String TAG = DataIntentService.class.getSimpleName();
+    public static final int JOB_ID = 11000012;
+
     private static final String ACTION_UPLOAD = "com.zaitunlabs.zlcore.services.action.UPLOAD";
     private static final String ACTION_POST = "com.zaitunlabs.zlcore.services.action.POST";
     private static final String ACTION_DOWNLOAD = "com.zaitunlabs.zlcore.services.action.DOWNLOAD";
@@ -46,11 +51,7 @@ public class DataIntentService extends IntentService {
     private static final String PARAM_EXTRAS = "param_extras";
     private static final String PARAM_TAG = "param_tag";
 
-    public DataIntentService() {
-        super("DataIntentService");
-    }
 
-    @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
@@ -64,7 +65,14 @@ public class DataIntentService extends IntentService {
 
     @Override
     public void onDestroy() {
+        AndroidNetworking.cancel(ACTION_POST+this.toString());
+        AndroidNetworking.cancel(ACTION_UPLOAD+this.toString());
         super.onDestroy();
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        onHandleIntent(intent);
     }
 
     private void handleActionUpload(Intent intent) {
@@ -172,6 +180,7 @@ public class DataIntentService extends IntentService {
                 });
     }
 
+
     public static void startUpload(Context context, String url, int icon, String title, String desc,
                                    int notifID, FileParts files, HeaderParts headers, BodyParts bodys, Extras extras, String tag) {
         Intent intent = new Intent(context, DataIntentService.class);
@@ -186,7 +195,7 @@ public class DataIntentService extends IntentService {
         intent.putExtra(PARAM_BODYS, bodys);
         intent.putExtra(PARAM_EXTRAS, extras);
         intent.putExtra(PARAM_TAG, tag);
-        context.startService(intent);
+        JobIntentService.enqueueWork(context,DataIntentService.class,JOB_ID,intent);
     }
 
 
@@ -203,7 +212,7 @@ public class DataIntentService extends IntentService {
         intent.putExtra(PARAM_BODYS, bodys);
         intent.putExtra(PARAM_EXTRAS, extras);
         intent.putExtra(PARAM_TAG, tag);
-        context.startService(intent);
+        JobIntentService.enqueueWork(context,DataIntentService.class,JOB_ID,intent);
     }
 
     public static class HeaderParts implements Serializable{
