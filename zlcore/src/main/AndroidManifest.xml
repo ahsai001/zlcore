@@ -45,9 +45,11 @@
 
         <service
             android:name=".services.FCMIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
         <service
             android:name=".services.FCMLoginIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 
         <!-- for application backsound -->
@@ -57,7 +59,9 @@
         <receiver android:name=".utils.audio.StopPlayerReceiver" />
 
         <!-- modules sholat dan shaum -->
-        <service android:name=".modules.shaum_sholat.ShaumSholatReminderService" />
+        <service android:name=".modules.shaum_sholat.ShaumSholatReminderService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false"/>
 
         <receiver android:name=".modules.shaum_sholat.ManageShaumSholatReminderReceiver">
             <intent-filter>
@@ -67,7 +71,9 @@
         <receiver android:name=".modules.shaum_sholat.SholatReminderReceiver" />
         <receiver android:name=".modules.shaum_sholat.ShaumReminderReceiver" />
 
-        <service android:name=".services.DataIntentService" />
+        <service android:name=".services.DataIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false"/>
 
         <activity
             android:name=".activities.MessageListActivity"

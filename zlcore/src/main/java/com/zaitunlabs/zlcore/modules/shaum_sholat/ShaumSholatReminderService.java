@@ -6,6 +6,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 import androidx.legacy.content.WakefulBroadcastReceiver;
 import android.text.TextUtils;
 
@@ -26,16 +29,13 @@ import id.web.michsan.praytimes.Util;
 /**
  * Created by ahmad s on 3/14/2016.
  */
-public class ShaumSholatReminderService extends IntentService {
-    public ShaumSholatReminderService(String name) {
-        super(name);
-    }
-
-    public ShaumSholatReminderService(){
-        super(ShaumSholatReminderService.class.getSimpleName());
-    }
-
+public class ShaumSholatReminderService extends JobIntentService {
+    public static final int JOB_ID = 11000014;
     @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        onHandleIntent(intent);
+    }
+
     protected void onHandleIntent(final Intent intent) {
         //set ashr/dzikir sore reminder and subuh/dzikir pagi reminder
         //getcurrent location
