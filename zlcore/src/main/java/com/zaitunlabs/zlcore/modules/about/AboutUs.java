@@ -145,7 +145,7 @@ public class AboutUs extends CanvasActivity {
 			aboutThisAppSpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, aboutThisAppSpanString.length(), 0);
 
 			aboutThisApp.setText(aboutThisAppSpanString);
-			aboutThisApp.setTextSize(18);
+			aboutThisApp.setTextSize(14);
 			aboutThisApp.setTextColor(AboutUs.textColorInt);
 			aboutThisApp.setGravity(Gravity.CENTER_VERTICAL|Gravity.RIGHT | Gravity.END);
 			versionAndAboutAppCanvas.addViewWithFrame(aboutThisApp, 0, 0, 100,50);
@@ -174,7 +174,7 @@ public class AboutUs extends CanvasActivity {
 		historySpanString.setSpan(new StyleSpan(Typeface.ITALIC), 0, historySpanString.length(), 0);
 
 		history.setText(historySpanString);
-		history.setTextSize(18);
+		history.setTextSize(14);
 		history.setTextColor(AboutUs.textColorInt);
 		history.setGravity(Gravity.CENTER_VERTICAL|Gravity.RIGHT | Gravity.END);
 		if(TextUtils.isEmpty(AboutUs.aboutThisAppUrlOrHtmlContent)) {
@@ -381,7 +381,7 @@ public class AboutUs extends CanvasActivity {
 				riwayatRawFile, isDisableBackSoundControl,
 				appLandingPageLink, true,
 				null, null, null,
-				0, null, 0, 0, 0, null);
+				0, null, 0, 0, 0, appLandingPageLink);
 	}
 
 	public static void start(Context context,@DrawableRes int logoDrawableRes,
