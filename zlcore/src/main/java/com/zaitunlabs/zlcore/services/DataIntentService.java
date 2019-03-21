@@ -65,8 +65,6 @@ public class DataIntentService extends JobIntentService {
 
     @Override
     public void onDestroy() {
-        AndroidNetworking.cancel(ACTION_POST+this.toString());
-        AndroidNetworking.cancel(ACTION_UPLOAD+this.toString());
         super.onDestroy();
     }
 

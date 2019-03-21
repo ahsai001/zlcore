@@ -3,6 +3,7 @@ package com.zaitunlabs.zlcore.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.androidnetworking.AndroidNetworking;
@@ -47,7 +48,7 @@ public class FCMLoginIntentService extends JobIntentService {
     }
 
     public static void startSending(final Context context, final String appid, long delayInMillis) {
-        new android.os.Handler().postDelayed(new Runnable() {
+        new android.os.Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(context, FCMLoginIntentService.class);
@@ -118,7 +119,6 @@ public class FCMLoginIntentService extends JobIntentService {
 
     @Override
     public void onDestroy() {
-        AndroidNetworking.cancel("updateloginfcm"+this.toString());
         super.onDestroy();
     }
 }
