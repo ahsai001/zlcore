@@ -114,10 +114,10 @@
     <string name="zlcore_action_search">Temukan</string>
     <string name="zlcore_aboutus_about_app">Tentang Aplikasi</string>
     <string name="zlcore_warning_sorry_there_is_problem">Maaf, telah terjadi kesalahan</string>
-    <string name="zlcore_aboutus_developer_name">Pengembang : %s</string>
-    <string name="zlcore_aboutus_developer_email">Email : %s</string>
+    <string name="zlcore_aboutus_developer_name">Pengembang : %1$s</string>
+    <string name="zlcore_aboutus_developer_email">Email : %1$s</string>
     <string name="zlcore_aboutus_kirim_email">Kirim Email</string>
-    <string name="zlcore_aboutus_version">Versi : %s</string>
+    <string name="zlcore_aboutus_version">Versi : %1$s</string>
     <string name="zlcore_aboutus_title_link_about_app">&#160;&#160;Tentang aplikasi&#160;&#160;</string>
     <string name="zlcore_aboutus_app_history">&#160;&#160;Riwayat versi aplikasi&#160;&#160;</string>
     <string name="zlcore_aboutus_share_title">share menggunakan :</string>
@@ -135,7 +135,7 @@
     <string name="zlcore_canvasactivity_volume_background_sound">Volume Suara Latar :</string>
     <string name="zlcore_infofragment_mark_all_as_read_success">Berhasil menandai semua sebagai sukses</string>
     <string name="zlcore_infofragment_delete_all_messages_success">Berhasil menghapus semua informasi</string>
-    <string name="zlcore_shaum_reminder_notification">Besok adalah hari %s, jangan lupa persiapannya bagi yang akan melakukan shaum/puasa</string>
+    <string name="zlcore_shaum_reminder_notification">Besok adalah hari %1$s, jangan lupa persiapannya bagi yang akan melakukan shaum/puasa</string>
     <string name="zlcore_sholat_reminder_subuh">Perhatian, sebentar lagi menjelang waktu sholat subuh</string>
     <string name="zlcore_sholat_reminder_syuruk">Perhatian, sebentar lagi menjelang waktu syuruk</string>
     <string name="zlcore_sholat_reminder_dzuhur">Perhatian, sebentar lagi menjelang waktu sholat dzuhur</string>
@@ -154,8 +154,8 @@
     <string name="zlcore_form_validations_utils_need_set_regex_pattern">Anda perlu membuat patter terlebih dahulu</string>
     <string name="zlcore_form_validations_utils_please_fill_alpha_numeric_only">Harap diisi dengan alfa numerik saja</string>
     <string name="zlcore_form_validations_utils_please_fill_numeric_only">Harap diisi dengan numerik saja</string>
-    <string name="zlcore_form_validations_utils_value_is_different">Isinya berbeda dengan %s</string>
-    <string name="zlcore_form_validations_utils_data_must_be_count_digits">Data seharusnya %d %s</string>
+    <string name="zlcore_form_validations_utils_value_is_different">Isinya berbeda dengan %1$s</string>
+    <string name="zlcore_form_validations_utils_data_must_be_count_digits">Data seharusnya %1$d %2$s</string>
     <string name="zlcore_form_validations_utils_phone_format_is_invalid">Format nomor handphone tidak valid</string>
     <string name="zlcore_form_validations_utils_you_must_check_this">Anda harus mencentang ini</string>
     <string name="zlcore_form_validations_utils_url_format_is_invalid">Format url tidak valid</string>

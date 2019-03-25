@@ -114,10 +114,10 @@
     <string name="zlcore_action_search">Search</string>
     <string name="zlcore_aboutus_about_app">About Application</string>
     <string name="zlcore_warning_sorry_there_is_problem">Sorry, there is problem</string>
-    <string name="zlcore_aboutus_developer_name">Developer : %s</string>
-    <string name="zlcore_aboutus_developer_email">Email : %s</string>
+    <string name="zlcore_aboutus_developer_name">Developer : %1$s</string>
+    <string name="zlcore_aboutus_developer_email">Email : %1$s</string>
     <string name="zlcore_aboutus_kirim_email">Send Email</string>
-    <string name="zlcore_aboutus_version">Version : %s</string>
+    <string name="zlcore_aboutus_version">Version : %1$s</string>
     <string name="zlcore_aboutus_title_link_about_app">&#160;&#160;About Application&#160;&#160;</string>
     <string name="zlcore_aboutus_app_history">&#160;&#160;Application Version History&#160;&#160;</string>
     <string name="zlcore_aboutus_share_title">Share using :</string>
@@ -136,7 +136,7 @@
     <string name="zlcore_canvasactivity_volume_background_sound">Backsound volume :</string>
     <string name="zlcore_infofragment_mark_all_as_read_success">Mark all as read success</string>
     <string name="zlcore_infofragment_delete_all_messages_success">Delete all messages success</string>
-    <string name="zlcore_shaum_reminder_notification">Tomorrow is %s, don\'t forget the preparation for fasting</string>
+    <string name="zlcore_shaum_reminder_notification">Tomorrow is %1$s, don\'t forget the preparation for fasting</string>
     <string name="zlcore_sholat_reminder_subuh">Attention, a few more minutes before shubuh prayer time</string>
     <string name="zlcore_sholat_reminder_syuruk">Attention, a few more minutes before syuruk time</string>
     <string name="zlcore_sholat_reminder_dzuhur">Attention, a few more minutes before dzuhur prayer time</string>
@@ -155,8 +155,8 @@
     <string name="zlcore_form_validations_utils_need_set_regex_pattern">You need to set Regexp Pattern first</string>
     <string name="zlcore_form_validations_utils_please_fill_alpha_numeric_only">Please fill with alpha numeric only</string>
     <string name="zlcore_form_validations_utils_please_fill_numeric_only">Please fill with numeric only</string>
-    <string name="zlcore_form_validations_utils_value_is_different">The value is different with %s</string>
-    <string name="zlcore_form_validations_utils_data_must_be_count_digits">Data must be %d %s</string>
+    <string name="zlcore_form_validations_utils_value_is_different">The value is different with %1$s</string>
+    <string name="zlcore_form_validations_utils_data_must_be_count_digits">Data must be %1$d %2$s</string>
     <string name="zlcore_form_validations_utils_phone_format_is_invalid">Phone format is invalid</string>
     <string name="zlcore_form_validations_utils_you_must_check_this">You must check this</string>
     <string name="zlcore_form_validations_utils_url_format_is_invalid">Url format is invalid</string>

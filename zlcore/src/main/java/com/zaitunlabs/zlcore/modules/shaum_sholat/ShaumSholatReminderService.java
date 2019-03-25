@@ -12,6 +12,7 @@ import androidx.core.app.JobIntentService;
 import androidx.legacy.content.WakefulBroadcastReceiver;
 import android.text.TextUtils;
 
+import com.zaitunlabs.zlcore.constants.ZLCoreConstanta;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.IntegerIDUtils;
 import com.zaitunlabs.zlcore.utils.LocationUtils;
@@ -171,7 +172,7 @@ public class ShaumSholatReminderService extends JobIntentService {
                     //setup shaum reminder if needed
                     setShaumReminderAlarm(sholatCalendar.getTimeInMillis());
 
-                    WakefulBroadcastReceiver.completeWakefulIntent(intent);
+                    //WakefulBroadcastReceiver.completeWakefulIntent(intent);
                 }
 
                 
@@ -185,13 +186,13 @@ public class ShaumSholatReminderService extends JobIntentService {
 
                     setManageReminderAlarm(calendar.getTimeInMillis(), ManageShaumSholatReminderReceiver.class);
 
-                    WakefulBroadcastReceiver.completeWakefulIntent(intent);
+                    //WakefulBroadcastReceiver.completeWakefulIntent(intent);
                 }
             });
             helper.init();
             helper.start();
         }else{
-            WakefulBroadcastReceiver.completeWakefulIntent(intent);
+            //WakefulBroadcastReceiver.completeWakefulIntent(intent);
         }
     }
 
@@ -199,7 +200,7 @@ public class ShaumSholatReminderService extends JobIntentService {
         AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
 
         Intent reminderIntent = new Intent(this, receiver);
-        reminderIntent.setAction("com.zaitunlabs.zlcore.manage_reminder_alarm"+IntegerIDUtils.getID(this));
+        reminderIntent.setAction(ZLCoreConstanta.ACTION_MANAGE_SHAUM_SHOLAT_REMINDER+IntegerIDUtils.getID(this));
         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 212, reminderIntent, 0);
 
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time, alarmIntent);
