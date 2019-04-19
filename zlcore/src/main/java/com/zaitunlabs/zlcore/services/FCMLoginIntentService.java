@@ -44,7 +44,7 @@ public class FCMLoginIntentService extends JobIntentService {
         Intent intent = new Intent(context, FCMLoginIntentService.class);
         intent.setAction(ACTION_SEND_TOKEN);
         intent.putExtra(PARAM_APPID,appid);
-        JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
+        JobIntentService.enqueueWork(context,FCMLoginIntentService.class,JOB_ID,intent);
     }
 
     public static void startSending(final Context context, final String appid, long delayInMillis) {
@@ -54,7 +54,7 @@ public class FCMLoginIntentService extends JobIntentService {
                 Intent intent = new Intent(context, FCMLoginIntentService.class);
                 intent.setAction(ACTION_SEND_TOKEN);
                 intent.putExtra(PARAM_APPID,appid);
-                JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
+                JobIntentService.enqueueWork(context,FCMLoginIntentService.class,JOB_ID,intent);
             }
         }, delayInMillis);
     }
