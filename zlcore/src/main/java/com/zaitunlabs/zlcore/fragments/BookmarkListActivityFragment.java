@@ -101,7 +101,7 @@ public class BookmarkListActivityFragment extends BaseFragment {
         adapter.setOnMoreOptionClickListener(new BookmarkListAdapter.OnMoreOptionClickListener() {
             @Override
             public void onClick(View view, final int position) {
-                CommonUtils.showPopup(view.getContext(), R.menu.menu_bookmark_list, view, null, new PopupMenu.OnMenuItemClickListener() {
+                CommonUtils.showPopupMenu(view.getContext(), R.menu.menu_bookmark_list, view, null, new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         String title = bookmarkModelList.get(position).getTitle();

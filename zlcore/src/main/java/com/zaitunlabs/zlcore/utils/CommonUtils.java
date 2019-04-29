@@ -43,7 +43,12 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -54,6 +59,7 @@ import androidx.appcompat.widget.PopupMenu;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.Html;
+import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -1862,7 +1868,7 @@ public class CommonUtils {
 	}
 
 
-	public static PopupWindow showPopupWindow(Context context,
+	public static PopupWindow showPopupView(Context context,
 											  View popupView,
 											  View anchorView,
 											  boolean outsideTouchable,
@@ -1874,7 +1880,7 @@ public class CommonUtils {
 		return popupWindow;
 	}
 
-	public static PopupWindow showPopupWindow(Context context,
+	public static PopupWindow showPopupView(Context context,
 											  View popupView,
 											  View parentView,
 											  int gravity,
@@ -1888,11 +1894,11 @@ public class CommonUtils {
 		return popupWindow;
 	}
 
-	public static PopupMenu showPopup(Context context,
-									  int menuResId,
-									  View anchorView,
-									  PopupMenu.OnDismissListener dismissListener,
-									  PopupMenu.OnMenuItemClickListener menuItemClickListener){
+	public static PopupMenu showPopupMenu(Context context,
+										  int menuResId,
+										  View anchorView,
+										  PopupMenu.OnDismissListener dismissListener,
+										  PopupMenu.OnMenuItemClickListener menuItemClickListener){
 		PopupMenu popup = new PopupMenu(context, anchorView);
 		popup.getMenuInflater().inflate(menuResId, popup.getMenu());
 		popup.setOnDismissListener(dismissListener);
@@ -2907,5 +2913,44 @@ public class CommonUtils {
 	public static String decodeBase64(String encodedText){
 		byte[] data = Base64.decode(encodedText, Base64.DEFAULT);
 		return new String(data, Charset.forName("UTF-8"));
+	}
+
+	public static BottomSheetDialog showBottomSheetDialog(Context context, View view, int layoutResId){
+		BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+		if(view != null){
+			bottomSheetDialog.setContentView(view);
+		} else {
+			bottomSheetDialog.setContentView(layoutResId);
+		}
+		bottomSheetDialog.show();
+		return bottomSheetDialog;
+	}
+
+	public static CustomBottomSheetDialogFragment showBottomSheetDialogFragment(FragmentManager fragmentManager, int layoutResId, String tag){
+		CustomBottomSheetDialogFragment customBottomSheetDialogFragment = new CustomBottomSheetDialogFragment();
+		Bundle argument = new Bundle();
+		argument.putInt(CustomBottomSheetDialogFragment.ARG_LAYOUT_KEY, layoutResId);
+		customBottomSheetDialogFragment.setArguments(argument);
+		customBottomSheetDialogFragment.show(fragmentManager, tag);
+		return customBottomSheetDialogFragment;
+	}
+
+	public static class CustomBottomSheetDialogFragment extends BottomSheetDialogFragment{
+		public static final String ARG_LAYOUT_KEY = "arg_layout_id";
+		private View rootView;
+		private int layoutResId;
+
+		@Override
+		public void onCreate(@Nullable Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			layoutResId = getIntFragmentArgument(getArguments(),ARG_LAYOUT_KEY, -1);
+		}
+
+		@Override
+		public void setupDialog(@NonNull Dialog dialog, int style) {
+			super.setupDialog(dialog, style);
+			rootView = LayoutInflater.from(getContext()).inflate(layoutResId, null);
+			dialog.setContentView(rootView);
+		}
 	}
 }

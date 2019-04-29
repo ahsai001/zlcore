@@ -5,22 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Html;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStructure;
 import android.webkit.URLUtil;
 
 import com.zaitunlabs.zlcore.R;
@@ -189,7 +185,7 @@ public class InfoFragment extends BaseFragment {
             @Override
             public void onClick(View view, final int position) {
                 final InformationModel info = infoList.get(position);
-                CommonUtils.showPopup(view.getContext(), info.isRead()?R.menu.menu_info_item_unread:R.menu.menu_info_item, view, null,
+                CommonUtils.showPopupMenu(view.getContext(), info.isRead()?R.menu.menu_info_item_unread:R.menu.menu_info_item, view, null,
                         new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
