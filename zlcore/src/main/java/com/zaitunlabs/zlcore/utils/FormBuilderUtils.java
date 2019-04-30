@@ -270,6 +270,8 @@ public class FormBuilderUtils implements VerticalStepperForm{
         }
     }
 
+
+    // ======== Start of Get Root View of Widget ========== //
     public View getViewForWidget(String widgetId) {
         return rootView.findViewWithTag(widgetId);
     }
@@ -279,6 +281,10 @@ public class FormBuilderUtils implements VerticalStepperForm{
         String widgetId = formViewJsonModel.getFormList().get(position).getId();
         return getViewForWidget(widgetId);
     }
+    // ======== End of Get Root View of Widget ========== //
+
+
+    // ======== Start of Get Valuable View of Widget ========== //
 
     public View getValuableViewForWidget(String widgetId) {
         View widgetView = getViewForWidget(widgetId);
@@ -324,11 +330,20 @@ public class FormBuilderUtils implements VerticalStepperForm{
         return valuableView;
     }
 
+    // ======== End of Get Valuable View of Widget ========== //
+
+
+    // ======== Start of Get Value of Widget ========== //
+
     public Object getValueForWidget(String widgetId) {
         View widgetView = getViewForWidget(widgetId);
         String widgetName = getWidgetName(widgetId);
         int viewIdForValue = widgetBuilderMap.get(widgetName).getViewIdForValue();
         View widgetValuableView = widgetView.findViewById(viewIdForValue);
+        if(widgetValuableView == null){
+            int position = getWidgetPosition(widgetId);
+            widgetValuableView = widgetView.findViewById(viewIdForValue+position+POSITION_DELTA);
+        }
         return widgetBuilderMap.get(widgetName).getWidgetValue(widgetValuableView);
     }
 
@@ -337,8 +352,13 @@ public class FormBuilderUtils implements VerticalStepperForm{
         FormWidgetModel formWidgetModel = formViewJsonModel.getFormList().get(position);
         int viewIdForValue = widgetBuilderMap.get(formWidgetModel.getWidgetName()).getViewIdForValue();
         View widgetValuableView = widgetView.findViewById(viewIdForValue);
+        if(widgetValuableView == null){
+            widgetValuableView = widgetView.findViewById(viewIdForValue+position+POSITION_DELTA);
+        }
         return widgetBuilderMap.get(formWidgetModel.getWidgetName()).getWidgetValue(widgetValuableView);
     }
+
+    // ======== End of Get Value of Widget ========== //
 
 
     public void setEnablerIfMandatoryDoneOnView(View targetView){
