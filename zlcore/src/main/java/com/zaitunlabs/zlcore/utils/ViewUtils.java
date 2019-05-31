@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.StateListAnimator;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
@@ -14,15 +15,27 @@ import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
+import android.text.InputType;
 import android.util.TypedValue;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 
 /**
  * @author upshots.org 5/27/16.
@@ -528,6 +541,98 @@ public class ViewUtils {
         if(enablePushEffect) {
             enablePushEffectAnim(targetButton);
         }
+    }
+
+
+
+
+
+
+    private static void showCustomDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Date defaultDate, final Locale locale, @NonNull final FragmentManager fragmentManager, @NonNull final String tag){
+        CommonUtils.showDatePicker(null, fragmentManager, tag, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                SimpleDateFormat sfd = new SimpleDateFormat(dateFormat, locale==null?CommonUtils.getIndonesianLocale():locale);
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, dayOfMonth);
+                editText.setText(sfd.format(defaultDate==null?calendar.getTime():defaultDate));
+            }
+        }, Calendar.getInstance().getTime());
+    }
+
+    public static void enableDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Date defaultDate, final Locale locale, @NonNull final FragmentManager fragmentManager, @NonNull final String tag){
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int inType = editText.getInputType(); // backup the input type
+                editText.setInputType(InputType.TYPE_NULL); // disable soft input
+                editText.onTouchEvent(event); // call native handler
+                editText.setInputType(inType); // restore input type
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    if(editText.hasFocus()){
+                        showCustomDatePicker(editText, dateFormat, defaultDate, locale, fragmentManager, tag);
+                    }
+                }
+                return true; // consume touch even
+            }
+        });
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    showCustomDatePicker(editText, dateFormat, defaultDate, locale, fragmentManager, tag);
+                }
+            }
+        });
+
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setFocusable(true);
+    }
+
+
+    public static void enablePopupMenu(@NonNull final EditText editText, final int menuResID){
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int inType = editText.getInputType(); // backup the input type
+                editText.setInputType(InputType.TYPE_NULL); // disable soft input
+                editText.onTouchEvent(event); // call native handler
+                editText.setInputType(inType); // restore input type
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    if(editText.hasFocus()){
+                        CommonUtils.showPopupMenu(editText.getContext(), menuResID, editText, null,
+                                new PopupMenu.OnMenuItemClickListener() {
+                                    @Override
+                                    public boolean onMenuItemClick(MenuItem item) {
+                                        editText.setText(item.getTitle());
+                                        return false;
+                                    }
+                                });
+                    }
+                }
+                return true; // consume touch even
+            }
+        });
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    CommonUtils.showPopupMenu(editText.getContext(), menuResID, editText, null,
+                            new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    editText.setText(item.getTitle());
+                                    return false;
+                                }
+                            });
+                }
+            }
+        });
+
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setFocusable(true);
     }
 
 }
