@@ -11,6 +11,7 @@ import android.app.Service;
 import android.app.TimePickerDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -2952,5 +2953,20 @@ public class CommonUtils {
 			rootView = LayoutInflater.from(getContext()).inflate(layoutResId, null);
 			dialog.setContentView(rootView);
 		}
+	}
+
+
+	public static void getUriOfResFile(Context context, String folder, String fileName){
+		Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
+				+ "://" + context.getPackageName() + "/" + folder + "/" + fileName);
+	}
+
+	public static void changeLocale(Context context, String lang) {
+		Locale locale = new Locale(lang);
+		Resources res = context.getResources();
+		DisplayMetrics dm = res.getDisplayMetrics();
+		Configuration conf = res.getConfiguration();
+		conf.locale = locale;
+		res.updateConfiguration(conf, dm);
 	}
 }
