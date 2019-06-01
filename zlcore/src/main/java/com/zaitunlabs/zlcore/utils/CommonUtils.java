@@ -18,6 +18,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -68,6 +70,7 @@ import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Display;
@@ -2968,5 +2971,48 @@ public class CommonUtils {
 		Configuration conf = res.getConfiguration();
 		conf.locale = locale;
 		res.updateConfiguration(conf, dm);
+	}
+
+
+	private static String getMetaDataString(Context context, String name) {
+		PackageManager pm = context.getPackageManager();
+		String value = null;
+
+		try {
+			ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+			value = ai.metaData.getString(name);
+		} catch (Exception e) {
+			Log.d(CommonUtils.class.getSimpleName(), "Couldn't find config value: " + name);
+		}
+
+		return value;
+	}
+
+	private static Integer getMetaDataInteger(Context context, String name) {
+		PackageManager pm = context.getPackageManager();
+		Integer value = null;
+
+		try {
+			ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+			value = ai.metaData.getInt(name);
+		} catch (Exception e) {
+				Log.d(CommonUtils.class.getSimpleName(), "Couldn't find config value: " + name);
+		}
+
+		return value;
+	}
+
+	public static boolean getMetaDataBoolean(Context context, String name) {
+		PackageManager pm = context.getPackageManager();
+		boolean value = false;
+
+		try {
+			ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+			value = ai.metaData.getBoolean(name);
+		} catch (Exception e) {
+			Log.d(CommonUtils.class.getSimpleName(), "Couldn't find config value: " + name);
+		}
+
+		return value;
 	}
 }
