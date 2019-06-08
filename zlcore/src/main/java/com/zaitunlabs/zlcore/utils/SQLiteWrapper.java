@@ -72,11 +72,13 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             stringBuilder.append(" ").append(table.getName()).append(" (");
             stringBuilder.append(ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT");
 
-
             List<Field> fieldList = table.getFieldList();
             for (Field field : fieldList){
                 stringBuilder.append(",");
                 stringBuilder.append(field.getName()).append(" ").append(field.getType());
+                if(field.getTrueType() == boolean.class){
+                    stringBuilder.append(" DEFAULT 0");
+                }
             }
 
             stringBuilder.append(")");
@@ -106,6 +108,35 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
+    private ContentValues getContentValues(List<Field> fieldList, List<Object> dataList){
+        ContentValues contentValues = new ContentValues();
+
+        for (int i = 0; i < fieldList.size(); i++) {
+            Field field = fieldList.get(i);
+            if(field.getType().equals(Field.TEXT)){
+                contentValues.put(field.getName(), (String) dataList.get(i));
+            } else if(field.getType().equals(Field.INTEGER)){
+                if(field.getTrueType() == int.class) {
+                    contentValues.put(field.getName(), (int) dataList.get(i));
+                } else if(field.getTrueType() == long.class){
+                    contentValues.put(field.getName(), (long) dataList.get(i));
+                } else if(field.getTrueType() == boolean.class){
+                    contentValues.put(field.getName(), (boolean) dataList.get(i));
+                }
+            } else if(field.getType().equals(Field.REAL)){
+                if(field.getTrueType() == float.class) {
+                    contentValues.put(field.getName(), (float) dataList.get(i));
+                } else if(field.getTrueType() == double.class){
+                    contentValues.put(field.getName(), (double) dataList.get(i));
+                }
+            } else if(field.getType().equals(Field.BLOB)){
+                //contentValues.put(field.getName(), (String) objectList.get(i));
+            }
+        }
+
+        return contentValues;
+    }
+
     //create or insert
     public boolean save(TableClass tableClass) {
         long id = -1;
@@ -117,31 +148,9 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             List<Object> dataList = new ArrayList<>();
             tableClass.getData(dataList);
 
-            ContentValues contentValues = new ContentValues();
-
             List<Field> fieldList = table.getFieldList();
 
-            for (int i = 0; i < fieldList.size(); i++) {
-                Field field = fieldList.get(i);
-                if(field.getType().equals(Field.TEXT)){
-                    contentValues.put(field.getName(), (String) dataList.get(i));
-                } else if(field.getType().equals(Field.INTEGER)){
-                    if(field.getTrueType().isInstance(int.class)) {
-                        contentValues.put(field.getName(), (int) dataList.get(i));
-                    } else if(field.getTrueType().isInstance(long.class)){
-                        contentValues.put(field.getName(), (long) dataList.get(i));
-                    }
-                } else if(field.getType().equals(Field.REAL)){
-                    if(field.getTrueType().isInstance(float.class)) {
-                        contentValues.put(field.getName(), (float) dataList.get(i));
-                    } else if(field.getTrueType().isInstance(double.class)){
-                        contentValues.put(field.getName(), (double) dataList.get(i));
-                    }
-                } else if(field.getType().equals(Field.BLOB)){
-                    //contentValues.put(field.getName(), (String) objectList.get(i));
-                }
-            }
-
+            ContentValues contentValues = getContentValues(fieldList, dataList);
 
             id = database.insert(tableClass.getTableName(), null, contentValues);
             close();
@@ -172,31 +181,9 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             List<Object>  dataList = new ArrayList<>();
             tableClass.getData(dataList);
 
-            ContentValues contentValues = new ContentValues();
-
             List<Field> fieldList = table.getFieldList();
 
-            for (int i = 0; i < fieldList.size(); i++) {
-                Field field = fieldList.get(i);
-                if(field.getType().equals(Field.TEXT)){
-                    contentValues.put(field.getName(), (String) dataList.get(i));
-                } else if(field.getType().equals(Field.INTEGER)){
-                    if(field.getTrueType().isInstance(int.class)) {
-                        contentValues.put(field.getName(), (int) dataList.get(i));
-                    } else if(field.getTrueType().isInstance(long.class)){
-                        contentValues.put(field.getName(), (long) dataList.get(i));
-                    }
-                } else if(field.getType().equals(Field.REAL)){
-                    if(field.getTrueType().isInstance(float.class)) {
-                        contentValues.put(field.getName(), (float) dataList.get(i));
-                    } else if(field.getTrueType().isInstance(double.class)){
-                        contentValues.put(field.getName(), (double) dataList.get(i));
-                    }
-                } else if(field.getType().equals(Field.BLOB)){
-                    //contentValues.put(field.getName(), (String) objectList.get(i));
-                }
-            }
-
+            ContentValues contentValues = getContentValues(fieldList, dataList);
 
             affectedRows = database.update(tableClass.getTableName(), contentValues, ID+"=?",
                     new String[]{Long.toString(tableClass.id)});
@@ -245,15 +232,17 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             if(field.getType().equals(Field.TEXT)){
                 dataList.add(cursor.getString(cursor.getColumnIndex(field.getName())));
             } else if(field.getType().equals(Field.INTEGER)){
-                if(field.getTrueType().isInstance(int.class)) {
+                if(field.getTrueType() == int.class) {
                     dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())));
-                } else if(field.getTrueType().isInstance(long.class)){
+                } else if(field.getTrueType() == long.class){
                     dataList.add(cursor.getLong(cursor.getColumnIndex(field.getName())));
+                } else if(field.getTrueType() == boolean.class){
+                    dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())) == 1);
                 }
             } else if(field.getType().equals(Field.REAL)){
-                if(field.getTrueType().isInstance(float.class)) {
+                if(field.getTrueType() == float.class) {
                     dataList.add(cursor.getFloat(cursor.getColumnIndex(field.getName())));
-                } else if(field.getTrueType().isInstance(double.class)){
+                } else if(field.getTrueType() == double.class){
                     dataList.add(cursor.getDouble(cursor.getColumnIndex(field.getName())));
                 }
             } else if(field.getType().equals(Field.BLOB)){
@@ -313,7 +302,9 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             close();
 
             return resultList;
-        }catch (Exception e){
+        } catch (SQLException e){
+            return null;
+        } catch (Exception e){
             return null;
         }
     }
@@ -373,6 +364,12 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             fieldList.add(field);
             return this;
         }
+
+        public Table addBooleanField(String name){
+            Field field = new Field(name, Field.INTEGER, boolean.class);
+            fieldList.add(field);
+            return this;
+        }
     }
 
 
@@ -421,7 +418,7 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
     public static class Builder {
         private Context context;
         private String databaseName;
-        private int version;
+        private int databaseVersion;
         private Map<String, Table> tableMap = new HashMap<>();
 
         public Builder setContext(Context context) {
@@ -434,13 +431,13 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             return this;
         }
 
-        public Builder setversion(int version) {
-            this.version = version;
+        public Builder setDatabaseVersion(int version) {
+            this.databaseVersion = version;
             return this;
         }
 
         public SQLiteWrapper create() {
-            return new SQLiteWrapper(context, databaseName, version, tableMap);
+            return new SQLiteWrapper(context, databaseName, databaseVersion, tableMap);
         }
     }
 
