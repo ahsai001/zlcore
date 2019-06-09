@@ -554,12 +554,18 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             return SQLiteWrapper.getInstance(context, getDatabaseName()).delete(this);
         }
 
-        public static TableClass findById(Context context, String databaseName, Class clazz, long id){
-            return SQLiteWrapper.getInstance(context, databaseName).findById(id, clazz.getSimpleName(), clazz);
+        public static TableClass findById(Context context, String databaseName, String tableName, Class clazz, long id){
+            if(TextUtils.isEmpty(tableName)){
+                tableName = clazz.getSimpleName();
+            }
+            return SQLiteWrapper.getInstance(context, databaseName).findById(id, tableName, clazz);
         }
 
-        public static List<? extends TableClass> findAll(Context context, String databaseName, Class clazz){
-            return SQLiteWrapper.getInstance(context, databaseName).findAll(clazz.getSimpleName(), clazz);
+        public static List<? extends TableClass> findAll(Context context, String databaseName, String tableName, Class clazz){
+            if(TextUtils.isEmpty(tableName)){
+                tableName = clazz.getSimpleName();
+            }
+            return SQLiteWrapper.getInstance(context, databaseName).findAll(tableName, clazz);
         }
     }
 
