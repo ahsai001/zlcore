@@ -45,5 +45,5 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.ahsai001:zlcore:1.2.35.58' //androidx version
+	        implementation 'com.github.ahsai001:zlcore:1.2.36.59' //androidx version
 	}
