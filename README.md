@@ -21,7 +21,8 @@ There are a lot of utility that you can use from this library :
 17. Date String Utility
 18. Show Dialog/SnackBar Utility
 19. Show Date/Time/Contact/File/Place Picker
-20. and many more in package folder 'com.zaitunlabs.zlcore.utils' especially 'CommonUtils' static class
+20. SQLiteWrapper
+21. and many more in package folder 'com.zaitunlabs.zlcore.utils' especially 'CommonUtils' static class
 
 
 
@@ -44,5 +45,5 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.ahsai001:zlcore:1.1.34.51' //androidx version
+	        implementation 'com.github.ahsai001:zlcore:1.2.35.58' //androidx version
 	}
