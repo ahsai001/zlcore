@@ -21,15 +21,15 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class SQLiteWrapper extends SQLiteOpenHelper {
+public final class SQLiteWrapper extends SQLiteOpenHelper {
     private static final String ID = "_id";
     private static final String TAG = SQLiteWrapper.class.getName();
     private static final String SQLW_FOLDER = "SQLW/";
     private Map<String, Table> tableMap;
     private Context context;
 
-    public static Map<String, Database> sqLiteDatabaseMap = new HashMap<>();
-    public static Map<String, SQLiteWrapper> sqLiteWrapperMap = new HashMap<>();
+    private static Map<String, Database> sqLiteDatabaseMap = new HashMap<>();
+    private static Map<String, SQLiteWrapper> sqLiteWrapperMap = new HashMap<>();
 
     public static void addDatabase(Database database){
         if(!sqLiteDatabaseMap.containsKey(database.getDatabaseName())) {
@@ -82,7 +82,7 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
         return this;
     }
 
-    public static SQLiteWrapper getInstance(Context context, String databaseName){
+    public static SQLiteWrapper get(Context context, String databaseName){
         if(sqLiteDatabaseMap.containsKey(databaseName)){
             return sqLiteDatabaseMap.get(databaseName).getSQLiteWrapper(context);
         }
@@ -258,7 +258,7 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
     //create or insert
-    public boolean save(TableClass tableClass) {
+    private boolean save(TableClass tableClass) {
         long id = -1;
         try {
             SQLiteDatabase database = getWritableDatabase();
@@ -291,7 +291,7 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     //update
-    public boolean update(TableClass tableClass) {
+    private boolean update(TableClass tableClass) {
         long affectedRows = -1;
         try {
             SQLiteDatabase database = getWritableDatabase();
@@ -320,7 +320,7 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     //delete
-    public boolean delete(TableClass tableClass) {
+    private boolean delete(TableClass tableClass) {
         if(tableClass.id > 0) {
             try {
                 SQLiteDatabase database = getWritableDatabase();
@@ -412,6 +412,118 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
 
             SQLiteDatabase database = getWritableDatabase();
             Cursor cursor = database.rawQuery("SELECT * FROM " + tableName, null);
+            cursor.moveToFirst();
+
+            List<TableClass> resultList = new ArrayList<>();
+
+            while (!cursor.isAfterLast()) {
+                List<Object> dataList = fetchRow(cursor, tableName);
+
+                TableClass tableClass = (TableClass) clazz.newInstance();
+                tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass.setData(dataList);
+
+                resultList.add(tableClass);
+
+                cursor.moveToNext();
+            }
+
+            cursor.close();
+            close();
+
+            return resultList;
+        } catch (SQLException e){
+            return null;
+        } catch (InstantiationException e){
+            return null;
+        } catch (IllegalAccessException e){
+            return null;
+        }
+    }
+
+    public List<? extends TableClass> findWithCriteria(String tableName, Class clazz, String whereClause, String[] whereClauseArgs) {
+        try {
+            if(TextUtils.isEmpty(tableName)){
+                tableName = clazz.getSimpleName();
+            }
+
+            SQLiteDatabase database = getWritableDatabase();
+            Cursor cursor = database.rawQuery("SELECT * FROM " + tableName + " WHERE "+whereClause, whereClauseArgs);
+            cursor.moveToFirst();
+
+            List<TableClass> resultList = new ArrayList<>();
+
+            while (!cursor.isAfterLast()) {
+                List<Object> dataList = fetchRow(cursor, tableName);
+
+                TableClass tableClass = (TableClass) clazz.newInstance();
+                tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass.setData(dataList);
+
+                resultList.add(tableClass);
+
+                cursor.moveToNext();
+            }
+
+            cursor.close();
+            close();
+
+            return resultList;
+        } catch (SQLException e){
+            return null;
+        } catch (InstantiationException e){
+            return null;
+        } catch (IllegalAccessException e){
+            return null;
+        }
+    }
+
+
+    public List<? extends TableClass> query(boolean distinct, String tableName, Class clazz, String[] columns,
+                                            String selection, String[] selectionArgs, String groupBy,
+                                            String having, String orderBy, String limit) {
+        try {
+            if(TextUtils.isEmpty(tableName)){
+                tableName = clazz.getSimpleName();
+            }
+
+            SQLiteDatabase database = getWritableDatabase();
+            Cursor cursor = database.query(distinct, tableName, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+            cursor.moveToFirst();
+
+            List<TableClass> resultList = new ArrayList<>();
+
+            while (!cursor.isAfterLast()) {
+                List<Object> dataList = fetchRow(cursor, tableName);
+
+                TableClass tableClass = (TableClass) clazz.newInstance();
+                tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass.setData(dataList);
+
+                resultList.add(tableClass);
+
+                cursor.moveToNext();
+            }
+
+            cursor.close();
+            close();
+
+            return resultList;
+        } catch (SQLException e){
+            return null;
+        } catch (InstantiationException e){
+            return null;
+        } catch (IllegalAccessException e){
+            return null;
+        }
+    }
+
+    public List<? extends TableClass> rawQuery(Class clazz, String sql, String[] sqlArgs) {
+        try {
+            String tableName = substringBetween(" from "," ", sql.replace("FROM","from")+" ");
+
+            SQLiteDatabase database = getWritableDatabase();
+            Cursor cursor = database.rawQuery(sql, sqlArgs);
             cursor.moveToFirst();
 
             List<TableClass> resultList = new ArrayList<>();
@@ -592,42 +704,69 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
         protected void getData(List<Object> dataList){}
 
         public boolean save(Context context, String databaseName){
-             return SQLiteWrapper.getInstance(context, databaseName).save(this);
+             return SQLiteWrapper.get(context, databaseName).save(this);
         }
 
         public boolean save(Context context){
-            return SQLiteWrapper.getInstance(context, getDatabaseName()).save(this);
+            return SQLiteWrapper.get(context, getDatabaseName()).save(this);
         }
 
         public boolean update(Context context, String databaseName){
-            return SQLiteWrapper.getInstance(context, databaseName).update(this);
+            return SQLiteWrapper.get(context, databaseName).update(this);
         }
 
         public boolean update(Context context){
-            return SQLiteWrapper.getInstance(context, getDatabaseName()).update(this);
+            return SQLiteWrapper.get(context, getDatabaseName()).update(this);
         }
 
         public boolean delete(Context context, String databaseName){
-            return SQLiteWrapper.getInstance(context, databaseName).delete(this);
+            return SQLiteWrapper.get(context, databaseName).delete(this);
         }
 
         public boolean delete(Context context){
-            return SQLiteWrapper.getInstance(context, getDatabaseName()).delete(this);
+            return SQLiteWrapper.get(context, getDatabaseName()).delete(this);
         }
 
         public static TableClass findById(Context context, String databaseName, String tableName, Class clazz, long id){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            return SQLiteWrapper.getInstance(context, databaseName).findById(id, tableName, clazz);
+            return SQLiteWrapper.get(context, databaseName).findById(id, tableName, clazz);
         }
 
         public static List<? extends TableClass> findAll(Context context, String databaseName, String tableName, Class clazz){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            return SQLiteWrapper.getInstance(context, databaseName).findAll(tableName, clazz);
+            return SQLiteWrapper.get(context, databaseName).findAll(tableName, clazz);
         }
+
+        public static List<? extends TableClass> findWithCriteria(Context context, String databaseName, String tableName,
+                                                                  Class clazz, String whereClause, String[] whereClauseArgs){
+            if(TextUtils.isEmpty(tableName)){
+                tableName = clazz.getSimpleName();
+            }
+            return SQLiteWrapper.get(context, databaseName).findWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
+        }
+
+        public static List<? extends TableClass> query(Context context, String databaseName, boolean distinct, String tableName,
+                                                       Class clazz,
+                                                       String[] columns,
+                                                       String selection, String[] selectionArgs, String groupBy,
+                                                       String having, String orderBy, String limit){
+            if(TextUtils.isEmpty(tableName)){
+                tableName = clazz.getSimpleName();
+            }
+            return SQLiteWrapper.get(context, databaseName).query(distinct, tableName, clazz, columns,
+                    selection, selectionArgs, groupBy, having, orderBy, limit);
+        }
+
+        public static List<? extends TableClass> rawQuery(Context context, String databaseName,
+                                                       Class clazz, String sql, String[] sqlArgs){
+            return SQLiteWrapper.get(context, databaseName).rawQuery(clazz, sql, sqlArgs);
+        }
+
+
     }
 
 
@@ -694,20 +833,26 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
 
                 if (line.endsWith(";")) {
                     String singleScript = statement.toString();
-                    String tableName = substringBetween("CREATE TABLE","(", singleScript);
+
+                    singleScript = singleScript
+                            .replace("CREATE TABLE", "create table")
+                            .replace("PRIMARY KEY", "primary key")
+                            .replace("DEFAULT", "default");
+
+                    String tableName = substringBetween("create table","(", singleScript);
                     String fieldsString = substringBetween("(", ")", singleScript);
                     String[] fieldArray = fieldsString.split(",");
 
                     Table table = new Table(tableName);
 
                     for (String fieldString : fieldArray){
-                        if(fieldString.contains("PRIMARY KEY"))continue;
+                        if(fieldString.contains("primary key"))continue;
 
                         String[] fieldParts = fieldString.split(" ");
 
                         switch (fieldParts[1]) {
                             case Field.INTEGER:
-                                if(fieldString.contains("DEFAULT 1") || fieldString.contains("DEFAULT 0")){
+                                if(fieldString.contains("default 1") || fieldString.contains("default 0")){
                                     //case boolean
                                     table.addBooleanField(fieldParts[0]);
                                 } else {
@@ -750,9 +895,9 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
 
     private static String substringBetween(String start, String end, String input) {
         int startIndex = input.indexOf(start);
-        int endIndex = input.lastIndexOf(end);
+        int endIndex = input.indexOf(end, startIndex + start.length());
         if(startIndex == -1 || endIndex == -1) return input;
-        else return input.substring(startIndex + start.length(), endIndex + end.length()).trim();
+        else return input.substring(startIndex + start.length(), endIndex).trim();
     }
 
 
