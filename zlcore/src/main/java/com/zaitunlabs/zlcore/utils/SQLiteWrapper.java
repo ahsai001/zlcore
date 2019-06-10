@@ -96,8 +96,8 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
     private void deInit(){
     }
 
-    private SQLiteWrapper(Context context, String databaseName, int version, Map<String, Table> tableMap){
-        super(context, databaseName, null, version);
+    private SQLiteWrapper(Context context, String databaseName, int databaseVersion, Map<String, Table> tableMap){
+        super(context, databaseName, null, databaseVersion);
         this.context = context;
         this.tableMap = tableMap;
     }
@@ -108,7 +108,7 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             return;
         }
 
-        List<String> createTableList = new ArrayList<>();
+        List<String> createTableScriptList = new ArrayList<>();
         Set<String> keySet = tableMap.keySet();
         for (String key : keySet) {
             Table table = tableMap.get(key);
@@ -129,13 +129,13 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
 
             stringBuilder.append(")");
 
-            createTableList.add(stringBuilder.toString());
+            createTableScriptList.add(stringBuilder.toString());
         }
 
         db.beginTransaction();
         try{
-            for (String createTable : createTableList){
-                db.execSQL(createTable);
+            for (String createTableScript : createTableScriptList){
+                db.execSQL(createTableScript);
             }
             db.setTransactionSuccessful();
         } finally {
@@ -146,16 +146,77 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
+            List<String> upgradeScriptList = new ArrayList<>();
             for (int i = oldVersion; i < newVersion; ++i) {
-                String migrationFileName = String.format("%d-%d.sql", i, (i + 1));
+                if(migrationPlan != null){
+                    List<MigrationStep> migrationStepList = migrationPlan.getUpgradePlan(i,(i+1));
+                    if(migrationStepList != null && migrationStepList.size() > 0){
+                        for (MigrationStep migrationStep : migrationStepList){
+                            upgradeScriptList.add(migrationStep.getSQLScript());
+                        }
+                        continue;
+                    }
+                }
+
+                String migrationFileName = String.format("%d-%d-%s.sql", i, (i + 1), getDatabaseName());
                 Log.d(TAG, "Looking for migration file: " + migrationFileName);
-                readAndExecuteSQLScript(db, context, migrationFileName);
+                List<String> resultList = readAndGetSQLScript(db, context, migrationFileName);
+                upgradeScriptList.addAll(resultList);
+
             }
+
+            db.beginTransaction();
+            try{
+                for (String upgradeScript : upgradeScriptList){
+                    db.execSQL(upgradeScript);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+
         } catch (Exception exception) {
             Log.e(TAG, "Exception running upgrade script:", exception);
         }
     }
 
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        try {
+            List<String> downgradeScriptList = new ArrayList<>();
+            for (int i = oldVersion; i > newVersion; --i) {
+                if(migrationPlan != null){
+                    List<MigrationStep> migrationStepList = migrationPlan.getDowngradePlan(i,(i-1));
+                    if(migrationStepList != null && migrationStepList.size() > 0){
+                        for (MigrationStep migrationStep : migrationStepList){
+                            downgradeScriptList.add(migrationStep.getSQLScript());
+                        }
+                        continue;
+                    }
+                }
+
+                String migrationFileName = String.format("%d-%d-%s.sql", i, (i - 1), getDatabaseName());
+                Log.d(TAG, "Looking for migration file: " + migrationFileName);
+                List<String> resultList = readAndGetSQLScript(db, context, migrationFileName);
+                downgradeScriptList.addAll(resultList);
+
+            }
+
+            db.beginTransaction();
+            try{
+                for (String downgradeScript : downgradeScriptList){
+                    db.execSQL(downgradeScript);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+
+        } catch (Exception exception) {
+            Log.e(TAG, "Exception running downgrade script:", exception);
+        }
+    }
 
     private void release(){
         tableMap = null;
@@ -202,6 +263,8 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
         try {
             SQLiteDatabase database = getWritableDatabase();
 
+            int version = database.getVersion();
+
             Table table = tableMap.get(tableClass.getTableName());
 
             List<Object> dataList = new ArrayList<>();
@@ -218,8 +281,6 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
                 return false;
             }
         } catch (SQLException e){
-            return false;
-        } catch (Exception e){
             return false;
         }
 
@@ -253,8 +314,6 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             }
         } catch (SQLException e){
             return false;
-        } catch (Exception e){
-            return false;
         }
         return true;
     }
@@ -272,8 +331,6 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
                     return false;
                 }
             } catch (SQLException e){
-                return false;
-            } catch (Exception e){
                 return false;
             }
 
@@ -340,7 +397,9 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             return tableClass;
         } catch (SQLException e){
             return null;
-        } catch (Exception e){
+        } catch (InstantiationException e){
+            return null;
+        } catch (IllegalAccessException e){
             return null;
         }
     }
@@ -375,7 +434,9 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             return resultList;
         } catch (SQLException e){
             return null;
-        } catch (Exception e){
+        } catch (InstantiationException e){
+            return null;
+        } catch (IllegalAccessException e){
             return null;
         }
     }
@@ -492,7 +553,7 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
 
 
 
-    public static class Builder {
+    private static class Builder {
         private Context context;
         private String databaseName;
         private int databaseVersion;
@@ -569,6 +630,42 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
+
+
+    public void setMigrationPlan(MigrationPlan migrationPlan){
+        this.migrationPlan = migrationPlan;
+    }
+    private MigrationPlan migrationPlan;
+
+    public interface MigrationStep {
+        String getSQLScript();
+    }
+
+    public static class RenameTableMigrationStep implements MigrationStep{
+        private String oldTableName;
+        private String newTableName;
+
+        public RenameTableMigrationStep(String oldTableName, String newTableName){
+            this.oldTableName = oldTableName;
+            this.newTableName = newTableName;
+        }
+
+        public RenameTableMigrationStep(Class oldTableClass, Class newTableClass){
+            this.oldTableName = oldTableClass.getSimpleName();
+            this.newTableName = newTableClass.getSimpleName();
+        }
+
+        @Override
+        public String getSQLScript() {
+            return String.format("ALTER TABLE %s RENAME TO %s", oldTableName, newTableName);
+        }
+    }
+
+
+    public interface MigrationPlan {
+        List<MigrationStep> getUpgradePlan(int oldVersion, int newVersion);
+        List<MigrationStep> getDowngradePlan(int oldVersion, int newVersion);
+    }
 
 
 
@@ -659,11 +756,13 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
-    private void readAndExecuteSQLScript(SQLiteDatabase db, Context context, String fileName) {
+    private List<String> readAndGetSQLScript(SQLiteDatabase db, Context context, String fileName) {
         if (TextUtils.isEmpty(fileName)) {
             Log.d(TAG, "Upgrade SQL script file name is empty");
-            return;
+            return null;
         }
+
+        List<String> scriptList = new ArrayList<>();
 
         Log.d(TAG, "Upgrade Script found. Executing...");
         AssetManager assetManager = context.getAssets();
@@ -673,7 +772,13 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             InputStream is = assetManager.open(SQLW_FOLDER+fileName);
             InputStreamReader isr = new InputStreamReader(is);
             reader = new BufferedReader(isr);
-            executeSQLScript(db, reader);
+
+            List<String> resultList = getSQLScript(reader);
+
+            if(resultList != null && resultList.size() > 0) {
+                scriptList.addAll(resultList);
+            }
+
         } catch (IOException e) {
             Log.e(TAG, "Upgrade IOException:", e);
         } finally {
@@ -686,6 +791,25 @@ public class SQLiteWrapper extends SQLiteOpenHelper {
             }
         }
 
+        return scriptList;
+    }
+
+    private List<String> getSQLScript(BufferedReader reader) throws IOException {
+        String line;
+        StringBuilder statement = new StringBuilder();
+
+        List<String> scriptList = new ArrayList<>();
+
+        while ((line = reader.readLine()) != null) {
+            statement.append(line);
+            statement.append(" ");
+            if (line.endsWith(";")) {
+                scriptList.add(statement.toString());
+                statement = new StringBuilder();
+            }
+        }
+
+        return scriptList;
     }
 
     private void executeSQLScript(SQLiteDatabase db, BufferedReader reader) throws IOException {
