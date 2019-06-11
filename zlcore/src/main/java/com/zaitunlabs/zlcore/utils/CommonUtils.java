@@ -11,6 +11,7 @@ import android.app.Service;
 import android.app.TimePickerDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -113,10 +115,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -2958,6 +2962,14 @@ public class CommonUtils {
 		}
 	}
 
+	public static String getIndonesianPriceString(int priceNumber){
+		Locale localeID = getIndonesianLocale();
+		NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+		String formatedPrice = formatRupiah.format((double)priceNumber);
+		String symbol = Currency.getInstance(localeID).getSymbol(localeID);
+		return formatedPrice.replace(symbol,symbol+" ")+",-";
+	}
+
 
 	public static void getUriOfResFile(Context context, String folder, String fileName){
 		Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
@@ -3019,8 +3031,35 @@ public class CommonUtils {
 
 	public static String substringBetween(String start, String end, String input) {
 		int startIndex = input.indexOf(start);
-		int endIndex = input.lastIndexOf(end);
+		int endIndex = input.indexOf(end, startIndex + start.length());
 		if(startIndex == -1 || endIndex == -1) return input;
-		else return input.substring(startIndex + start.length(), endIndex + end.length()).trim();
+		else return input.substring(startIndex + start.length(), endIndex).trim();
+	}
+
+
+	public static void runAutoStartupPage(Context context) {
+
+		try {
+			Intent intent = new Intent();
+			String manufacturer = android.os.Build.MANUFACTURER;
+			if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+				intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+			} else if ("oppo".equalsIgnoreCase(manufacturer)) {
+				intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+			} else if ("vivo".equalsIgnoreCase(manufacturer)) {
+				intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+			} else if ("Letv".equalsIgnoreCase(manufacturer)) {
+				intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+			} else if ("Honor".equalsIgnoreCase(manufacturer)) {
+				intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+			}
+
+			List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+			if  (list.size() > 0) {
+				context.startActivity(intent);
+			}
+		} catch (Exception e) {
+			Log.e("exc" , String.valueOf(e));
+		}
 	}
 }
