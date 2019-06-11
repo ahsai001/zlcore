@@ -9,8 +9,11 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
 
      dangerous permission
+     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     -->
+
+
 
     <supports-screens
         android:anyDensity="true"

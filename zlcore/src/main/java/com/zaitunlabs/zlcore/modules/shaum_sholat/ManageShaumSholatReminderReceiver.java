@@ -16,8 +16,12 @@ import androidx.core.app.JobIntentService;
 public class ManageShaumSholatReminderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction() != null && (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED) ||
-                intent.getAction().startsWith(ZLCoreConstanta.ACTION_MANAGE_SHAUM_SHOLAT_REMINDER))) {
+        if(intent.getAction() != null && (
+                intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED) ||
+                intent.getAction().equals(Intent.ACTION_LOCKED_BOOT_COMPLETED) ||
+                intent.getAction().equals(Intent.ACTION_REBOOT) ||
+                intent.getAction().equals("android.intent.action.QUICKBOOT_POWERON") ||
+                intent.getAction().startsWith(ZLCoreConstanta.ACTION_MANAGE_SHAUM_SHOLAT_REMINDER) )) {
             JobIntentService.enqueueWork(context, ShaumSholatReminderService.class, ShaumSholatReminderService.JOB_ID, new Intent());
         }
     }
