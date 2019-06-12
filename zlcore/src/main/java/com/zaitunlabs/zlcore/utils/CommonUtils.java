@@ -125,6 +125,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 public class CommonUtils {
@@ -2498,13 +2499,30 @@ public class CommonUtils {
 	}
 
 	public static void showNotification(Context context, String title, String content, Class nextActivity,
-										HashMap<String, String> data, int appNameResId, int iconResId, boolean autocancel, boolean isHeadsUp){
+										HashMap<String, Object> data, int appNameResId, int iconResId, boolean autocancel, boolean isHeadsUp){
 		NotificationUtils.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId, autocancel, isHeadsUp);
 	}
 
 	public static void showNotification(Context context, String title, String content, Class nextActivity,
-										HashMap<String, String> data, int appNameResId, int iconResId,int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
+										HashMap<String, Object> data, int appNameResId, int iconResId,int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
 		NotificationUtils.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId,notifID,pendingIntentAction, autocancel, isHeadsUp);
+	}
+
+	public static void showNotification(Context context, String title, String content, String imageUrl,
+										int nextIntentType, Intent nextIntent,
+										int deleteIntentType, Intent deleteIntent,
+										Map<String, Object> data, int appNameResId, int iconResId, int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
+		NotificationUtils.showNotification(context, title, content, imageUrl, nextIntentType, nextIntent, deleteIntentType, deleteIntent, data, appNameResId, iconResId, notifID, pendingIntentAction, autocancel, isHeadsUp);
+	}
+
+	public static void showNotification(Context context, String title, String content, String imageUrl,
+										PendingIntent nextPendingIntent,
+										PendingIntent deletePendingIntent,
+										PendingIntent fullScreenPendingIntent,
+										Uri soundUri,
+										int appNameResId, int iconResId, int notifID,
+										boolean autocancel, boolean isHeadsUp){
+		NotificationUtils.showNotification(context, title, content, imageUrl, nextPendingIntent, deletePendingIntent, fullScreenPendingIntent, soundUri, appNameResId, iconResId, notifID, autocancel, isHeadsUp);
 	}
 
 

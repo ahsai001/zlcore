@@ -21,14 +21,20 @@ public class IntegerIDUtils {
 
             int nextValue = atomicInteger.incrementAndGet();
 
-            /* //use limit value
+            //use limit value
             if(nextValue > max_value){
                 nextValue = init_value+1;
                 atomicInteger.set(nextValue);
-            }*/
+            }
 
             Prefs.with(context).save(ATOMIC_INIT_VALUE_FOR_NOTIF,nextValue);
             return nextValue;
+        }
+    }
+
+    public static int getID() {
+        synchronized (IntegerIDUtils.class){
+            return (int) (System.currentTimeMillis()/1000);
         }
     }
 }
