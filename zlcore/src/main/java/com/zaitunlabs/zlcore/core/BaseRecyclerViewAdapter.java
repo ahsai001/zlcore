@@ -181,8 +181,8 @@ implements SwipeDragCallback.SwipeDragInterface {
         return ItemTouchHelper.LEFT | ItemTouchHelper.START | ItemTouchHelper.RIGHT | ItemTouchHelper.END;
     }
 
-    private OnChildViewClickListener onChildViewClickListener;
-    public void setOnChildViewClickListener(OnChildViewClickListener onChildViewClickListener){
+    private OnChildViewClickListener<DM> onChildViewClickListener;
+    public void setOnChildViewClickListener(OnChildViewClickListener<DM> onChildViewClickListener){
         this.onChildViewClickListener = onChildViewClickListener;
     }
 
