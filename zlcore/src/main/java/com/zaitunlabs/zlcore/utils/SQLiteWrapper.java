@@ -43,11 +43,17 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
     public static abstract class Database {
+        private Context context;
+
+        public Database(Context context){
+            this.context = context.getApplicationContext();
+        }
+
         public abstract String getDatabaseName();
         public abstract int getDatabaseVersion();
         public abstract boolean isWrapperCached();
         public abstract void configure(SQLiteWrapper sqLiteWrapper);
-        private SQLiteWrapper getSQLiteWrapper(Context context){
+        private SQLiteWrapper getSQLiteWrapper(){
             if(sqLiteWrapperMap.containsKey(getDatabaseName())){
                 return sqLiteWrapperMap.get(getDatabaseName());
             } else {
@@ -82,9 +88,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         return this;
     }
 
-    public static SQLiteWrapper get(Context context, String databaseName){
+    public static SQLiteWrapper of(String databaseName){
         if(sqLiteDatabaseMap.containsKey(databaseName)){
-            return sqLiteDatabaseMap.get(databaseName).getSQLiteWrapper(context);
+            return sqLiteDatabaseMap.get(databaseName).getSQLiteWrapper();
         }
         return null;
     }
@@ -249,7 +255,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     }
                     break;
                 case Field.BLOB:
-                    //contentValues.put(field.getName(), (String) objectList.get(i));
+                    //contentValues.put(field.getName(), (String) objectList.of(i));
                     break;
             }
         }
@@ -374,6 +380,13 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         return dataList;
     }
 
+    private static final String MUST_HAS_CONSTRUCTOR_WITH_NO_ARGUMENT =
+            "";
+
+    private RuntimeException getWarningWhenNoConstructorWithNoArgument(String className){
+        return new RuntimeException(String.format(
+                "Class %s must has constructor with no argument",className));
+    }
 
     public TableClass findById(long id, String tableName, Class clazz){
         try {
@@ -398,7 +411,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         } catch (SQLException e){
             return null;
         } catch (InstantiationException e){
-            return null;
+            throw getWarningWhenNoConstructorWithNoArgument(clazz.getSimpleName());
         } catch (IllegalAccessException e){
             return null;
         }
@@ -435,7 +448,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         } catch (SQLException e){
             return null;
         } catch (InstantiationException e){
-            return null;
+            throw getWarningWhenNoConstructorWithNoArgument(clazz.getSimpleName());
         } catch (IllegalAccessException e){
             return null;
         }
@@ -472,7 +485,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         } catch (SQLException e){
             return null;
         } catch (InstantiationException e){
-            return null;
+            throw getWarningWhenNoConstructorWithNoArgument(clazz.getSimpleName());
         } catch (IllegalAccessException e){
             return null;
         }
@@ -512,7 +525,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         } catch (SQLException e){
             return null;
         } catch (InstantiationException e){
-            return null;
+            throw getWarningWhenNoConstructorWithNoArgument(clazz.getSimpleName());
         } catch (IllegalAccessException e){
             return null;
         }
@@ -547,7 +560,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         } catch (SQLException e){
             return null;
         } catch (InstantiationException e){
-            return null;
+            throw getWarningWhenNoConstructorWithNoArgument(clazz.getSimpleName());
         } catch (IllegalAccessException e){
             return null;
         }
@@ -694,62 +707,79 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
     public static class TableClass {
         public long id;
+
         protected String getTableName(){
             return this.getClass().getSimpleName();
         }
+
         protected String getDatabaseName(){
             return null;
         }
+
         protected void setData(List<Object> dataList){}
         protected void getData(List<Object> dataList){}
 
-        public boolean save(Context context, String databaseName){
-             return SQLiteWrapper.get(context, databaseName).save(this);
+        public boolean saveIn(String databaseName){
+             return SQLiteWrapper.of(databaseName).save(this);
         }
 
-        public boolean save(Context context){
-            return SQLiteWrapper.get(context, getDatabaseName()).save(this);
+        private void checkCondition(){
+            if(TextUtils.isEmpty(getDatabaseName())) {
+                throw new RuntimeException(String.format(
+                        "Class %s must define database name in method getDatabaseName() or use method saveIn() instead of save()",
+                        getClass().getSimpleName()));
+            }
         }
 
-        public boolean update(Context context, String databaseName){
-            return SQLiteWrapper.get(context, databaseName).update(this);
+        public boolean save(){
+            checkCondition();
+
+            return SQLiteWrapper.of(getDatabaseName()).save(this);
         }
 
-        public boolean update(Context context){
-            return SQLiteWrapper.get(context, getDatabaseName()).update(this);
+        public boolean updateIn(String databaseName){
+            return SQLiteWrapper.of(databaseName).update(this);
         }
 
-        public boolean delete(Context context, String databaseName){
-            return SQLiteWrapper.get(context, databaseName).delete(this);
+        public boolean update(){
+            checkCondition();
+
+            return SQLiteWrapper.of(getDatabaseName()).update(this);
         }
 
-        public boolean delete(Context context){
-            return SQLiteWrapper.get(context, getDatabaseName()).delete(this);
+        public boolean deleteIn(String databaseName){
+            return SQLiteWrapper.of(databaseName).delete(this);
         }
 
-        public static TableClass findById(Context context, String databaseName, String tableName, Class clazz, long id){
+        public boolean delete(){
+            checkCondition();
+
+            return SQLiteWrapper.of(getDatabaseName()).delete(this);
+        }
+
+        public static TableClass findById(String databaseName, String tableName, Class clazz, long id){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            return SQLiteWrapper.get(context, databaseName).findById(id, tableName, clazz);
+            return SQLiteWrapper.of(databaseName).findById(id, tableName, clazz);
         }
 
-        public static List<? extends TableClass> findAll(Context context, String databaseName, String tableName, Class clazz){
+        public static List<? extends TableClass> findAll(String databaseName, String tableName, Class clazz){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            return SQLiteWrapper.get(context, databaseName).findAll(tableName, clazz);
+            return SQLiteWrapper.of(databaseName).findAll(tableName, clazz);
         }
 
-        public static List<? extends TableClass> findWithCriteria(Context context, String databaseName, String tableName,
+        public static List<? extends TableClass> findWithCriteria(String databaseName, String tableName,
                                                                   Class clazz, String whereClause, String[] whereClauseArgs){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            return SQLiteWrapper.get(context, databaseName).findWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
+            return SQLiteWrapper.of(databaseName).findWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
         }
 
-        public static List<? extends TableClass> query(Context context, String databaseName, boolean distinct, String tableName,
+        public static List<? extends TableClass> query(String databaseName, boolean distinct, String tableName,
                                                        Class clazz,
                                                        String[] columns,
                                                        String selection, String[] selectionArgs, String groupBy,
@@ -757,13 +787,13 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            return SQLiteWrapper.get(context, databaseName).query(distinct, tableName, clazz, columns,
+            return SQLiteWrapper.of(databaseName).query(distinct, tableName, clazz, columns,
                     selection, selectionArgs, groupBy, having, orderBy, limit);
         }
 
         public static List<? extends TableClass> rawQuery(Context context, String databaseName,
                                                        Class clazz, String sql, String[] sqlArgs){
-            return SQLiteWrapper.get(context, databaseName).rawQuery(clazz, sql, sqlArgs);
+            return SQLiteWrapper.of(databaseName).rawQuery(clazz, sql, sqlArgs);
         }
 
 
