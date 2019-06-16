@@ -6,7 +6,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 33
-        versionName "1.2.39.64"
+        versionName "1.2.40.68"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
