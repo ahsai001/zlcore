@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">ZL Core</string>
-
     <string name="zlcore_notification_error_ssl_date_invalid">Tanggal sertifikat tidak valid</string>
     <string name="zlcore_notification_error_ssl_expired">Sertifikat sudah kadaluarsa</string>
     <string name="zlcore_notification_error_ssl_idmismatch">Nama host tidak cocok</string>
