@@ -6,7 +6,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 34
-        versionName "1.2.41.69"
+        versionName "1.2.42.70"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -72,11 +72,11 @@ dependencies {
     //play service
 
 
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha04'
-    implementation 'com.google.android.material:material:1.1.0-alpha05'
+    implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
+    implementation 'com.google.android.material:material:1.1.0-alpha07'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha4'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha04'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
 
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
@@ -93,7 +93,7 @@ dependencies {
     implementation 'id.web.michsan.praytimes:praytimes:2.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-places:16.0.0'
+    implementation 'com.google.android.gms:play-services-places:16.1.0'
     testImplementation 'junit:junit:4.12'
 }
 

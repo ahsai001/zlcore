@@ -388,7 +388,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 "Class %s must has constructor with no argument",className));
     }
 
-    public TableClass findById(long id, String tableName, Class clazz){
+    public <T extends TableClass> T findById(long id, String tableName, Class<T> clazz){
         try {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
@@ -400,7 +400,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
             List<Object> dataList = fetchRow(cursor, tableName);
 
-            TableClass tableClass = (TableClass) clazz.newInstance();
+            T tableClass = clazz.newInstance();
             tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
             tableClass.setData(dataList);
 
@@ -417,7 +417,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-    public List<? extends TableClass> findAll(String tableName, Class clazz) {
+    public <T extends TableClass> List<T> findAll(String tableName, Class<T> clazz) {
         try {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
@@ -427,12 +427,12 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery("SELECT * FROM " + tableName, null);
             cursor.moveToFirst();
 
-            List<TableClass> resultList = new ArrayList<>();
+            List<T> resultList = new ArrayList<>();
 
             while (!cursor.isAfterLast()) {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
-                TableClass tableClass = (TableClass) clazz.newInstance();
+                T tableClass = clazz.newInstance();
                 tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
 
@@ -454,7 +454,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-    public List<? extends TableClass> findWithCriteria(String tableName, Class clazz, String whereClause, String[] whereClauseArgs) {
+    public <T extends TableClass> List<T> findWithCriteria(String tableName, Class<T> clazz, String whereClause, String[] whereClauseArgs) {
         try {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
@@ -464,12 +464,12 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery("SELECT * FROM " + tableName + " WHERE "+whereClause, whereClauseArgs);
             cursor.moveToFirst();
 
-            List<TableClass> resultList = new ArrayList<>();
+            List<T> resultList = new ArrayList<>();
 
             while (!cursor.isAfterLast()) {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
-                TableClass tableClass = (TableClass) clazz.newInstance();
+                T tableClass = clazz.newInstance();
                 tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
 
@@ -492,7 +492,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
-    public List<? extends TableClass> query(boolean distinct, String tableName, Class clazz, String[] columns,
+    public <T extends TableClass> List<T> query(boolean distinct, String tableName, Class<T> clazz, String[] columns,
                                             String selection, String[] selectionArgs, String groupBy,
                                             String having, String orderBy, String limit) {
         try {
@@ -504,12 +504,12 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             Cursor cursor = database.query(distinct, tableName, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
             cursor.moveToFirst();
 
-            List<TableClass> resultList = new ArrayList<>();
+            List<T> resultList = new ArrayList<>();
 
             while (!cursor.isAfterLast()) {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
-                TableClass tableClass = (TableClass) clazz.newInstance();
+                T tableClass = clazz.newInstance();
                 tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
 
@@ -531,7 +531,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-    public List<? extends TableClass> rawQuery(Class clazz, String sql, String[] sqlArgs) {
+    public <T extends TableClass> List<T> rawQuery(Class<T> clazz, String sql, String[] sqlArgs) {
         try {
             String tableName = substringBetween(" from "," ", sql.replace("FROM","from")+" ");
 
@@ -539,12 +539,12 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery(sql, sqlArgs);
             cursor.moveToFirst();
 
-            List<TableClass> resultList = new ArrayList<>();
+            List<T> resultList = new ArrayList<>();
 
             while (!cursor.isAfterLast()) {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
-                TableClass tableClass = (TableClass) clazz.newInstance();
+                T tableClass = clazz.newInstance();
                 tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
 
