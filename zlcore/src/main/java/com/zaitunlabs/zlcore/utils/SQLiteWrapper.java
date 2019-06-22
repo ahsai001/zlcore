@@ -764,23 +764,23 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             return SQLiteWrapper.of(databaseName).findById(id, tableName, clazz);
         }
 
-        public static List<? extends TableClass> findAll(String databaseName, String tableName, Class clazz){
+        public static <T extends TableClass> List<T> findAll(String databaseName, String tableName, Class<T> clazz){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
             return SQLiteWrapper.of(databaseName).findAll(tableName, clazz);
         }
 
-        public static List<? extends TableClass> findWithCriteria(String databaseName, String tableName,
-                                                                  Class clazz, String whereClause, String[] whereClauseArgs){
+        public static <T extends TableClass> List<T> findWithCriteria(String databaseName, String tableName,
+                                                                  Class<T> clazz, String whereClause, String[] whereClauseArgs){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
             return SQLiteWrapper.of(databaseName).findWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
         }
 
-        public static List<? extends TableClass> query(String databaseName, boolean distinct, String tableName,
-                                                       Class clazz,
+        public static <T extends TableClass> List<T> query(String databaseName, boolean distinct, String tableName,
+                                                       Class<T> clazz,
                                                        String[] columns,
                                                        String selection, String[] selectionArgs, String groupBy,
                                                        String having, String orderBy, String limit){
@@ -791,8 +791,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     selection, selectionArgs, groupBy, having, orderBy, limit);
         }
 
-        public static List<? extends TableClass> rawQuery(Context context, String databaseName,
-                                                       Class clazz, String sql, String[] sqlArgs){
+        public static <T extends TableClass> List<T> rawQuery(Context context, String databaseName,
+                                                       Class<T> clazz, String sql, String[] sqlArgs){
             return SQLiteWrapper.of(databaseName).rawQuery(clazz, sql, sqlArgs);
         }
 
