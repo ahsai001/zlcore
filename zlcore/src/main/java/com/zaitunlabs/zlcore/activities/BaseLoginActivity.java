@@ -290,133 +290,141 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
 
 
     public void attemptLogin() {
-        permissionUtils = PermissionUtils.checkPermissionAndGo(this, 1053, new Runnable() {
-            @Override
-            public void run() {
-                CommonUtils.hideKeyboard(BaseLoginActivity.this, mLoginFormView);
-
-                // Reset errors.
-                mUserIDView.setError(null);
-                mPasswordView.setError(null);
-
-                // Store values at the time of the login attempt.
-                String userId = mUserIDView.getText().toString();
-                String password = mPasswordView.getText().toString();
-
-                boolean cancel = false;
-                View focusView = null;
-
-                // Check for a valid password, if the user entered one.
-                if (TextUtils.isEmpty(password)) {
-                    mPasswordView.setError(getString(R.string.zlcore_error_field_required));
-                    focusView = mPasswordView;
-                    cancel = true;
+        if(isMeidIncluded()) {
+            permissionUtils = PermissionUtils.checkPermissionAndGo(this, 1053, new Runnable() {
+                @Override
+                public void run() {
+                    loginProcess();
                 }
-
-                if (!isPasswordValid(password)) {
-                    mPasswordView.setError(TextUtils.isEmpty(getPasswordInvalidMessage())?
-                            getString(R.string.zlcore_error_invalid_password):getPasswordInvalidMessage());
-                    focusView = mPasswordView;
-                    cancel = true;
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    CommonUtils.showToast(BaseLoginActivity.this, getString(R.string.zlcore_warning_please_give_permission));
+                    finish();
                 }
+            }, Manifest.permission.READ_PHONE_STATE);
+        } else {
+            loginProcess();
+        }
 
-                if (TextUtils.isEmpty(userId)) {
-                    mUserIDView.setError(getString(R.string.zlcore_error_field_required));
-                    focusView = mUserIDView;
-                    cancel = true;
-                }
+    }
 
-                if (!isUserIDValid(userId)) {
-                    mUserIDView.setError(TextUtils.isEmpty(getUserIdInvalidMessage())?
-                            getString(R.string.zlcore_error_invalid_userid):getUserIdInvalidMessage());
-                    focusView = mUserIDView;
-                    cancel = true;
-                }
+    private void loginProcess(){
+        CommonUtils.hideKeyboard(BaseLoginActivity.this, mLoginFormView);
 
-                if (cancel) {
-                    // There was an error; don't attempt login and focus the first
-                    // form field with an error.
-                    focusView.requestFocus();
-                } else {
-                    // Show a progress spinner, and kick off a background task to
-                    // perform the user login attempt.
-                    showProgress(true);
+        // Reset errors.
+        mUserIDView.setError(null);
+        mPasswordView.setError(null);
 
-                    isOverridePreviousLogin = !TextUtils.isEmpty(PrefsData.getUserID())
-                            && !mUserIDView.getText().toString().equals(PrefsData.getUserID());
+        // Store values at the time of the login attempt.
+        String userId = mUserIDView.getText().toString();
+        String password = mPasswordView.getText().toString();
 
-                    //set username - password to localdata
-                    String username = mUserIDView.getText().toString();
-                    String cookedPassword = getCookedPassword(mPasswordView.getText().toString());
-                    PrefsData.setUserID(username);
-                    PrefsData.setSecret(cookedPassword);
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.zlcore_error_field_required));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
+        if (!isPasswordValid(password)) {
+            mPasswordView.setError(TextUtils.isEmpty(getPasswordInvalidMessage())?
+                    getString(R.string.zlcore_error_invalid_password):getPasswordInvalidMessage());
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(userId)) {
+            mUserIDView.setError(getString(R.string.zlcore_error_field_required));
+            focusView = mUserIDView;
+            cancel = true;
+        }
+
+        if (!isUserIDValid(userId)) {
+            mUserIDView.setError(TextUtils.isEmpty(getUserIdInvalidMessage())?
+                    getString(R.string.zlcore_error_invalid_userid):getUserIdInvalidMessage());
+            focusView = mUserIDView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            showProgress(true);
+
+            isOverridePreviousLogin = !TextUtils.isEmpty(PrefsData.getUserID())
+                    && !mUserIDView.getText().toString().equals(PrefsData.getUserID());
+
+            //set username - password to localdata
+            String username = mUserIDView.getText().toString();
+            String cookedPassword = getCookedPassword(mPasswordView.getText().toString());
+            PrefsData.setUserID(username);
+            PrefsData.setSecret(cookedPassword);
 
 
-                    if(isHandleCustomLogin()){
-                        handleCustomLogin(appType, mUserIDView.getText().toString(), mPasswordView.getText().toString(), BaseLoginActivity.this);
-                    } else {
-                        //do hit api
-                        AndroidNetworking.post(getLoginUrl())
-                                .setOkHttpClient(HttpClientUtils.getHTTPClient(BaseLoginActivity.this, getAPIVersion(), isMeidIncluded()))
-                                .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getUserIdFieldName())?"username":getUserIdFieldName(), username)
-                                .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getPasswordFieldName())?"password":getPasswordFieldName(), cookedPassword)
-                                .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getLoginTypeFieldName())?"loginType":getLoginTypeFieldName(), appType)
-                                .setPriority(Priority.HIGH)
-                                .setTag("login")
-                                .build()
-                                .getAsJSONObject(new JSONObjectRequestListener() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        if(isHandleCustomSuccessResponse()){
-                                            handleCustomSuccessResponse(response, BaseLoginActivity.this);
-                                        } else {
-                                            int status = response.optInt("status");
-                                            String message = response.optString("message");
-                                            if (status == APIResponse.GENERIC_RESPONSE.OK) {
-                                                //success login
-                                                JSONObject data = response.optJSONObject("data");
-                                                String token = data.optString("token", null);
-                                                String name = data.optString("name", null);
-                                                String phone = data.optString("phone", null);
-                                                String email = data.optString("email", null);
-                                                String photo = data.optString("photo", null);
-                                                setSuccess(token, name, phone, email, photo);
-                                                handleCustomData(data);
-                                                CommonUtils.showToast(BaseLoginActivity.this, message);
-                                            } else {
-                                                setFailed();
-                                                CommonUtils.showSnackBar(BaseLoginActivity.this, message);
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(ANError anError) {
+            if(isHandleCustomLogin()){
+                handleCustomLogin(appType, mUserIDView.getText().toString(), mPasswordView.getText().toString(), BaseLoginActivity.this);
+            } else {
+                //do hit api
+                AndroidNetworking.post(getLoginUrl())
+                        .setOkHttpClient(HttpClientUtils.getHTTPClient(BaseLoginActivity.this, getAPIVersion(), isMeidIncluded()))
+                        .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getUserIdFieldName())?"username":getUserIdFieldName(), username)
+                        .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getPasswordFieldName())?"password":getPasswordFieldName(), cookedPassword)
+                        .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getLoginTypeFieldName())?"loginType":getLoginTypeFieldName(), appType)
+                        .setPriority(Priority.HIGH)
+                        .setTag("login")
+                        .build()
+                        .getAsJSONObject(new JSONObjectRequestListener() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                if(isHandleCustomSuccessResponse()){
+                                    handleCustomSuccessResponse(response, BaseLoginActivity.this);
+                                } else {
+                                    int status = response.optInt("status");
+                                    String message = response.optString("message");
+                                    if (status == APIResponse.GENERIC_RESPONSE.OK) {
+                                        //success login
+                                        JSONObject data = response.optJSONObject("data");
+                                        String token = data.optString("token", null);
+                                        String name = data.optString("name", null);
+                                        String phone = data.optString("phone", null);
+                                        String email = data.optString("email", null);
+                                        String photo = data.optString("photo", null);
+                                        setSuccess(token, name, phone, email, photo);
+                                        handleCustomData(data);
+                                        CommonUtils.showToast(BaseLoginActivity.this, message);
+                                    } else {
                                         setFailed();
-                                        if (anError.getErrorCode() != 0) {
-                                            // received error from server
-                                            // anError.getErrorCode() - the error code from server
-                                            // anError.getErrorBody() - the error body from server
-                                            // anError.getErrorDetail() - just an error detail
-
-                                            CommonUtils.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
-                                        } else {
-                                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
-                                            CommonUtils.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
-                                        }
+                                        CommonUtils.showSnackBar(BaseLoginActivity.this, message);
                                     }
-                                });
-                    }
-                }
-            }
-        }, new Runnable() {
-            @Override
-            public void run() {
-                CommonUtils.showToast(BaseLoginActivity.this, getString(R.string.zlcore_warning_please_give_permission));
-                finish();
-            }
-        }, Manifest.permission.READ_PHONE_STATE);
+                                }
+                            }
 
+                            @Override
+                            public void onError(ANError anError) {
+                                setFailed();
+                                if (anError.getErrorCode() != 0) {
+                                    // received error from server
+                                    // anError.getErrorCode() - the error code from server
+                                    // anError.getErrorBody() - the error body from server
+                                    // anError.getErrorDetail() - just an error detail
+
+                                    CommonUtils.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
+                                } else {
+                                    // error.getErrorDetail() : connectionError, parseError, requestCancelledError
+                                    CommonUtils.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
+                                }
+                            }
+                        });
+            }
+        }
     }
 
     @Override

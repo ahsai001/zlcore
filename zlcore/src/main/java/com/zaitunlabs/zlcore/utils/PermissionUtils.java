@@ -35,8 +35,13 @@ public class PermissionUtils {
     }
 
     public static PermissionUtils checkPermissionAndGo(Object activityOrFragment, int requestCode, boolean showDialogInit, String initTitle, String initBody, Runnable taskWillDo, Runnable taskIfDenied,String... permissions){
-        PermissionUtils permissionUtils = new PermissionUtils(activityOrFragment, requestCode, taskWillDo, taskIfDenied);
-        if(permissionUtils.arePermissionsGranted(showDialogInit, initTitle, initBody, permissions)){
+        PermissionUtils permissionUtils = null;
+        if(permissions != null && permissions.length > 0) {
+            permissionUtils = new PermissionUtils(activityOrFragment, requestCode, taskWillDo, taskIfDenied);
+            if (permissionUtils.arePermissionsGranted(showDialogInit, initTitle, initBody, permissions)) {
+                taskWillDo.run();
+            }
+        } else {
             taskWillDo.run();
         }
         return  permissionUtils;

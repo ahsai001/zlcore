@@ -89,18 +89,22 @@ public abstract class BaseSplashActivity extends BaseActivity {
         bottomTextView = findViewById(R.id.splashscreen_bottom_text);
 
         if(!TextUtils.isEmpty(checkVersionUrl)) {
-            permissionUtils = PermissionUtils.checkPermissionAndGo(this, 1041, new Runnable() {
-                @Override
-                public void run() {
-                    pushyMeInit();
-                }
-            }, new Runnable() {
-                @Override
-                public void run() {
-                    CommonUtils.showToast(BaseSplashActivity.this, "Please give permission to run this application");
-                    finish();
-                }
-            }, Manifest.permission.READ_PHONE_STATE);
+            if(isMeidIncluded()) {
+                permissionUtils = PermissionUtils.checkPermissionAndGo(this, 1041, new Runnable() {
+                    @Override
+                    public void run() {
+                        pushyMeInit();
+                    }
+                }, new Runnable() {
+                    @Override
+                    public void run() {
+                        CommonUtils.showToast(BaseSplashActivity.this, "Please give permission to run this application");
+                        finish();
+                    }
+                }, Manifest.permission.READ_PHONE_STATE);
+            } else {
+                pushyMeInit();
+            }
         } else {
             pushyMeInit();
         }
