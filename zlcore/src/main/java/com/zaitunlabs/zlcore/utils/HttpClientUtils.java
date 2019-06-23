@@ -22,8 +22,12 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -63,17 +67,135 @@ public class HttpClientUtils {
 
     public static String webview_user_agent = null;
     public static String androidId = null;
+    public static String randomUUID = null;
 
+
+    public static ArrayList<String> getHeaderList(boolean isMeid, boolean isAndroidID, boolean isRandomUUID, boolean isUserAgent){
+        ArrayList<String> headerList = new ArrayList<>();
+        headerList.add("Authorization");
+        headerList.add("x-screensize");
+        headerList.add("x-model");
+        if(isMeid) {
+            headerList.add("x-meid");
+        }
+        headerList.add("x-packagename");
+        headerList.add("x-versionname");
+        headerList.add("x-versioncode");
+        headerList.add("x-lang");
+        headerList.add("x-platform");
+        headerList.add("x-os");
+        headerList.add("x-token");
+        if(isAndroidID) {
+            headerList.add("x-androidid");
+        }
+        if(isRandomUUID) {
+            headerList.add("x-randomuuid");
+        }
+        if(isUserAgent) {
+            headerList.add("x-useragent");
+            headerList.add("User-Agent");
+        }
+        return headerList;
+    }
+
+    public static HashMap<String, String> getHeaderMap(Context context, List<String> headerList){
+        HashMap<String, String> headerMap = new HashMap<>();
+        String userAgent = "";
+        if(headerList != null){
+            for (String header : headerList){
+                switch (header){
+                    case "Authorization" :
+                        headerMap.put("Authorization", HttpClientUtils.getAuthAPIKey());
+                        break;
+                    case "x-screensize":
+                        headerMap.put("x-screensize", CommonUtils.getDisplayMetricsDensityDPIInString(context));
+                        break;
+                    case "x-model":
+                        headerMap.put("x-model", getModelNumberInUrlEncode());
+                        break;
+                    case "x-meid":
+                        headerMap.put("x-meid", CommonUtils.getMeid(context));
+                        break;
+                    case "x-packagename":
+                        headerMap.put("x-packagename", context.getPackageName());
+                        break;
+                    case "x-versionname":
+                        headerMap.put("x-versionname", CommonUtils.getVersionName(context));
+                        break;
+                    case "x-versioncode":
+                        headerMap.put("x-versioncode", ""+ CommonUtils.getVersionCode(context)+"");
+                        break;
+                    case "x-lang":
+                        headerMap.put("x-lang", CommonUtils.getCurrentDeviceLanguage(context));
+                        break;
+                    case "x-platform":
+                        headerMap.put("x-platform", "android");
+                        break;
+                    case "x-os":
+                        String osVersion = "";
+                        try {
+                            osVersion = CommonUtils.urlEncode(Build.VERSION.RELEASE);
+                        } catch (UnsupportedEncodingException e) {
+                            ////e.printStackTrace();
+                        }
+                        headerMap.put("x-os", osVersion);
+                        break;
+                    case "x-token":
+                        headerMap.put("x-token", PrefsData.getToken());
+                        break;
+                    case "x-androidid":
+                        if(TextUtils.isEmpty(androidId)){
+                            androidId = CommonUtils.getAndroidID(context);
+                        }
+                        headerMap.put("x-androidid", androidId);
+                        break;
+                    case "x-randomuuid":
+                        if(TextUtils.isEmpty(randomUUID)){
+                            randomUUID = CommonUtils.getRandomUUID(context);
+                        }
+                        headerMap.put("x-randomuuid", randomUUID);
+                        break;
+                    case "x-useragent":
+                        try {
+                            userAgent = CommonUtils.urlEncode(System.getProperty("http.agent"));
+                        } catch (UnsupportedEncodingException e) {
+                            ////e.printStackTrace();
+                        }
+                        headerMap.put("x-useragent", userAgent);
+                        break;
+                    case "User-Agent":
+                        try {
+                            userAgent = CommonUtils.urlEncode(System.getProperty("http.agent"));
+                        } catch (UnsupportedEncodingException e) {
+                            ////e.printStackTrace();
+                        }
+                        headerMap.put("User-Agent", userAgent);
+                        break;
+
+                }
+            }
+        }
+        return headerMap;
+    }
 
 
     public static OkHttpClient getHTTPClient(final Context context, String apiVersion){
-        return getHTTPClient(context,apiVersion, false);
+        List<String> headerList = getHeaderList(false, true, true, true);
+        Map<String, String> headerMap = getHeaderMap(context, headerList);
+        return getHTTPClient(context,headerMap,apiVersion,false);
     }
 
+
     public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isUpload){
+        List<String> headerList = getHeaderList(false, true, true, true);
+        Map<String, String> headerMap = getHeaderMap(context, headerList);
+        return getHTTPClient(context,headerMap,apiVersion,isUpload);
+    }
+
+    public static OkHttpClient getHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload){
         OkHttpClient client = null;
         if(context!= null) {
-            Interceptor interceptor = getInterceptor(context, apiVersion);
+            Interceptor interceptor = getInterceptor(headerMap, apiVersion);
             // Add the interceptor to OkHttpClient
             client = new OkHttpClient.Builder()
                     .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
@@ -86,11 +208,11 @@ public class HttpClientUtils {
     }
 
 
-    public static OkHttpClient getUnsafeHTTPClient(final Context context, String apiVersion){
-        return getUnsafeHTTPClient(context,apiVersion, false);
+    public static OkHttpClient getUnsafeHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion){
+        return getUnsafeHTTPClient(context, headerMap, apiVersion,false);
     }
 
-    public static OkHttpClient getUnsafeHTTPClient(final Context context, String apiVersion, boolean isUpload) {
+    public static OkHttpClient getUnsafeHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload) {
         try {
             OkHttpClient client = null;
             if(context!= null) {
@@ -119,7 +241,7 @@ public class HttpClientUtils {
                 final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
 
-                Interceptor interceptor = getInterceptor(context, apiVersion);
+                Interceptor interceptor = getInterceptor(headerMap, apiVersion);
                 // Add the interceptor to OkHttpClient
                 client = new OkHttpClient.Builder()
                         .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
@@ -142,14 +264,14 @@ public class HttpClientUtils {
         }
     }
 
-    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, String apiVersion, @IdRes int certRawResId){
-        return getCertificatePinnerHTTPClient(context,apiVersion, false, certRawResId);
+    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, @IdRes int certRawResId){
+        return getCertificatePinnerHTTPClient(context,headerMap, apiVersion, false, certRawResId);
     }
 
-    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, String apiVersion, boolean isUpload,  @IdRes int certRawResId){
+    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload,  @IdRes int certRawResId){
         OkHttpClient client = null;
         if(context!= null) {
-            CustomTrust customTrust = new CustomTrust(context,apiVersion,isUpload,certRawResId);
+            CustomTrust customTrust = new CustomTrust(context,headerMap,apiVersion, isUpload,certRawResId);
             client = customTrust.getClient();
         }
         return client;
@@ -162,7 +284,7 @@ public class HttpClientUtils {
         private final Context context;
         private final int certRawResId;
 
-        public CustomTrust(final Context context, String apiVersion, boolean isUpload, @IdRes int certRawResId) {
+        public CustomTrust(final Context context, Map<String, String> headerMap,String apiVersion, boolean isUpload, @IdRes int certRawResId) {
             this.context = context;
             this.certRawResId = certRawResId;
             X509TrustManager trustManager;
@@ -176,7 +298,7 @@ public class HttpClientUtils {
                 throw new RuntimeException(e);
             }
 
-            Interceptor interceptor = getInterceptor(context, apiVersion);
+            Interceptor interceptor = getInterceptor(headerMap, apiVersion);
             // Add the interceptor to OkHttpClient
             client = new OkHttpClient.Builder()
                     .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
@@ -279,49 +401,19 @@ public class HttpClientUtils {
         return model;
     }
 
-    private static Interceptor getInterceptor(final Context context, final String apiVersion){
+    private static Interceptor getInterceptor(final Map<String, String> headerMap, final String apiVersion){
         Interceptor interceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                if(TextUtils.isEmpty(webview_user_agent)){
-                    //webview_user_agent = new WebView(context).getSettings().getUserAgentString();
-                }
-                if(TextUtils.isEmpty(androidId)){
-                    androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-                }
+                Request.Builder builder = chain.request().newBuilder();
 
-                String osVersion = "";
-                try {
-                    osVersion = CommonUtils.urlEncode(Build.VERSION.RELEASE);
-                } catch (UnsupportedEncodingException e) {
-                    ////e.printStackTrace();
+                for (Map.Entry<String, String> header : headerMap.entrySet()){
+                    builder.addHeader(header.getKey(), header.getValue());
                 }
 
-                String userAgent = "";
-                try {
-                    userAgent = CommonUtils.urlEncode(System.getProperty("http.agent"));
-                } catch (UnsupportedEncodingException e) {
-                    ////e.printStackTrace();
+                if(!TextUtils.isEmpty(apiVersion)) {
+                    builder.addHeader("x-api", apiVersion);
                 }
-
-                Request.Builder builder = chain.request().newBuilder()
-                        .addHeader("Authorization", HttpClientUtils.getAuthAPIKey())
-                        .addHeader("x-screensize", CommonUtils.getDisplayMetricsDensityDPIInString(context))
-                        .addHeader("x-model", getModelNumberInUrlEncode())
-                        .addHeader("x-meid", CommonUtils.getMeid(context))
-                        .addHeader("x-packagename", context.getPackageName())
-                        .addHeader("x-versionname", CommonUtils.getVersionName(context))
-                        .addHeader("x-versioncode", ""+ CommonUtils.getVersionCode(context)+"")
-                        .addHeader("x-lang", CommonUtils.getCurrentDeviceLanguage(context))
-                        .addHeader("x-platform", "android")//TODO : x-platform
-                        .addHeader("x-os", osVersion)//TODO : x-os
-                        .addHeader("x-token", PrefsData.getToken())
-                        .addHeader("x-deviceid", androidId)//TODO : x-deviceid
-                        .addHeader("x-useragent", userAgent)//TODO : x-useragent
-                        .addHeader("User-Agent", userAgent);//TODO : User-Agent
-
-
-                builder.addHeader("x-api", apiVersion);
 
                 Request newRequest = builder.build();
                 return chain.proceed(newRequest);
@@ -331,13 +423,13 @@ public class HttpClientUtils {
     }
 
 
-    public static void setCustomPicassoSingletoneInstance(Context context, String apiVersion){
-        Picasso.setSingletonInstance(getPicassoInstance(context,apiVersion));
+    public static void setCustomPicassoSingletoneInstance(Context context, Map<String, String> headerMap, String apiVersion){
+        Picasso.setSingletonInstance(getPicassoInstance(context,headerMap, apiVersion));
     }
 
 
-    private static Picasso getPicassoInstance(Context context, String apiVersion){
-        Interceptor interceptor = getInterceptor(context, apiVersion);
+    private static Picasso getPicassoInstance(Context context, Map<String, String> headerMap, String apiVersion){
+        Interceptor interceptor = getInterceptor(headerMap, apiVersion);
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(HttpClientUtils.IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(HttpClientUtils.IMAGE_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)

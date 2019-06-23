@@ -18,6 +18,10 @@ import android.webkit.WebView;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.fragments.GeneralWebViewFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.HttpClientUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -35,6 +39,7 @@ public class WebViewActivity extends BaseActivity {
     public static final String PARAM_BG_COLOR = "param_bg_color";
     public static final String PARAM_DEFAULT_MESSAGE = "param_default_message";
     public static final String PARAM_PAGE_TAG = "param_page_tag";
+    public static final String PARAM_IS_MEID = "param_is_meid";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +69,14 @@ public class WebViewActivity extends BaseActivity {
 
         transaction = getSupportFragmentManager().beginTransaction();
         newFragment = new WebViewFragment();
-        newFragment.setArg(1, url, defaultMessage, bgColor);
+
+        boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
+        if(isMeid){
+            ArrayList<String> headerList = HttpClientUtils.getHeaderList(true, true, true, true);
+            newFragment.setArg(1, url, defaultMessage, bgColor, false, headerList);
+        } else {
+            newFragment.setArg(1, url, defaultMessage, bgColor);
+        }
         transaction.replace(R.id.webview_main_fragment, newFragment, usedTag);
         transaction.commit();
     }
@@ -174,13 +186,14 @@ public class WebViewActivity extends BaseActivity {
 
     }
 
-    public static void start(Context context, String urlOrHtmlContent, String title, String defaultMessage, int bgColor,String pageTag){
+    public static void start(Context context, String urlOrHtmlContent, String title, String defaultMessage, int bgColor,String pageTag, boolean isMeid){
         Intent webviewIntent = new Intent(context, WebViewActivity.class);
         webviewIntent.putExtra(PARAM_URL, urlOrHtmlContent);
         webviewIntent.putExtra(PARAM_TITLE, title);
         webviewIntent.putExtra(PARAM_BG_COLOR, bgColor);
         webviewIntent.putExtra(PARAM_DEFAULT_MESSAGE, defaultMessage);
         webviewIntent.putExtra(PARAM_PAGE_TAG, pageTag);
+        webviewIntent.putExtra(PARAM_IS_MEID, isMeid);
         context.startActivity(webviewIntent);
     }
 }

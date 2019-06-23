@@ -555,6 +555,14 @@ public class CommonUtils {
 		return retval;
 	}
 
+	public static ArrayList<String> getStringArrayListFragmentArgument(Bundle argument, String name, ArrayList<String> defaultValue) {
+		ArrayList<String> retval = defaultValue;
+		if (argument != null) {
+			retval = argument.getStringArrayList(name);
+		}
+		return retval;
+	}
+
 	// get boolean from Argument Fragment
 	public static boolean getBooleanFragmentArgument(Bundle argument, String name, boolean defaultValue) {
 		boolean retval = defaultValue;

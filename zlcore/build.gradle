@@ -6,7 +6,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 34
-        versionName "1.2.43.71"
+        versionName "1.2.44.75"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -72,6 +72,10 @@ dependencies {
     //play service
 
 
+    //implementation 'com.facebook.stetho:stetho:1.5.1'
+    //implementation 'com.andkulikov:transitionseverywhere:2.0.0-alpha01'
+
+
     implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -82,18 +86,24 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
+
     implementation 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.ms-square:expandableTextView:0.1.4'
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     implementation 'com.ernestoyaquello.stepperform:vertical-stepper-form:1.0.0'
     implementation 'net.opacapp:multiline-collapsingtoolbar:27.1.1'
-    //implementation 'com.andkulikov:transitionseverywhere:2.0.0-alpha01'
+
+
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'id.web.michsan.praytimes:praytimes:2.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-places:16.1.0'
+
+
+
     testImplementation 'junit:junit:4.12'
 }
 

@@ -11,7 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
-import android.provider.Settings;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.widget.ContentLoadingProgressBar;
@@ -52,14 +52,14 @@ import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
-import com.zaitunlabs.zlcore.utils.PrefsData;
 import com.zaitunlabs.zlcore.utils.SwipeRefreshLayoutUtils;
 import com.zaitunlabs.zlcore.utils.ViewUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -79,6 +79,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private static final String ARG_SHARE_INSTRUCTION = "share_instruction";
     private static final String ARG_SHARE_TITLE = "shareTitleRes";
     private static final String ARG_SHARE_MESSAGE = "share_message";
+    private static final String ARG_HEADER_MAP = "header_map";
 
     public static final String QUERY_PARAM_NO_HISTORY = "nohistory";
     public static final String QUERY_PARAM_CLEAR_HISTORY = "clearhistory";
@@ -100,6 +101,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private String shareInstruction;
     private String shareTitle;
     private String shareMessage;
+    private HashMap<String, String> headerMap;
 
     private boolean isShowBookmark = false;
     private boolean isShowShare = false;
@@ -121,15 +123,17 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     }
 
     public void setArg(int position, String url, String defaultMessage, int bgColor){
-        setArg(position,url,defaultMessage,-1, false);
+        ArrayList<String> headerList = HttpClientUtils.getHeaderList(false, true, true, true);
+        setArg(position,url,defaultMessage,-1, false, headerList);
     }
 
-    public void setArg(int position, String url, String defaultMessage, int bgColor, boolean showBookmark){
-        setArg(position,url,defaultMessage,-1, false, false, null, null, null);
+    public void setArg(int position, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList){
+        HashMap<String, String> headerMap = HttpClientUtils.getHeaderMap(getContext(), headerList);
+        setArg(position,url,defaultMessage,-1, false, false, null, null, null, headerMap);
     }
 
     public void setArg(int position, String url, String defaultMessage, int bgColor, boolean showBookmark,
-                       boolean showShare, String shareInstruction, String shareTitle, String shareMessage){
+                       boolean showShare, String shareInstruction, String shareTitle, String shareMessage, HashMap<String, String> headerMap){
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         b.putString(ARG_URL,url);
@@ -140,6 +144,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         b.putString(ARG_SHARE_INSTRUCTION,shareInstruction);
         b.putString(ARG_SHARE_TITLE,shareTitle);
         b.putString(ARG_SHARE_MESSAGE,shareMessage);
+        b.putSerializable(ARG_HEADER_MAP, headerMap);
         this.setArguments(b);
     }
 
@@ -148,6 +153,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         isShowBookmark = CommonUtils.getBooleanFragmentArgument(getArguments(),ARG_SHOW_BOOKMARK, false);
         isShowShare = CommonUtils.getBooleanFragmentArgument(getArguments(),ARG_SHOW_SHARE, false);
+        headerMap = (HashMap<String, String>) CommonUtils.getSerializableFragmentArgument(getArguments(), ARG_HEADER_MAP, null);
         setHasOptionsMenu(true);
     }
 
@@ -329,46 +335,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 //url content
                 //rootUrl = CommonUtils.prettifyUrl(rootUrl);
 
-                HashMap<String, String> headers = new HashMap<>();
-
-                if(TextUtils.isEmpty(HttpClientUtils.webview_user_agent)){
-                    //webview_user_agent = new WebView(context).getSettings().getUserAgentString();
-                }
-                if(TextUtils.isEmpty(HttpClientUtils.androidId)){
-                    HttpClientUtils.androidId = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-                }
-
-                String osVersion = "";
-                try {
-                    osVersion = CommonUtils.urlEncode(Build.VERSION.RELEASE);
-                } catch (UnsupportedEncodingException e) {
-                    ////e.printStackTrace();
-                }
-
-                String userAgent = "";
-                try {
-                    userAgent = CommonUtils.urlEncode(System.getProperty("http.agent"));
-                } catch (UnsupportedEncodingException e) {
-                    ////e.printStackTrace();
-                }
-
-                headers.put("Authorization", HttpClientUtils.getAuthAPIKey());
-
-                headers.put("x-screensize", CommonUtils.getDisplayMetricsDensityDPIInString(getContext()));
-                headers.put("x-model", CommonUtils.getModelNumber());
-                headers.put("x-meid", CommonUtils.getMeid(view.getContext()));
-                headers.put("x-packagename", getContext().getPackageName());
-                headers.put("x-versionname", CommonUtils.getVersionName(getContext()));
-                headers.put("x-versioncode", ""+CommonUtils.getVersionCode(getContext())+"");
-                headers.put("x-lang", CommonUtils.getCurrentDeviceLanguage(getContext()));
-                headers.put("x-platform", "android");
-                headers.put("x-os", osVersion);
-                headers.put("x-token", PrefsData.getToken());
-                headers.put("x-deviceid", HttpClientUtils.androidId);
-                headers.put("x-useragent", userAgent);
-                headers.put("User-Agent", userAgent);
                 //headers.put("Accept-Encoding", "gzip");
-                webView.loadUrl(rootUrl, headers);
+                webView.loadUrl(rootUrl, headerMap);
             } else {
                 //html content
                 String encodedHtml = Base64.encodeToString(rootUrl.getBytes(), Base64.NO_PADDING);
