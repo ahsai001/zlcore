@@ -13,6 +13,7 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.GsonBuilder;
 import com.zaitunlabs.zlcore.api.APIConstant;
 import com.zaitunlabs.zlcore.api.APIResponse;
+import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.models.GenericResponseModel;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 
 public class FCMIntentService extends JobIntentService {
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
     private final String TAG = FCMIntentService.class.getSimpleName();
     public static final int JOB_ID = 11000011;
 
@@ -36,16 +38,19 @@ public class FCMIntentService extends JobIntentService {
     public static final String PARAM_NEED_LOGIN = "param_need_login";
 
 
+    private boolean isMeid;
 
-    public static void startSending(Context context, String appid, boolean needLogin) {
+
+    public static void startSending(Context context, String appid, boolean needLogin, boolean isMeid) {
         Intent intent = new Intent(context, FCMIntentService.class);
         intent.setAction(ACTION_SEND_TOKEN);
         intent.putExtra(PARAM_APPID,appid);
         intent.putExtra(PARAM_NEED_LOGIN,needLogin);
+        intent.putExtra(PARAM_IS_MEID, isMeid);
         JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
     }
 
-    public static void startSending(final Context context, final String appid, final boolean needLogin, long delayInMillis) {
+    public static void startSending(final Context context, final String appid, final boolean needLogin, final boolean isMeid, long delayInMillis) {
         new android.os.Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -53,6 +58,7 @@ public class FCMIntentService extends JobIntentService {
                 intent.setAction(ACTION_SEND_TOKEN);
                 intent.putExtra(PARAM_APPID,appid);
                 intent.putExtra(PARAM_NEED_LOGIN,needLogin);
+                intent.putExtra(PARAM_IS_MEID, isMeid);
                 JobIntentService.enqueueWork(context,FCMIntentService.class,JOB_ID,intent);
             }
         }, delayInMillis);
@@ -75,14 +81,17 @@ public class FCMIntentService extends JobIntentService {
         isProcessing = true;
 
 
+        isMeid = CommonUtils.getBooleanIntent(intent, PARAM_IS_MEID, false);
+
         if(TextUtils.isEmpty(PrefsData.getPushyToken())){
             //it means pushy.Me not yet generate token, please waiting and retry
             isProcessing = false;
-            FCMIntentService.startSending(this, appid, needLogin, 2*1000);
+            FCMIntentService.startSending(this, appid, needLogin, isMeid, 2*1000);
         }else {
             if (!PrefsData.getPushyTokenSent() && (PrefsData.isAccountLogin() || !needLogin)) {
+
                 AndroidNetworking.post(APIConstant.API_SEND_FCM)
-                        .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION))
+                        .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, isMeid))
                         .addUrlEncodeFormBodyParameter("fcmid",PrefsData.getPushyToken())
                         .addUrlEncodeFormBodyParameter("appid",appid)
                         .setPriority(Priority.HIGH)
@@ -101,7 +110,7 @@ public class FCMIntentService extends JobIntentService {
                                 if(responseModel.getStatus() == APIResponse.GENERIC_RESPONSE.OK) {
                                     PrefsData.setPushyTokenSent(true);
                                 } else if(responseModel.getStatus() == APIResponse.GENERIC_RESPONSE.FAILED) {
-                                    FCMIntentService.startSending(FCMIntentService.this, appid, needLogin, 2 * 1000);
+                                    FCMIntentService.startSending(FCMIntentService.this, appid, needLogin, isMeid, 2 * 1000);
                                 }
                             }
 

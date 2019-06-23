@@ -45,6 +45,7 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 public class AppListActivityFragment extends BaseFragment {
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
     private AppListAdapter adapter;
     private List<AppListDataModel> appListDataModels = new ArrayList<>();
     private CustomRecylerView recyclerView;
@@ -56,6 +57,12 @@ public class AppListActivityFragment extends BaseFragment {
     private AppListModel appListModel;
 
     public AppListActivityFragment() {
+    }
+
+    public void setArg(boolean isMeid){
+        Bundle b = new Bundle();
+        b.putBoolean(PARAM_IS_MEID, isMeid);
+        setArguments(b);
     }
 
     @Override
@@ -178,8 +185,10 @@ public class AppListActivityFragment extends BaseFragment {
 
 
     private void fetchAppListData(final Context context, final int loadingPage, final AppListModel appListModel){
+        final boolean isMeid = CommonUtils.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
+
         AndroidNetworking.get(APIConstant.API_OTHER_APPS +"/"+countPerPage+"/"+loadingPage)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(context, APIConstant.API_VERSION))
+                .setOkHttpClient(HttpClientUtils.getHTTPClient(context, APIConstant.API_VERSION, isMeid))
                 .setPriority(Priority.HIGH)
                 .setTag("othersapp")
                 .build()

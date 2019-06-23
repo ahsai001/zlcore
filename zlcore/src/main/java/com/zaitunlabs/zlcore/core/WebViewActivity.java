@@ -17,6 +17,7 @@ import android.webkit.WebView;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.fragments.GeneralWebViewFragment;
+import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
 
@@ -39,7 +40,7 @@ public class WebViewActivity extends BaseActivity {
     public static final String PARAM_BG_COLOR = "param_bg_color";
     public static final String PARAM_DEFAULT_MESSAGE = "param_default_message";
     public static final String PARAM_PAGE_TAG = "param_page_tag";
-    public static final String PARAM_IS_MEID = "param_is_meid";
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

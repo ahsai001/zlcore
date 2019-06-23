@@ -51,6 +51,7 @@ import java.util.List;
  */
 
 public class StoreActivityFragment extends BaseFragment {
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
     private StoreAdapter adapter;
     private List<StoreDataModel> storeDataModels = new ArrayList<>();
     private CustomRecylerView recyclerView;
@@ -63,6 +64,12 @@ public class StoreActivityFragment extends BaseFragment {
     private StoreModel storeModel;
 
     public StoreActivityFragment() {
+    }
+
+    public void setArg(boolean isMeid){
+        Bundle b = new Bundle();
+        b.putBoolean(PARAM_IS_MEID, isMeid);
+        setArguments(b);
     }
 
     @Override
@@ -182,8 +189,10 @@ public class StoreActivityFragment extends BaseFragment {
 
 
     private void fetchStoreData(final Context context, final int loadingPage, final StoreModel storeModel){
+        boolean isMeid = CommonUtils.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
+
         ANRequest.PostRequestBuilder builder = AndroidNetworking.post(APIConstant.API_STORE +"/"+countPerPage+"/"+loadingPage)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(context, APIConstant.API_VERSION))
+                .setOkHttpClient(HttpClientUtils.getHTTPClient(context, APIConstant.API_VERSION, isMeid))
                 .setPriority(Priority.HIGH)
                 .setTag("store");
         if(!TextUtils.isEmpty(searchTerm)){

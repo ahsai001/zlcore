@@ -94,6 +94,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
     protected abstract boolean isPasswordValid(String password);
     protected abstract String getLoginUrl();
     protected abstract String getAPIVersion();
+    protected abstract boolean isMeidIncluded();
     protected abstract boolean clearAllCache();
     protected abstract HashMap<String, String> getLoginTypeViewValueList();
     protected abstract String getDefaultValueLoginType();
@@ -356,7 +357,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
                     } else {
                         //do hit api
                         AndroidNetworking.post(getLoginUrl())
-                                .setOkHttpClient(HttpClientUtils.getHTTPClient(BaseLoginActivity.this, getAPIVersion()))
+                                .setOkHttpClient(HttpClientUtils.getHTTPClient(BaseLoginActivity.this, getAPIVersion(), isMeidIncluded()))
                                 .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getUserIdFieldName())?"username":getUserIdFieldName(), username)
                                 .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getPasswordFieldName())?"password":getPasswordFieldName(), cookedPassword)
                                 .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getLoginTypeFieldName())?"loginType":getLoginTypeFieldName(), appType)

@@ -42,13 +42,19 @@ import java.util.List;
  */
 
 public class InfoFragment extends BaseFragment {
-
+    public static final String PARAM_IS_MEID = "param_is_meid";
     CustomRecylerView recyclerView;
     View emptyView;
     InfoAdapter mAdapter;
     private List<InformationModel> infoList = new ArrayList<>();
 
     public InfoFragment() {
+    }
+
+    public void setArg(boolean isMeid){
+        Bundle b = new Bundle();
+        b.putBoolean(PARAM_IS_MEID, isMeid);
+        setArguments(b);
     }
 
     @Override
@@ -129,6 +135,8 @@ public class InfoFragment extends BaseFragment {
         }));*/
 
 
+        final boolean isMeid = CommonUtils.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
+
         mAdapter.setOnCardClickListener(new InfoAdapter.OnCardClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -148,7 +156,7 @@ public class InfoFragment extends BaseFragment {
                                     htmlContent = CommonUtils.decodeBase64(htmlContent);
                                 }
                                 WebViewActivity.start(view.getContext(),htmlContent,info.getTitle(), "",
-                                        ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info.getId());
+                                        ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info.getId(), isMeid);
                             } else {
                                 //may be this is activity name
                                 try {

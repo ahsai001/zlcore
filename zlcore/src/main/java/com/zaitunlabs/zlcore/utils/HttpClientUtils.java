@@ -51,23 +51,28 @@ import okhttp3.Response;
 
 
 public class HttpClientUtils {
-    public static final int DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
-    public static final int DATA_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
-    public static final int DATA_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    private static final int DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
+    private static final int DATA_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    private static final int DATA_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
 
 
-    public static final int IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
-    public static final int IMAGE_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
-    public static final int IMAGE_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    private static final int IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
+    private static final int IMAGE_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    private static final int IMAGE_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
 
 
-    public static final int UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
-    public static final int UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS = 60 * 1000; // 60s
-    public static final int UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS = 60 * 1000; // 60s
+    private static final int UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
+    private static final int UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS = 60 * 1000; // 60s
+    private static final int UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS = 60 * 1000; // 60s
 
-    public static String webview_user_agent = null;
-    public static String androidId = null;
-    public static String randomUUID = null;
+    private static String webview_user_agent = null;
+    private static String androidId = null;
+    private static String randomUUID = null;
+
+    private static volatile OkHttpClient singletonOkHttpClient = null;
+    private static volatile OkHttpClient singletonUnsafeOkHttpClient = null;
+
+
 
 
     public static ArrayList<String> getHeaderList(boolean isMeid, boolean isAndroidID, boolean isRandomUUID, boolean isUserAgent){
@@ -179,20 +184,47 @@ public class HttpClientUtils {
     }
 
 
-    public static OkHttpClient getHTTPClient(final Context context, String apiVersion){
-        List<String> headerList = getHeaderList(false, true, true, true);
-        Map<String, String> headerMap = getHeaderMap(context, headerList);
-        return getHTTPClient(context,headerMap,apiVersion,false);
+    public static void setSingletonOkHttpClient(OkHttpClient okHttpClient){
+        if (okHttpClient == null) {
+            throw new IllegalArgumentException("OkHttpClient must not be null.");
+        }
+        synchronized (HttpClientUtils.class) {
+            if (singletonOkHttpClient != null) {
+                throw new IllegalStateException("Singleton instance already exists.");
+            }
+            singletonOkHttpClient = okHttpClient;
+        }
+    }
+
+    public static void setSingletonUnsafeOkHttpClient(OkHttpClient unsafeOkHttpClient){
+        if (unsafeOkHttpClient == null) {
+            throw new IllegalArgumentException("OkHttpClient must not be null.");
+        }
+        synchronized (HttpClientUtils.class) {
+            if (singletonUnsafeOkHttpClient != null) {
+                throw new IllegalStateException("Singleton instance already exists.");
+            }
+            singletonUnsafeOkHttpClient = unsafeOkHttpClient;
+        }
     }
 
 
-    public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isUpload){
-        List<String> headerList = getHeaderList(false, true, true, true);
+    public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isMeid){
+        return getHTTPClient(context,apiVersion,isMeid,false);
+    }
+
+
+    public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isMeid, boolean isUpload){
+        List<String> headerList = getHeaderList(isMeid, true, true, true);
         Map<String, String> headerMap = getHeaderMap(context, headerList);
         return getHTTPClient(context,headerMap,apiVersion,isUpload);
     }
 
     public static OkHttpClient getHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload){
+        if(singletonOkHttpClient != null){
+            return singletonOkHttpClient;
+        }
+
         OkHttpClient client = null;
         if(context!= null) {
             Interceptor interceptor = getInterceptor(headerMap, apiVersion);
@@ -213,6 +245,10 @@ public class HttpClientUtils {
     }
 
     public static OkHttpClient getUnsafeHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload) {
+        if(singletonUnsafeOkHttpClient != null){
+            return singletonUnsafeOkHttpClient;
+        }
+
         try {
             OkHttpClient client = null;
             if(context!= null) {

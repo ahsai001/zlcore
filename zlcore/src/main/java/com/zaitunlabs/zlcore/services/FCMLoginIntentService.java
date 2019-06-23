@@ -13,6 +13,7 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.GsonBuilder;
 import com.zaitunlabs.zlcore.api.APIConstant;
 import com.zaitunlabs.zlcore.api.APIResponse;
+import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.models.GenericResponseModel;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 
 public class FCMLoginIntentService extends JobIntentService {
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
     private final String TAG = FCMLoginIntentService.class.getSimpleName();
     public static final int JOB_ID = 11000013;
 
@@ -34,26 +36,29 @@ public class FCMLoginIntentService extends JobIntentService {
 
     public static final String PARAM_APPID = "param_appid";
 
+    private boolean isMeid;
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         onHandleIntent(intent);
     }
 
-    public static void startSending(Context context, String appid) {
+    public static void startSending(Context context, String appid, boolean isMeid) {
         Intent intent = new Intent(context, FCMLoginIntentService.class);
         intent.setAction(ACTION_SEND_TOKEN);
         intent.putExtra(PARAM_APPID,appid);
+        intent.putExtra(PARAM_IS_MEID, isMeid);
         JobIntentService.enqueueWork(context,FCMLoginIntentService.class,JOB_ID,intent);
     }
 
-    public static void startSending(final Context context, final String appid, long delayInMillis) {
+    public static void startSending(final Context context, final String appid, final boolean isMeid, long delayInMillis) {
         new android.os.Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(context, FCMLoginIntentService.class);
                 intent.setAction(ACTION_SEND_TOKEN);
                 intent.putExtra(PARAM_APPID,appid);
+                intent.putExtra(PARAM_IS_MEID, isMeid);
                 JobIntentService.enqueueWork(context,FCMLoginIntentService.class,JOB_ID,intent);
             }
         }, delayInMillis);
@@ -74,14 +79,17 @@ public class FCMLoginIntentService extends JobIntentService {
         if(isProcessing)return;
         isProcessing = true;
 
+
+        isMeid = CommonUtils.getBooleanIntent(intent, PARAM_IS_MEID, false);
+
         if(TextUtils.isEmpty(PrefsData.getPushyToken())){
             //it means pushy.Me not yet generate token, please waiting and retry
             isProcessing = false;
-            FCMLoginIntentService.startSending(this, appid, 2*1000);
+            FCMLoginIntentService.startSending(this, appid, isMeid, 2*1000);
         }else {
             if (!PrefsData.getPushyTokenLoginSent() && (PrefsData.isAccountLogin())) {
                 AndroidNetworking.post(APIConstant.API_SEND_FCM_LOGIN)
-                        .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION))
+                        .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, isMeid))
                         .addUrlEncodeFormBodyParameter("fcmid",PrefsData.getPushyToken())
                         .addUrlEncodeFormBodyParameter("appid",appid)
                         .setPriority(Priority.HIGH)
@@ -100,7 +108,7 @@ public class FCMLoginIntentService extends JobIntentService {
                                 if(responseModel.getStatus() == APIResponse.GENERIC_RESPONSE.OK) {
                                     PrefsData.setPushyTokenLoginSent(true);
                                 } else if(responseModel.getStatus() == APIResponse.GENERIC_RESPONSE.FAILED) {
-                                    FCMLoginIntentService.startSending(FCMLoginIntentService.this, appid, 2 * 1000);
+                                    FCMLoginIntentService.startSending(FCMLoginIntentService.this, appid, isMeid, 2 * 1000);
                                 }
                             }
 

@@ -16,6 +16,7 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.UploadProgressListener;
 import com.zaitunlabs.zlcore.api.APIConstant;
 import com.zaitunlabs.zlcore.events.UploadCallbackEvent;
+import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.HttpClientUtils;
 import com.zaitunlabs.zlcore.utils.NotificationProgressUtils;
@@ -48,6 +49,7 @@ public class DataIntentService extends JobIntentService {
     private static final String PARAM_HEADERS = "param_headers";
     private static final String PARAM_BODYS = "param_bodys";
     private static final String PARAM_EXTRAS = "param_extras";
+    private static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
     private static final String PARAM_TAG = "param_tag";
 
 
@@ -82,13 +84,14 @@ public class DataIntentService extends JobIntentService {
         HeaderParts headers = (HeaderParts) CommonUtils.getSerializableIntent(intent, PARAM_HEADERS,null);
         BodyParts bodys = (BodyParts) CommonUtils.getSerializableIntent(intent, PARAM_BODYS,null);
         final Extras extras = (Extras) CommonUtils.getSerializableIntent(intent, PARAM_EXTRAS,null);
+        boolean isMeid = CommonUtils.getBooleanIntent(intent, PARAM_IS_MEID, false);
         final String tag = CommonUtils.getStringIntent(intent, PARAM_TAG,null);
 
         final NotificationProgressUtils progressUtils = new NotificationProgressUtils(this,
                 title, desc, icon, notifID);
 
         ANRequest.MultiPartBuilder builder = AndroidNetworking.upload(url)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, true));
+                .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, isMeid, true));
 
 
         if(headers != null){
@@ -136,13 +139,14 @@ public class DataIntentService extends JobIntentService {
         HeaderParts headers = (HeaderParts) CommonUtils.getSerializableIntent(intent, PARAM_HEADERS,null);
         BodyParts bodys = (BodyParts) CommonUtils.getSerializableIntent(intent, PARAM_BODYS,null);
         final Extras extras = (Extras) CommonUtils.getSerializableIntent(intent, PARAM_EXTRAS,null);
+        boolean isMeid = CommonUtils.getBooleanIntent(intent, PARAM_IS_MEID, false);
         final String tag = CommonUtils.getStringIntent(intent, PARAM_TAG,null);
 
         final NotificationProgressUtils progressUtils = new NotificationProgressUtils(this,
                 title, desc, icon, notifID);
 
         ANRequest.PostRequestBuilder builder = AndroidNetworking.post(url)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION));
+                .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, isMeid));
 
         if(headers != null){
             builder.addHeaders(headers.getHeaderList());
@@ -179,7 +183,7 @@ public class DataIntentService extends JobIntentService {
 
 
     public static void startUpload(Context context, String url, int icon, String title, String desc,
-                                   int notifID, FileParts files, HeaderParts headers, BodyParts bodys, Extras extras, String tag) {
+                                   int notifID, FileParts files, HeaderParts headers, BodyParts bodys, Extras extras, boolean isMeid, String tag) {
         Intent intent = new Intent(context, DataIntentService.class);
         intent.setAction(ACTION_UPLOAD);
         intent.putExtra(PARAM_URL, url);
@@ -191,13 +195,14 @@ public class DataIntentService extends JobIntentService {
         intent.putExtra(PARAM_HEADERS,headers);
         intent.putExtra(PARAM_BODYS, bodys);
         intent.putExtra(PARAM_EXTRAS, extras);
+        intent.putExtra(PARAM_IS_MEID, isMeid);
         intent.putExtra(PARAM_TAG, tag);
         JobIntentService.enqueueWork(context,DataIntentService.class,JOB_ID,intent);
     }
 
 
     public static void startPost(Context context, String url, int icon, String title, String desc,
-                                 int notifID, HeaderParts headers, BodyParts bodys, Extras extras, String tag) {
+                                 int notifID, HeaderParts headers, BodyParts bodys, Extras extras, boolean isMeid, String tag) {
         Intent intent = new Intent(context, DataIntentService.class);
         intent.setAction(ACTION_POST);
         intent.putExtra(PARAM_URL, url);
@@ -208,6 +213,7 @@ public class DataIntentService extends JobIntentService {
         intent.putExtra(PARAM_HEADERS,headers);
         intent.putExtra(PARAM_BODYS, bodys);
         intent.putExtra(PARAM_EXTRAS, extras);
+        intent.putExtra(PARAM_IS_MEID, isMeid);
         intent.putExtra(PARAM_TAG, tag);
         JobIntentService.enqueueWork(context,DataIntentService.class,JOB_ID,intent);
     }

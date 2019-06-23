@@ -12,9 +12,12 @@ import android.view.View;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
+import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.fragments.StoreActivityFragment;
+import com.zaitunlabs.zlcore.utils.CommonUtils;
 
 public class StoreActivity extends BaseActivity {
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +38,13 @@ public class StoreActivity extends BaseActivity {
         });
 
 
-        showFragment(R.id.fragment, StoreActivityFragment.class, null, savedInstanceState, "store");
+        final boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
+        showFragment(R.id.fragment, StoreActivityFragment.class, new PostFragmentInstantiation<StoreActivityFragment>() {
+            @Override
+            public void postInstantiation(StoreActivityFragment fragment) {
+                fragment.setArg(isMeid);
+            }
+        }, savedInstanceState, "store");
     }
 
     @Override
@@ -49,8 +58,9 @@ public class StoreActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static void start(Context context){
+    public static void start(Context context, boolean isMeid){
         Intent intent = new Intent(context,StoreActivity.class);
+        intent.putExtra(PARAM_IS_MEID, isMeid);
         context.startActivity(intent);
     }
 

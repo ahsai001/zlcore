@@ -13,10 +13,11 @@ import android.view.View;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.fragments.InfoFragment;
+import com.zaitunlabs.zlcore.utils.CommonUtils;
 import com.zaitunlabs.zlcore.utils.NotificationUtils;
 
 public class MessageListActivity extends BaseActivity {
-
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +38,14 @@ public class MessageListActivity extends BaseActivity {
             }
         });
 
+        final boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
 
-        showFragment(R.id.fragment, InfoFragment.class, null, savedInstanceState, "messageList");
+        showFragment(R.id.fragment, InfoFragment.class, new PostFragmentInstantiation<InfoFragment>() {
+            @Override
+            public void postInstantiation(InfoFragment fragment) {
+                fragment.setArg(isMeid);
+            }
+        }, savedInstanceState, "messageList");
 
         NotificationUtils.handleIntentFromNotification(getIntent(), new NotificationUtils.CallBackIntentFromNotification() {
             @Override
@@ -49,8 +56,9 @@ public class MessageListActivity extends BaseActivity {
 
     }
 
-    public static void start(Context context){
+    public static void start(Context context, boolean isMeid){
         Intent intent = new Intent(context,MessageListActivity.class);
+        intent.putExtra(PARAM_IS_MEID, isMeid);
         context.startActivity(intent);
     }
 

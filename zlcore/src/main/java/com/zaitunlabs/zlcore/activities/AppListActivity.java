@@ -13,8 +13,11 @@ import android.view.View;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.fragments.AppListActivityFragment;
+import com.zaitunlabs.zlcore.fragments.InfoFragment;
+import com.zaitunlabs.zlcore.utils.CommonUtils;
 
 public class AppListActivity extends BaseActivity {
+    public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,14 @@ public class AppListActivity extends BaseActivity {
             }
         });
 
-        showFragment(R.id.fragment, AppListActivityFragment.class, null, savedInstanceState, "AppListActivity");
+        final boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
+
+        showFragment(R.id.fragment, AppListActivityFragment.class, new PostFragmentInstantiation<AppListActivityFragment>() {
+            @Override
+            public void postInstantiation(AppListActivityFragment fragment) {
+                fragment.setArg(isMeid);
+            }
+        }, savedInstanceState, "AppListActivity");
     }
 
     @Override
@@ -48,8 +58,9 @@ public class AppListActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static void start(Context context){
+    public static void start(Context context, boolean isMeid){
         Intent intent = new Intent(context,AppListActivity.class);
+        intent.putExtra(PARAM_IS_MEID, isMeid);
         context.startActivity(intent);
     }
 

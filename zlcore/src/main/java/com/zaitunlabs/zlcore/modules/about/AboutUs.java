@@ -77,7 +77,7 @@ public class AboutUs extends CanvasActivity {
 				if(AboutUs.appLandingPageLink.startsWith("file:///android_asset/")){
 					WebViewActivity.start(AboutUs.this,AboutUs.appLandingPageLink, getString(R.string.zlcore_aboutus_about_app),
 							getString(R.string.zlcore_warning_sorry_there_is_problem),
-							0,"tentang aplikasi");
+							0,"tentang aplikasi", isMeid);
 				} else {
 					CommonUtils.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
 				}
@@ -156,7 +156,7 @@ public class AboutUs extends CanvasActivity {
 					if(AboutUs.aboutThisAppUrlOrHtmlContent.startsWith("file:///android_asset/")){
 						WebViewActivity.start(AboutUs.this,AboutUs.aboutThisAppUrlOrHtmlContent, getString(R.string.zlcore_aboutus_about_app),
 								getString(R.string.zlcore_warning_sorry_there_is_problem),
-								0,"tentang aplikasi");
+								0,"tentang aplikasi", isMeid);
 					} else {
 						CommonUtils.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
 					}
@@ -368,20 +368,21 @@ public class AboutUs extends CanvasActivity {
 	public static int textColorInt;
 	public static int menuTextColorInt;
 	public static String aboutThisAppUrlOrHtmlContent;
+	public static boolean isMeid = false;
 
 	public static void start(Context context,@DrawableRes int logoDrawableRes,
 							 @DrawableRes int shareDrawableRes, @StringRes int shareTitleRes, @StringRes int shareBodyRes,
 							 @DrawableRes int feedBackDrawableRes,@StringRes int feedbackMailToRes,@StringRes int feedbackTitleRes ,@StringRes int feedbackBodyRes,
 							 @DrawableRes int rateDrawableRes,
 							 @RawRes int riwayatRawFile, boolean isDisableBackSoundControl,
-							 String appLandingPageLink){
+							 String appLandingPageLink, boolean isMeid){
 		start(context, logoDrawableRes, shareDrawableRes, shareTitleRes, shareBodyRes,
 				feedBackDrawableRes, feedbackMailToRes, feedbackTitleRes, feedbackBodyRes,
 				rateDrawableRes,
 				riwayatRawFile, isDisableBackSoundControl,
 				appLandingPageLink, true,
 				null, null, null,
-				0, null, 0, 0, 0, appLandingPageLink);
+				0, null, 0, 0, 0, appLandingPageLink, isMeid);
 	}
 
 	public static void start(Context context,@DrawableRes int logoDrawableRes,
@@ -391,7 +392,7 @@ public class AboutUs extends CanvasActivity {
 							 @RawRes int riwayatRawFile, boolean isDisableBackSoundControl,
 							 String appLandingPageLink, boolean isZL,
 							 String developerName, String developerHomePage, String developerEmail,
-							 @DrawableRes int developerLogoDrawableRes, String developerTM, @DrawableRes int backgroundDrawableRes, @ColorInt int textColorInt, @ColorInt int menuTextColorInt, String aboutThisAppUrlOrHtmlContent){
+							 @DrawableRes int developerLogoDrawableRes, String developerTM, @DrawableRes int backgroundDrawableRes, @ColorInt int textColorInt, @ColorInt int menuTextColorInt, String aboutThisAppUrlOrHtmlContent, boolean isMeid){
 		Intent aboutIntent = new Intent(context, AboutUs.class);
 		AboutUs.logoDrawableRes = logoDrawableRes;
 
@@ -418,7 +419,7 @@ public class AboutUs extends CanvasActivity {
 		AboutUs.textColorInt = textColorInt == 0?Color.WHITE:textColorInt;
 		AboutUs.menuTextColorInt = menuTextColorInt == 0?Color.WHITE:menuTextColorInt;
 		AboutUs.aboutThisAppUrlOrHtmlContent = aboutThisAppUrlOrHtmlContent;
-
+		AboutUs.isMeid = isMeid;
 		context.startActivity(aboutIntent);
 	}
 }
