@@ -545,10 +545,9 @@ public class ViewUtils {
 
 
 
-
-
-
-    private static void showCustomDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Date defaultDate, final Locale locale, @NonNull final FragmentManager fragmentManager, @NonNull final String tag){
+    private static void showCustomDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Date defaultDate, final Locale locale,
+                                             @NonNull final FragmentManager fragmentManager, @NonNull final String tag,
+                                             final boolean isHideKeyboardForThis, final EditText nextEditText, final boolean isShowKeyboardForNext){
         CommonUtils.showDatePicker(null, fragmentManager, tag, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -556,11 +555,25 @@ public class ViewUtils {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, dayOfMonth);
                 editText.setText(sfd.format(defaultDate==null?calendar.getTime():defaultDate));
+                editText.setTag(false);
+
+                if(isHideKeyboardForThis){
+                    CommonUtils.hideKeyboard(editText.getContext(),editText);
+                }
+
+                if(nextEditText != null) {
+                    nextEditText.requestFocus();
+                    if (isShowKeyboardForNext) {
+                        CommonUtils.showKeyboard(nextEditText.getContext());
+                    }
+                }
             }
         }, Calendar.getInstance().getTime());
     }
 
-    public static void enableDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Date defaultDate, final Locale locale, @NonNull final FragmentManager fragmentManager, @NonNull final String tag){
+    public static void enableDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Date defaultDate, final Locale locale,
+                                        @NonNull final FragmentManager fragmentManager, @NonNull final String tag,
+                                        final boolean isHideKeyboardForThis, final EditText nextEditText, final boolean isShowKeyboardForNext){
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -570,7 +583,9 @@ public class ViewUtils {
                 editText.setInputType(inType); // restore input type
                 if(event.getAction() == MotionEvent.ACTION_UP){
                     if(editText.hasFocus()){
-                        showCustomDatePicker(editText, dateFormat, defaultDate, locale, fragmentManager, tag);
+                        if(!((Boolean) v.getTag())) {
+                            showCustomDatePicker(editText, dateFormat, defaultDate, locale, fragmentManager, tag, isHideKeyboardForThis, nextEditText, isShowKeyboardForNext);
+                        }
                     }
                 }
                 return true; // consume touch even
@@ -581,7 +596,10 @@ public class ViewUtils {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
-                    showCustomDatePicker(editText, dateFormat, defaultDate, locale, fragmentManager, tag);
+                    v.setTag(true);
+                    showCustomDatePicker(editText, dateFormat, defaultDate, locale, fragmentManager, tag, isHideKeyboardForThis, nextEditText, isShowKeyboardForNext);
+                } else {
+                    v.setTag(false);
                 }
             }
         });
@@ -591,7 +609,7 @@ public class ViewUtils {
     }
 
 
-    public static void enablePopupMenu(@NonNull final EditText editText, final int menuResID){
+    public static void enablePopupMenu(@NonNull final EditText editText, final int menuResID, final boolean isHideKeyboard, final EditText nextEditText, final boolean isShowKeyboardForNext){
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -601,17 +619,35 @@ public class ViewUtils {
                 editText.setInputType(inType); // restore input type
                 if(event.getAction() == MotionEvent.ACTION_UP){
                     if(editText.hasFocus()){
-                        CommonUtils.showPopupMenu(editText.getContext(), menuResID, editText, null,
-                                new PopupMenu.OnMenuItemClickListener() {
-                                    @Override
-                                    public boolean onMenuItemClick(MenuItem item) {
-                                        editText.setText(item.getTitle());
-                                        return false;
-                                    }
-                                });
+                        if(!((Boolean) v.getTag())) {
+                            CommonUtils.showPopupMenu(editText.getContext(), menuResID, editText, null,
+                                    new PopupMenu.OnMenuItemClickListener() {
+                                        @Override
+                                        public boolean onMenuItemClick(MenuItem item) {
+                                            editText.setText(item.getTitle());
+                                            editText.setTag(false);
+
+                                            if(nextEditText != null) {
+                                                nextEditText.requestFocus();
+                                                if (isShowKeyboardForNext) {
+                                                    CommonUtils.showKeyboard(nextEditText.getContext());
+                                                }
+                                            }
+                                            return false;
+                                        }
+                                    });
+                            if(isHideKeyboard){
+                                CommonUtils.hideKeyboard(editText.getContext(),editText);
+                            }
+                        }
                     }
                 }
-                return true; // consume touch even
+
+                if(isHideKeyboard){
+                    return true;
+                }
+
+                return false;
             }
         });
 
@@ -619,14 +655,28 @@ public class ViewUtils {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
+                    v.setTag(true);
                     CommonUtils.showPopupMenu(editText.getContext(), menuResID, editText, null,
                             new PopupMenu.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
                                     editText.setText(item.getTitle());
+                                    editText.setTag(false);
+
+                                    if(nextEditText != null) {
+                                        nextEditText.requestFocus();
+                                        if (isShowKeyboardForNext) {
+                                            CommonUtils.showKeyboard(nextEditText.getContext());
+                                        }
+                                    }
                                     return false;
                                 }
                             });
+                    if(isHideKeyboard){
+                        CommonUtils.hideKeyboard(editText.getContext(),editText);
+                    }
+                } else {
+                    v.setTag(false);
                 }
             }
         });
