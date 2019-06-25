@@ -74,9 +74,9 @@ public class WebViewActivity extends BaseActivity {
         boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
         if(isMeid){
             ArrayList<String> headerList = HttpClientUtils.getHeaderList(true, true, true, true);
-            newFragment.setArg(1, url, defaultMessage, bgColor, false, headerList);
+            newFragment.setArg(this,1, url, defaultMessage, bgColor, false, headerList);
         } else {
-            newFragment.setArg(1, url, defaultMessage, bgColor);
+            newFragment.setArg(this,1, url, defaultMessage, bgColor);
         }
         transaction.replace(R.id.webview_main_fragment, newFragment, usedTag);
         transaction.commit();

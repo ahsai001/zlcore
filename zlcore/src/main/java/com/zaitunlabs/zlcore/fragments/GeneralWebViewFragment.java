@@ -2,6 +2,7 @@ package com.zaitunlabs.zlcore.fragments;
 
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -118,17 +119,17 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
     private ViewTreeObserver.OnScrollChangedListener onScrollChangedListener;
 
-    public void setArg(int position, String url, String defaultMessage){
-        setArg(position,url,defaultMessage,-1);
+    public void setArg(Context context, int position, String url, String defaultMessage){
+        setArg(context, position,url,defaultMessage,-1);
     }
 
-    public void setArg(int position, String url, String defaultMessage, int bgColor){
+    public void setArg(Context context, int position, String url, String defaultMessage, int bgColor){
         ArrayList<String> headerList = HttpClientUtils.getHeaderList(false, true, true, true);
-        setArg(position,url,defaultMessage,-1, false, headerList);
+        setArg(context, position,url,defaultMessage,-1, false, headerList);
     }
 
-    public void setArg(int position, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList){
-        HashMap<String, String> headerMap = HttpClientUtils.getHeaderMap(getContext(), headerList);
+    public void setArg(Context context, int position, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList){
+        HashMap<String, String> headerMap = HttpClientUtils.getHeaderMap(context, headerList);
         setArg(position,url,defaultMessage,-1, false, false, null, null, null, headerMap);
     }
 
