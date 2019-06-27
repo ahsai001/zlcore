@@ -380,9 +380,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         return dataList;
     }
 
-    private static final String MUST_HAS_CONSTRUCTOR_WITH_NO_ARGUMENT =
-            "";
-
     private RuntimeException getWarningWhenNoConstructorWithNoArgument(String className){
         return new RuntimeException(String.format(
                 "Class %s must has constructor with no argument",className));
@@ -493,8 +490,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     public <T extends TableClass> List<T> selectQuery(boolean distinct, String tableName, Class<T> clazz, String[] columns,
-                                                      String selection, String[] selectionArgs, String groupBy,
-                                                      String having, String orderBy, String limit) {
+                                            String selection, String[] selectionArgs, String groupBy,
+                                            String having, String orderBy, String limit) {
         try {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
@@ -531,7 +528,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-    public <T extends TableClass> List<T> rawSelectQuery(Class<T> clazz, String selectSql, String[] sqlArgs) {
+    public <T extends TableClass> List<T> rawQuery(Class<T> clazz, String selectSql, String[] sqlArgs) {
         try {
             String tableName = substringBetween(" from "," ", selectSql.replace("FROM","from")+" ");
 
@@ -567,10 +564,24 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
-    public void rawQuery(String sql, String[] sqlArgs) {
+    public void execSQL(String sql, String[] sqlArgs) {
         try {
             SQLiteDatabase database = getWritableDatabase();
-            database.rawQuery(sql, sqlArgs).close();
+            database.execSQL(sql, sqlArgs);
+            close();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public <T extends TableClass> void delete(String tableName, Class<T> clazz,  String whereClause, String[] whereClauseArgs){
+        if(TextUtils.isEmpty(tableName)){
+            tableName = clazz.getSimpleName();
+        }
+        try {
+            SQLiteDatabase database = getWritableDatabase();
+            database.delete(tableName, whereClause, whereClauseArgs);
             close();
         } catch (SQLException e){
             e.printStackTrace();
@@ -582,7 +593,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         if(TextUtils.isEmpty(tableName)){
             tableName = clazz.getSimpleName();
         }
-        rawQuery("delete from "+tableName,null);
+        delete(tableName, clazz, null, null);
     }
 
 
@@ -799,10 +810,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
 
         public static <T extends TableClass> List<T> selectQuery(String databaseName, boolean distinct, String tableName,
-                                                                 Class<T> clazz,
-                                                                 String[] columns,
-                                                                 String selection, String[] selectionArgs, String groupBy,
-                                                                 String having, String orderBy, String limit){
+                                                       Class<T> clazz,
+                                                       String[] columns,
+                                                       String selection, String[] selectionArgs, String groupBy,
+                                                       String having, String orderBy, String limit){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
@@ -810,22 +821,20 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     selection, selectionArgs, groupBy, having, orderBy, limit);
         }
 
-        public static <T extends TableClass> List<T> rawSelectQuery(String databaseName,
+        public static <T extends TableClass> List<T> rawQuery(String databaseName,
                                                                     Class<T> clazz, String selectSql, String[] sqlArgs){
-            return SQLiteWrapper.of(databaseName).rawSelectQuery(clazz, selectSql, sqlArgs);
+            return SQLiteWrapper.of(databaseName).rawQuery(clazz, selectSql, sqlArgs);
         }
 
-        public static void rawQuery(String databaseName, String sql, String[] sqlArgs){
-            SQLiteWrapper.of(databaseName).rawQuery(sql, sqlArgs);
+        public static void execSQL(String databaseName, String sql, String[] sqlArgs){
+            SQLiteWrapper.of(databaseName).execSQL(sql, sqlArgs);
         }
 
         public static <T extends TableClass> void deleteAll(String databaseName, String tableName, Class<T> clazz){
             SQLiteWrapper.of(databaseName).deleteAll(tableName, clazz);
         }
 
-
     }
-
 
 
     public void setMigrationPlan(MigrationPlan migrationPlan){
