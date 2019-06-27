@@ -145,4 +145,17 @@ public class DateStringUtils {
 
         return result;
     }
+
+    public static Date getDateFromString(String format, String dateString, Locale locale){
+        SimpleDateFormat sf = new SimpleDateFormat(format, (locale == null?Locale.getDefault():locale));
+        sf.setLenient(true);
+        Date date = null;
+        try {
+            date = sf.parse(dateString);
+        } catch (ParseException e) {
+            //do nothing
+            DebugUtils.logD("zlcore", "exception parse date");
+        }
+        return date;
+    }
 }

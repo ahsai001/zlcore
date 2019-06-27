@@ -2163,45 +2163,51 @@ public class CommonUtils {
 		}
 	}
 
-	public static DatePickerFragment showDatePicker(Bundle savedInstanceState, FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener onDateSetListener, Date defautlDate) {
-		return showDatePicker(savedInstanceState, false, fragmentManager, tag, onDateSetListener, defautlDate);
-	}
+    public static DatePickerFragment showDatePicker(Bundle savedInstanceState, FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener onDateSetListener, DialogInterface.OnDismissListener onDismissListener, Date defautlDate) {
+        return showDatePicker(savedInstanceState, false, fragmentManager, tag, onDateSetListener, onDismissListener, defautlDate);
+    }
 
-	public static DatePickerFragment showDatePicker(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener onDateSetListener, Date defautlDate){
-		DatePickerFragment datePickerFragment = null;
-		if(savedInstanceState == null || ignoreStateOrAlwaysCreateNew) {
-			datePickerFragment = DatePickerFragment.newInstance(onDateSetListener, defautlDate);
-			datePickerFragment.show(fragmentManager, tag);
-		} else {
-			datePickerFragment = (DatePickerFragment) fragmentManager.findFragmentByTag(tag);
-			if(datePickerFragment == null){
-				return showDatePicker(null, true, fragmentManager, tag, onDateSetListener, defautlDate);
-			} else {
-				datePickerFragment.setOnDateSetListener(onDateSetListener);
-			}
-		}
-		return datePickerFragment;
-	}
+    public static DatePickerFragment showDatePicker(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener onDateSetListener, DialogInterface.OnDismissListener onDismissListener, Date defautlDate){
+        DatePickerFragment datePickerFragment = null;
+        if(savedInstanceState == null || ignoreStateOrAlwaysCreateNew) {
+            datePickerFragment = DatePickerFragment.newInstance(onDateSetListener, defautlDate);
+            datePickerFragment.showNow(fragmentManager, tag);
+            datePickerFragment.getDialog().setOnDismissListener(onDismissListener);
+        } else {
+            datePickerFragment = (DatePickerFragment) fragmentManager.findFragmentByTag(tag);
+            if(datePickerFragment == null){
+                return showDatePicker(null, true, fragmentManager, tag, onDateSetListener, onDismissListener, defautlDate);
+            } else {
+                datePickerFragment.setOnDateSetListener(onDateSetListener);
+                datePickerFragment.showNow(fragmentManager, tag);
+                datePickerFragment.getDialog().setOnDismissListener(onDismissListener);
+            }
+        }
+        return datePickerFragment;
+    }
 
-	public static TimePickerFragment showTimePicker(Bundle savedInstanceState, FragmentManager fragmentManager, String tag, TimePickerDialog.OnTimeSetListener onTimeSetListener, Date defaultTime) {
-		return showTimePicker(savedInstanceState, false, fragmentManager, tag, onTimeSetListener, defaultTime);
-	}
+    public static TimePickerFragment showTimePicker(Bundle savedInstanceState, FragmentManager fragmentManager, String tag, TimePickerDialog.OnTimeSetListener onTimeSetListener, DialogInterface.OnDismissListener onDismissListener, Date defaultTime) {
+        return showTimePicker(savedInstanceState, false, fragmentManager, tag, onTimeSetListener, onDismissListener, defaultTime);
+    }
 
-	public static TimePickerFragment showTimePicker(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, FragmentManager fragmentManager, String tag, TimePickerDialog.OnTimeSetListener onTimeSetListener, Date defaultTime){
-		TimePickerFragment timePickerFragment = null;
-		if(savedInstanceState == null || ignoreStateOrAlwaysCreateNew) {
-			timePickerFragment = TimePickerFragment.newInstance(onTimeSetListener, defaultTime);
-			timePickerFragment.show(fragmentManager, tag);
-		} else {
-			timePickerFragment = (TimePickerFragment) fragmentManager.findFragmentByTag(tag);
-			if(timePickerFragment == null){
-				return showTimePicker(null, true, fragmentManager, tag, onTimeSetListener, defaultTime);
-			} else {
-				timePickerFragment.setOnTimeSetListener(onTimeSetListener);
-			}
-		}
-		return timePickerFragment;
-	}
+    public static TimePickerFragment showTimePicker(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, FragmentManager fragmentManager, String tag, TimePickerDialog.OnTimeSetListener onTimeSetListener, DialogInterface.OnDismissListener onDismissListener, Date defaultTime){
+        TimePickerFragment timePickerFragment = null;
+        if(savedInstanceState == null || ignoreStateOrAlwaysCreateNew) {
+            timePickerFragment = TimePickerFragment.newInstance(onTimeSetListener, defaultTime);
+            timePickerFragment.showNow(fragmentManager, tag);
+            timePickerFragment.getDialog().setOnDismissListener(onDismissListener);
+        } else {
+            timePickerFragment = (TimePickerFragment) fragmentManager.findFragmentByTag(tag);
+            if(timePickerFragment == null){
+                return showTimePicker(null, true, fragmentManager, tag, onTimeSetListener, onDismissListener, defaultTime);
+            } else {
+                timePickerFragment.setOnTimeSetListener(onTimeSetListener);
+                timePickerFragment.showNow(fragmentManager, tag);
+                timePickerFragment.getDialog().setOnDismissListener(onDismissListener);
+            }
+        }
+        return timePickerFragment;
+    }
 
 	public static AlertDialogFrament showDialogFragment1Option(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
 															   String title, String msg, String strOption1) {
