@@ -1119,39 +1119,11 @@ public class FormBuilderUtils implements VerticalStepperForm{
             @Override
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, final List<Object> data) {
                 View editTextLayout = layoutInflater.inflate(R.layout.base_form_edittext_label, parentView, false);
-                View editText = editTextLayout.findViewById(getViewIdForValue());
-                editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(final View view, boolean b) {
-                        if(b) {
-                            CommonUtils.showDatePicker(savedInstanceState,((AppCompatActivity) activity).getSupportFragmentManager(),
-                                    (String)data.get(0), new DatePickerDialog.OnDateSetListener() {
-                                        @Override
-                                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                                            Calendar calendar = Calendar.getInstance();
-                                            calendar.set(i, i1, i2);
-                                            ((EditText) view).setText(DateStringUtils.getDateTimeInString((String) data.get(1), calendar.getTime(), (Locale) data.get(2)));
-                                            ((EditText) view).setError(null);
-                                        }
-                                    }, null);
-                        }
-                    }
-                });
-                editText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View view) {
-                        CommonUtils.showDatePicker(savedInstanceState, ((AppCompatActivity) activity).getSupportFragmentManager(),
-                                (String)data.get(0), new DatePickerDialog.OnDateSetListener() {
-                                    @Override
-                                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                                        Calendar calendar = Calendar.getInstance();
-                                        calendar.set(i, i1, i2);
-                                        ((EditText) view).setText(DateStringUtils.getDateTimeInString((String) data.get(1), calendar.getTime(), (Locale) data.get(2)));
-                                        ((EditText) view).setError(null);
-                                    }
-                                }, null);
-                    }
-                });
+                EditText editText = editTextLayout.findViewById(getViewIdForValue());
+                editText.setText(DateStringUtils.getDateTimeInString((String) data.get(1), Calendar.getInstance().getTime(), (Locale) data.get(2)));
+                ViewUtils.enableDatePicker(editText, (String) data.get(1), (Locale) data.get(2),
+                        ((AppCompatActivity) activity).getSupportFragmentManager(),(String)data.get(0),true, null, false);
+
                 return editTextLayout;
             }
 

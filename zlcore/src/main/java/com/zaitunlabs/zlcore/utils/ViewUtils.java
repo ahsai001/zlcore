@@ -565,7 +565,7 @@ public class ViewUtils {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, dayOfMonth);
                 editText.setText(sfd.format(calendar.getTime()));
-
+                editText.setError(null);
                 editText.setTag(false);
 
                 if (isHideKeyboardForThis) {
