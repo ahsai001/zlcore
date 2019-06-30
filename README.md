@@ -21,8 +21,9 @@ There are a lot of utility that you can use from this library :
 17. Date String Utility
 18. Show Dialog/SnackBar Utility
 19. Show Date/Time/Contact/File/Place Picker
-20. SQLiteWrapper
-21. and many more in package folder 'com.zaitunlabs.zlcore.utils' especially 'CommonUtils' static class
+20. SQLiteWrapper (multi database, support migration plan, simple use, without reflection, lightweight)
+21. Lookup table (powered by SQLiteWrapper)
+22. and many more in package folder 'com.zaitunlabs.zlcore.utils' especially 'CommonUtils' static class
 
 
 
