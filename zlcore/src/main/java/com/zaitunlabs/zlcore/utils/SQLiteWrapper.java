@@ -26,7 +26,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private static final String TAG = SQLiteWrapper.class.getName();
     private static final String SQLW_FOLDER = "SQLW/";
     private Map<String, Table> tableMap;
-    private Context context;
+    private AssetManager assetManager;
 
     private static Map<String, Database> sqLiteDatabaseMap = new HashMap<>();
     private static Map<String, SQLiteWrapper> sqLiteWrapperMap = new HashMap<>();
@@ -43,12 +43,11 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
     public static abstract class Database {
-        private Context context;
 
-        public Database(Context context){
-            this.context = context.getApplicationContext();
+        public Database(){
         }
 
+        public abstract Context getAppContext();
         public abstract String getDatabaseName();
         public abstract int getDatabaseVersion();
         public abstract boolean isWrapperCached();
@@ -58,10 +57,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 return sqLiteWrapperMap.get(getDatabaseName());
             } else {
                 SQLiteWrapper sqLiteWrapper = new SQLiteWrapper.Builder()
-                        .setContext(context)
                         .setDatabaseName(getDatabaseName())
                         .setDatabaseVersion(getDatabaseVersion())
-                        .create();
+                        .create(getAppContext());
                 configure(sqLiteWrapper);
                 sqLiteWrapper.init();
                 if(isWrapperCached()){
@@ -79,7 +77,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     public SQLiteWrapper addTablesFromSQLAsset(String filename){
-        List<Table> tableList = readAndParseCreateTableScript(context, filename);
+        List<Table> tableList = readAndParseCreateTableScript(filename);
         if(tableList != null) {
             for (Table table : tableList) {
                 tableMap.put(table.getName(), table);
@@ -104,7 +102,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
     private SQLiteWrapper(Context context, String databaseName, int databaseVersion, Map<String, Table> tableMap){
         super(context, databaseName, null, databaseVersion);
-        this.context = context;
+        this.assetManager = context.getAssets();
         this.tableMap = tableMap;
     }
 
@@ -118,24 +116,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         Set<String> keySet = tableMap.keySet();
         for (String key : keySet) {
             Table table = tableMap.get(key);
-
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("CREATE TABLE");
-            stringBuilder.append(" ").append(table.getName()).append(" (");
-            stringBuilder.append(ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT");
-
-            List<Field> fieldList = table.getFieldList();
-            for (Field field : fieldList) {
-                stringBuilder.append(",");
-                stringBuilder.append(field.getName()).append(" ").append(field.getType());
-                if (field.getTrueType() == boolean.class) {
-                    stringBuilder.append(" DEFAULT 0");
-                }
+            if(table != null) {
+                String createTableScript = getCreateTableScript(table);
+                createTableScriptList.add(createTableScript);
             }
-
-            stringBuilder.append(")");
-
-            createTableScriptList.add(stringBuilder.toString());
         }
 
         db.beginTransaction();
@@ -149,6 +133,28 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
+
+    private String getCreateTableScript(Table table){
+        if(table == null) return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("CREATE TABLE");
+        stringBuilder.append(" ").append(table.getName()).append(" (");
+        stringBuilder.append(ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT");
+
+        List<Field> fieldList = table.getFieldList();
+        for (Field field : fieldList) {
+            stringBuilder.append(",");
+            stringBuilder.append(field.getName()).append(" ").append(field.getType());
+            if (field.getTrueType() == boolean.class) {
+                stringBuilder.append(" DEFAULT 0");
+            }
+        }
+
+        stringBuilder.append(")");
+
+        return stringBuilder.toString();
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
@@ -158,7 +164,14 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     List<MigrationStep> migrationStepList = migrationPlan.getUpgradePlan(i,(i+1));
                     if(migrationStepList != null && migrationStepList.size() > 0){
                         for (MigrationStep migrationStep : migrationStepList){
-                            upgradeScriptList.add(migrationStep.getSQLScript());
+                            List<String> sqlScriptList = migrationStep.getSQLScriptList(this);
+                            if(sqlScriptList != null && sqlScriptList.size() > 0) {
+                                for (String sqlScript : sqlScriptList) {
+                                    if(!TextUtils.isEmpty(sqlScript)) {
+                                        upgradeScriptList.add(sqlScript);
+                                    }
+                                }
+                            }
                         }
                         continue;
                     }
@@ -166,7 +179,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
                 String migrationFileName = String.format("%d-%d-%s.sql", i, (i + 1), getDatabaseName());
                 Log.d(TAG, "Looking for migration file: " + migrationFileName);
-                List<String> resultList = readAndGetSQLScript(db, context, migrationFileName);
+                List<String> resultList = readAndGetSQLScript(migrationFileName);
                 upgradeScriptList.addAll(resultList);
 
             }
@@ -196,7 +209,14 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     List<MigrationStep> migrationStepList = migrationPlan.getDowngradePlan(i,(i-1));
                     if(migrationStepList != null && migrationStepList.size() > 0){
                         for (MigrationStep migrationStep : migrationStepList){
-                            downgradeScriptList.add(migrationStep.getSQLScript());
+                            List<String> sqlScriptList = migrationStep.getSQLScriptList(this);
+                            if(sqlScriptList != null && sqlScriptList.size() > 0) {
+                                for (String sqlScript : sqlScriptList) {
+                                    if(!TextUtils.isEmpty(sqlScript)) {
+                                        downgradeScriptList.add(sqlScript);
+                                    }
+                                }
+                            }
                         }
                         continue;
                     }
@@ -204,7 +224,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
                 String migrationFileName = String.format("%d-%d-%s.sql", i, (i - 1), getDatabaseName());
                 Log.d(TAG, "Looking for migration file: " + migrationFileName);
-                List<String> resultList = readAndGetSQLScript(db, context, migrationFileName);
+                List<String> resultList = readAndGetSQLScript(migrationFileName);
                 downgradeScriptList.addAll(resultList);
 
             }
@@ -451,7 +471,23 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-    public <T extends TableClass> List<T> findWithCriteria(String tableName, Class<T> clazz, String whereClause, String[] whereClauseArgs) {
+    public <T extends TableClass> T findFirst(String tableName, Class<T> clazz) {
+        List<T> resultList = findAll(tableName, clazz);
+        if(resultList != null && resultList.size() > 0){
+            return resultList.get(0);
+        }
+        return  null;
+    }
+
+    public <T extends TableClass> T findLast(String tableName, Class<T> clazz) {
+        List<T> resultList = findAll(tableName, clazz);
+        if(resultList != null && resultList.size() > 0){
+            return resultList.get(resultList.size()-1);
+        }
+        return  null;
+    }
+
+    public <T extends TableClass> List<T> findAllWithCriteria(String tableName, Class<T> clazz, String whereClause, String[] whereClauseArgs) {
         try {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
@@ -486,6 +522,22 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         } catch (IllegalAccessException e){
             return null;
         }
+    }
+
+    public <T extends TableClass> T findFirstWithCriteria(String tableName, Class<T> clazz, String whereClause, String[] whereClauseArgs) {
+        List<T> resultList = findAllWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
+        if(resultList != null && resultList.size() > 0){
+            return resultList.get(0);
+        }
+        return  null;
+    }
+
+    public <T extends TableClass> T findLastWithCriteria(String tableName, Class<T> clazz, String whereClause, String[] whereClauseArgs) {
+        List<T> resultList = findAllWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
+        if(resultList != null && resultList.size() > 0){
+            return resultList.get(resultList.size()-1);
+        }
+        return  null;
     }
 
 
@@ -709,15 +761,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     private static class Builder {
-        private Context context;
         private String databaseName;
         private int databaseVersion;
         private Map<String, Table> tableMap = new HashMap<>();
-
-        public Builder setContext(Context context) {
-            this.context = context.getApplicationContext();
-            return this;
-        }
 
         public Builder setDatabaseName(String databaseName) {
             this.databaseName = databaseName;
@@ -729,7 +775,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             return this;
         }
 
-        public SQLiteWrapper create() {
+        public SQLiteWrapper create(Context context) {
             return new SQLiteWrapper(context, databaseName, databaseVersion, tableMap);
         }
     }
@@ -806,7 +852,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            return SQLiteWrapper.of(databaseName).findWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
+            return SQLiteWrapper.of(databaseName).findAllWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
         }
 
         public static <T extends TableClass> List<T> selectQuery(String databaseName, boolean distinct, String tableName,
@@ -843,7 +889,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private MigrationPlan migrationPlan;
 
     public interface MigrationStep {
-        String getSQLScript();
+        List<String> getSQLScriptList(SQLiteWrapper sqLiteWrapper);
     }
 
     public static class RenameTableMigrationStep implements MigrationStep{
@@ -855,14 +901,42 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             this.newTableName = newTableName;
         }
 
-        public RenameTableMigrationStep(Class oldTableClass, Class newTableClass){
-            this.oldTableName = oldTableClass.getSimpleName();
-            this.newTableName = newTableClass.getSimpleName();
+        @Override
+        public List<String> getSQLScriptList(SQLiteWrapper sqLiteWrapper) {
+            List<String> sqlScriptList = new ArrayList<>();
+            sqlScriptList.add(String.format("ALTER TABLE %s RENAME TO %s", oldTableName, newTableName));
+            return sqlScriptList;
+        }
+    }
+
+
+    public static class AddTableMigrationStep implements MigrationStep{
+        private String tableName;
+        public AddTableMigrationStep(String tableName){
+            this.tableName = tableName;
         }
 
         @Override
-        public String getSQLScript() {
-            return String.format("ALTER TABLE %s RENAME TO %s", oldTableName, newTableName);
+        public List<String> getSQLScriptList(SQLiteWrapper sqLiteWrapper) {
+            List<String> sqlScriptList = new ArrayList<>();
+            Table table = sqLiteWrapper.tableMap.get(tableName);
+            sqlScriptList.add(sqLiteWrapper.getCreateTableScript(table));
+            return sqlScriptList;
+        }
+    }
+
+
+    public static class RemoveTableMigrationStep implements MigrationStep{
+        private String tableName;
+        public RemoveTableMigrationStep(String tableName){
+            this.tableName = tableName;
+        }
+
+        @Override
+        public List<String> getSQLScriptList(SQLiteWrapper sqLiteWrapper) {
+            List<String> sqlScriptList = new ArrayList<>();
+            sqlScriptList.add(String.format("DROP TABLE %s", tableName));
+            return sqlScriptList;
         }
     }
 
@@ -874,7 +948,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
 
-    private List<Table> readAndParseCreateTableScript(Context context, String fileName) {
+    private List<Table> readAndParseCreateTableScript(String fileName) {
         List<Table> tableList = new ArrayList<>();
 
         if (TextUtils.isEmpty(fileName)) {
@@ -883,7 +957,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
 
         Log.d(TAG, "Create Script found. Executing...");
-        AssetManager assetManager = context.getAssets();
         BufferedReader reader = null;
 
         try {
@@ -967,7 +1040,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
-    private List<String> readAndGetSQLScript(SQLiteDatabase db, Context context, String fileName) {
+    private List<String> readAndGetSQLScript(String fileName) {
         if (TextUtils.isEmpty(fileName)) {
             Log.d(TAG, "Upgrade SQL script file name is empty");
             return null;
@@ -976,7 +1049,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         List<String> scriptList = new ArrayList<>();
 
         Log.d(TAG, "Upgrade Script found. Executing...");
-        AssetManager assetManager = context.getAssets();
         BufferedReader reader = null;
 
         try {
@@ -1033,6 +1105,147 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 db.execSQL(statement.toString());
                 statement = new StringBuilder();
             }
+        }
+    }
+
+
+    private static String LOOKUP_DATABASE_NAME = "sqlwlookup.db";
+    private static void enableLookupDatabase(final Context context){
+        addDatabase(new Database() {
+            @Override
+            public Context getAppContext() {
+                return context.getApplicationContext();
+            }
+
+            @Override
+            public String getDatabaseName() {
+                return LOOKUP_DATABASE_NAME;
+            }
+
+            @Override
+            public int getDatabaseVersion() {
+                return 1;
+            }
+
+            @Override
+            public boolean isWrapperCached() {
+                return true;
+            }
+
+            @Override
+            public void configure(SQLiteWrapper sqLiteWrapper) {
+                sqLiteWrapper.addTable(new Table(TLookup.class)
+                        .addStringField("key")
+                        .addStringField("string")
+                        .addBooleanField("boolean")
+                        .addIntField("integer")
+                        .addLongField("long")
+                        .addFloatField("float")
+                        .addDoubleField("double"));
+            }
+        });
+    }
+
+
+    public static SQLiteWrapper getLookupDatabase(Context context){
+        SQLiteWrapper sqLiteWrapper = SQLiteWrapper.of(LOOKUP_DATABASE_NAME);
+        if(sqLiteWrapper == null){
+            SQLiteWrapper.enableLookupDatabase(context);
+            sqLiteWrapper = SQLiteWrapper.of(LOOKUP_DATABASE_NAME);
+        }
+        return sqLiteWrapper;
+    }
+
+    public static class TLookup extends TableClass{
+        private String key;
+        private String string;
+        private boolean aBoolean;
+        private int anInt;
+        private long aLong;
+        private float aFloat;
+        private double aDouble;
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getString() {
+            return string;
+        }
+
+        public void setString(String string) {
+            this.string = string;
+        }
+
+        public boolean getBoolean() {
+            return aBoolean;
+        }
+
+        public void setBoolean(boolean aBoolean) {
+            this.aBoolean = aBoolean;
+        }
+
+        public int getInt() {
+            return anInt;
+        }
+
+        public void setInt(int anInt) {
+            this.anInt = anInt;
+        }
+
+        public long getLong() {
+            return aLong;
+        }
+
+        public void setLong(long aLong) {
+            this.aLong = aLong;
+        }
+
+        public float getFloat() {
+            return aFloat;
+        }
+
+        public void setFloat(float aFloat) {
+            this.aFloat = aFloat;
+        }
+
+        public double getDouble() {
+            return aDouble;
+        }
+
+        public void setDouble(double aDouble) {
+            this.aDouble = aDouble;
+        }
+
+        @Override
+        protected String getDatabaseName() {
+            return LOOKUP_DATABASE_NAME;
+        }
+
+        @Override
+        protected void getData(List<Object> dataList) {
+            dataList.add(key);
+            dataList.add(string);
+            dataList.add(aBoolean);
+            dataList.add(anInt);
+            dataList.add(aLong);
+            dataList.add(aFloat);
+            dataList.add(aDouble);
+        }
+
+        @Override
+        protected void setData(List<Object> dataList) {
+            key = (String) dataList.get(0);
+            string = (String) dataList.get(1);
+            aBoolean = (boolean) dataList.get(2);
+            anInt = (int) dataList.get(3);
+            aLong = (long) dataList.get(4);
+            aFloat = (float) dataList.get(5);
+            aDouble = (double) dataList.get(6);
         }
     }
 }
