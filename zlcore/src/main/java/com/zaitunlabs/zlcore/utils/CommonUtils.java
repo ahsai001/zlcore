@@ -1899,28 +1899,30 @@ public class CommonUtils {
 	}
 
 
-	public static PopupWindow showPopupView(Context context,
-											  View popupView,
-											  View anchorView,
-											  boolean outsideTouchable,
-											  PopupWindow.OnDismissListener dismissListener) {
+	public static PopupWindow showPopupViewAsDropDown(Context context,
+													  View popupView,
+													  View anchorView, int xOff, int yOff,
+													  boolean outsideTouchable,
+													  PopupWindow.OnDismissListener dismissListener) {
 		PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		popupWindow.setOutsideTouchable(outsideTouchable);
 		popupWindow.setOnDismissListener(dismissListener);
-		popupWindow.showAsDropDown(anchorView);
+		popupWindow.setFocusable(true);
+		popupWindow.showAsDropDown(anchorView, xOff, yOff);
 		return popupWindow;
 	}
 
-	public static PopupWindow showPopupView(Context context,
-											  View popupView,
-											  View parentView,
-											  int gravity,
-											  int xOff, int yOff,
-											  boolean outsideTouchable,
-											  PopupWindow.OnDismissListener dismissListener) {
+	public static PopupWindow showPopupViewAtLocation(Context context,
+													  View popupView,
+													  View parentView,
+													  int gravity,
+													  int xOff, int yOff,
+													  boolean outsideTouchable,
+													  PopupWindow.OnDismissListener dismissListener) {
 		PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		popupWindow.setOutsideTouchable(outsideTouchable);
 		popupWindow.setOnDismissListener(dismissListener);
+		popupWindow.setFocusable(true);
 		popupWindow.showAtLocation(parentView, gravity, xOff,yOff);
 		return popupWindow;
 	}
@@ -3113,45 +3115,35 @@ public class CommonUtils {
 		}
 	}
 
-	public static String getBase64StringFromUri(Context context, Uri uri) {
+	public static String getBase64StringFromUri(Context context, Uri uri) throws IOException {
 		String base64 = "";
-		try {
-			InputStream inputStream = context.getContentResolver().openInputStream(uri);
-			ByteArrayOutputStream result = new ByteArrayOutputStream();
-			byte[] buffer = new byte[1024];
-			int length;
-			while ((length = inputStream.read(buffer)) != -1) {
-				result.write(buffer, 0, length);
-			}
-			base64 = android.util.Base64.encodeToString(result.toByteArray(), 0, result.size(),
-					android.util.Base64.DEFAULT);
-			result.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		InputStream inputStream = context.getContentResolver().openInputStream(uri);
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = inputStream.read(buffer)) != -1) {
+			result.write(buffer, 0, length);
 		}
+		base64 = Base64.encodeToString(result.toByteArray(), 0, result.size(),
+				Base64.DEFAULT);
+		result.close();
 		return base64;
 	}
 
 	public static Bitmap decodeSampledBitmapFromUri(Context context, Uri imageUri,
-													int reqWidth, int reqHeight) {
+													int reqWidth, int reqHeight) throws FileNotFoundException {
 
-		try {
-			// First decode with inJustDecodeBounds=true to check dimensions
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
 
-			BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
-			// Calculate inSampleSize
-			options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
-			// Decode bitmap with inSampleSize set
-			options.inJustDecodeBounds = false;
-			return BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		return null;
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
 	}
 
 	public static int calculateInSampleSize(
@@ -3216,16 +3208,13 @@ public class CommonUtils {
 		return Bitmap.createScaledBitmap(image, width, height, true);
 	}
 
-	public static String getBase64StringFromBitmap(Bitmap bitmap) {
+	public static String getBase64StringFromBitmap(Bitmap bitmap) throws IOException {
 		String temp = "";
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-			byte[] b = baos.toByteArray();
-			temp = Base64.encodeToString(b, Base64.DEFAULT);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+		byte[] b = baos.toByteArray();
+		temp = Base64.encodeToString(b, Base64.DEFAULT);
+		baos.close();
 		return temp;
 	}
 }
