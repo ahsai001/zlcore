@@ -57,6 +57,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.core.widget.PopupWindowCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -1901,28 +1903,62 @@ public class CommonUtils {
 
 	public static PopupWindow showPopupViewAsDropDown(Context context,
 													  View popupView,
-													  View anchorView, int xOff, int yOff,
+													  View anchorView,
+													  int width, int height,
+													  int gravity, int xOff, int yOff,
 													  boolean outsideTouchable,
 													  PopupWindow.OnDismissListener dismissListener) {
-		PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		PopupWindow popupWindow = new PopupWindow(popupView, width==0?ViewGroup.LayoutParams.WRAP_CONTENT:width, height==0?ViewGroup.LayoutParams.WRAP_CONTENT:height);
+
+		popupWindow.setAnimationStyle(android.R.style.Animation_Toast);
+		//popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.popup_chat_background));
+
 		popupWindow.setOutsideTouchable(outsideTouchable);
+		popupWindow.setFocusable(outsideTouchable);
+
+		if(width > 0){
+			popupWindow.setWidth(width);
+		}
+
+		if(height > 0){
+			popupWindow.setHeight(height);
+		}
+
 		popupWindow.setOnDismissListener(dismissListener);
-		popupWindow.setFocusable(true);
-		popupWindow.showAsDropDown(anchorView, xOff, yOff);
+		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED);
+
+		//popupWindow.showAsDropDown(anchorView, xOff, yOff);
+		PopupWindowCompat.showAsDropDown(popupWindow, anchorView, xOff, yOff, gravity);
 		return popupWindow;
 	}
 
 	public static PopupWindow showPopupViewAtLocation(Context context,
 													  View popupView,
 													  View parentView,
+													  int width, int height,
 													  int gravity,
 													  int xOff, int yOff,
 													  boolean outsideTouchable,
 													  PopupWindow.OnDismissListener dismissListener) {
-		PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		PopupWindow popupWindow = new PopupWindow(popupView, width==0?ViewGroup.LayoutParams.WRAP_CONTENT:width, height==0?ViewGroup.LayoutParams.WRAP_CONTENT:height);
+
+		popupWindow.setAnimationStyle(android.R.style.Animation_Toast);
+		//popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.popup_chat_background));
+
 		popupWindow.setOutsideTouchable(outsideTouchable);
+		popupWindow.setFocusable(outsideTouchable);
+
+		if(width > 0){
+			popupWindow.setWidth(width);
+		}
+
+		if(height > 0){
+			popupWindow.setHeight(height);
+		}
+
 		popupWindow.setOnDismissListener(dismissListener);
-		popupWindow.setFocusable(true);
+		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
 		popupWindow.showAtLocation(parentView, gravity, xOff,yOff);
 		return popupWindow;
 	}
