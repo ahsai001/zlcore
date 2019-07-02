@@ -30,6 +30,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -95,6 +97,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.util.Base64;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -103,6 +106,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.zaitunlabs.zlcore.BuildConfig;
 import com.zaitunlabs.zlcore.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -2583,7 +2587,11 @@ public class CommonUtils {
 
 		 */
 		Intent intent = new Intent();
-		intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+		} else {
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+		}
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
 		intent.setType(mimeType);
 		if(activityOrFragment instanceof Activity) {
@@ -2616,7 +2624,7 @@ public class CommonUtils {
 		}
 	}
 
-	public static Uri handleFilePicker(Object activityOrFragment, int targetRequestCode, int requestCode, int resultCode, Intent data){
+	public static Uri handleFilePickerData(Object activityOrFragment, int targetRequestCode, int requestCode, int resultCode, Intent data){
 		Uri fileResultUri = null;
 		if(targetRequestCode == requestCode){
 			if(resultCode == Activity.RESULT_OK){
@@ -2631,7 +2639,7 @@ public class CommonUtils {
 		return fileResultUri;
 	}
 
-	public static String handleFilePickerString(Object activityOrFragment, int targetRequestCode, int requestCode, int resultCode, Intent data){
+	public static String handleFilePickerDataString(Object activityOrFragment, int targetRequestCode, int requestCode, int resultCode, Intent data){
 		String fileResultUri = null;
 		if(targetRequestCode == requestCode){
 			if(resultCode == Activity.RESULT_OK){
@@ -3103,5 +3111,121 @@ public class CommonUtils {
 		} catch (Exception e) {
 			Log.e("exc" , String.valueOf(e));
 		}
+	}
+
+	public static String getBase64StringFromUri(Context context, Uri uri) {
+		String base64 = "";
+		try {
+			InputStream inputStream = context.getContentResolver().openInputStream(uri);
+			ByteArrayOutputStream result = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = inputStream.read(buffer)) != -1) {
+				result.write(buffer, 0, length);
+			}
+			base64 = android.util.Base64.encodeToString(result.toByteArray(), 0, result.size(),
+					android.util.Base64.DEFAULT);
+			result.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return base64;
+	}
+
+	public static Bitmap decodeSampledBitmapFromUri(Context context, Uri imageUri,
+													int reqWidth, int reqHeight) {
+
+		try {
+			// First decode with inJustDecodeBounds=true to check dimensions
+			final BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+
+			BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
+			// Calculate inSampleSize
+			options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+			// Decode bitmap with inSampleSize set
+			options.inJustDecodeBounds = false;
+			return BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public static int calculateInSampleSize(
+			BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) >= reqHeight
+					&& (halfWidth / inSampleSize) >= reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+
+	public static Bitmap addStringWaterMark(Bitmap src, int backgroundColor, int textColor, String stringWaterMark) {
+		int left = 30, top = 30;
+		int w = src.getWidth();
+		int h = src.getHeight();
+		Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
+		Canvas canvas = new Canvas(result);
+		canvas.drawBitmap(src, 0, 0, null);
+
+		Paint.FontMetrics fm = new Paint.FontMetrics();
+		Paint mTxtPaint = new Paint();
+		mTxtPaint.setColor(backgroundColor);
+		mTxtPaint.setTextSize(18.0F);
+		mTxtPaint.getFontMetrics(fm);
+		int margin = 10;
+		canvas.drawRect(left - margin, top + fm.top - margin,
+				left + mTxtPaint.measureText(stringWaterMark) + margin, top + fm.bottom
+						+ margin, mTxtPaint);
+		mTxtPaint.setColor(textColor);
+
+		canvas.drawText(stringWaterMark, left, top, mTxtPaint);
+
+		return result;
+	}
+
+	public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		float bitmapRatio = (float) width / (float) height;
+		if (bitmapRatio > 1) {
+			width = maxSize;
+			height = (int) (width / bitmapRatio);
+		} else {
+			height = maxSize;
+			width = (int) (height * bitmapRatio);
+		}
+		return Bitmap.createScaledBitmap(image, width, height, true);
+	}
+
+	public static String getBase64StringFromBitmap(Bitmap bitmap) {
+		String temp = "";
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+			byte[] b = baos.toByteArray();
+			temp = Base64.encodeToString(b, Base64.DEFAULT);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return temp;
 	}
 }
