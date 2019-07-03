@@ -3151,7 +3151,7 @@ public class CommonUtils {
 		}
 	}
 
-	public static String getBase64StringFromUri(Context context, Uri uri) throws IOException {
+	public static String getBase64StringFromUri(Context context, Uri uri) throws IOException, OutOfMemoryError {
 		String base64 = "";
 		InputStream inputStream = context.getContentResolver().openInputStream(uri);
 		ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -3244,7 +3244,7 @@ public class CommonUtils {
 		return Bitmap.createScaledBitmap(image, width, height, true);
 	}
 
-	public static String getBase64StringFromBitmap(Bitmap bitmap) throws IOException {
+	public static String getBase64StringFromBitmap(Bitmap bitmap) throws IOException, OutOfMemoryError {
 		String temp = "";
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
