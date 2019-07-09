@@ -3,7 +3,7 @@ package com.zaitunlabs.zlcore.utils;
 import android.content.Context;
 import android.net.http.SslError;
 import android.os.Build;
-import android.provider.Settings;
+
 import androidx.annotation.IdRes;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -69,9 +69,11 @@ public class HttpClientUtils {
     private static String androidId = null;
     private static String randomUUID = null;
 
-    private static volatile OkHttpClient singletonOkHttpClient = null;
-    private static volatile OkHttpClient singletonUnsafeOkHttpClient = null;
-
+    private static volatile OkHttpClient singletonClient = null;
+    private static volatile OkHttpClient singletonUploadClient = null;
+    private static volatile OkHttpClient singletonUnsafeClient = null;
+    private static volatile OkHttpClient singletonUploadUnsafeClient = null;
+    private static volatile BuilderConfig singletonBuilderConfig = null;
 
 
 
@@ -184,69 +186,135 @@ public class HttpClientUtils {
     }
 
 
-    public static void setSingletonOkHttpClient(OkHttpClient okHttpClient){
+    public static void setSingletonBuilderConfig(BuilderConfig builderConfig){
+        if (builderConfig == null) {
+            throw new IllegalArgumentException("CUstomOkHttpBuilder must not be null.");
+        }
+        synchronized (HttpClientUtils.class) {
+            if (singletonBuilderConfig != null) {
+                throw new IllegalStateException("Singleton instance already exists.");
+            }
+            singletonBuilderConfig = builderConfig;
+        }
+    }
+
+    public static void setSingletonClient(OkHttpClient okHttpClient){
         if (okHttpClient == null) {
             throw new IllegalArgumentException("OkHttpClient must not be null.");
         }
         synchronized (HttpClientUtils.class) {
-            if (singletonOkHttpClient != null) {
+            if (singletonClient != null) {
                 throw new IllegalStateException("Singleton instance already exists.");
             }
-            singletonOkHttpClient = okHttpClient;
+            singletonClient = okHttpClient;
         }
     }
 
-    public static void setSingletonUnsafeOkHttpClient(OkHttpClient unsafeOkHttpClient){
+    public static void setSingletonUploadClient(OkHttpClient okHttpClient){
+        if (okHttpClient == null) {
+            throw new IllegalArgumentException("OkHttpClient must not be null.");
+        }
+        synchronized (HttpClientUtils.class) {
+            if (singletonUploadClient != null) {
+                throw new IllegalStateException("Singleton instance already exists.");
+            }
+            singletonUploadClient = okHttpClient;
+        }
+    }
+
+    public static void setSingletonUnsafeClient(OkHttpClient unsafeOkHttpClient){
         if (unsafeOkHttpClient == null) {
             throw new IllegalArgumentException("OkHttpClient must not be null.");
         }
         synchronized (HttpClientUtils.class) {
-            if (singletonUnsafeOkHttpClient != null) {
+            if (singletonUnsafeClient != null) {
                 throw new IllegalStateException("Singleton instance already exists.");
             }
-            singletonUnsafeOkHttpClient = unsafeOkHttpClient;
+            singletonUnsafeClient = unsafeOkHttpClient;
+        }
+    }
+
+    public static void setSingletonUploadUnsafeClient(OkHttpClient unsafeOkHttpClient){
+        if (unsafeOkHttpClient == null) {
+            throw new IllegalArgumentException("OkHttpClient must not be null.");
+        }
+        synchronized (HttpClientUtils.class) {
+            if (singletonUploadUnsafeClient != null) {
+                throw new IllegalStateException("Singleton instance already exists.");
+            }
+            singletonUploadUnsafeClient = unsafeOkHttpClient;
         }
     }
 
 
     public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isMeid){
-        return getHTTPClient(context,apiVersion,isMeid,false);
+        return getHTTPClient(context,apiVersion,isMeid, null);
+    }
+
+    public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isMeid, BuilderConfig builderConfig){
+        return getHTTPClient(context,apiVersion,isMeid,false, builderConfig);
     }
 
 
     public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isMeid, boolean isUpload){
-        List<String> headerList = getHeaderList(isMeid, isMeid, isMeid, isMeid);
-        Map<String, String> headerMap = getHeaderMap(context, headerList);
-        return getHTTPClient(context,headerMap,apiVersion,isUpload);
+        return getHTTPClient(context,apiVersion,isMeid, isUpload, null);
     }
 
-    public static OkHttpClient getHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload){
-        if(singletonOkHttpClient != null){
-            return singletonOkHttpClient;
+    public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isMeid, boolean isUpload, BuilderConfig builderConfig){
+        List<String> headerList = getHeaderList(isMeid, isMeid, isMeid, isMeid);
+        Map<String, String> headerMap = getHeaderMap(context, headerList);
+        return getHTTPClient(context,headerMap,apiVersion,isUpload, builderConfig);
+    }
+
+
+    public static OkHttpClient getHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload, BuilderConfig builderConfig){
+        if(isUpload){
+            if(singletonUploadClient != null){
+                return singletonUploadClient;
+            }
+        } else {
+            if (singletonClient != null) {
+                return singletonClient;
+            }
         }
 
         OkHttpClient client = null;
         if(context!= null) {
             Interceptor interceptor = getInterceptor(headerMap, apiVersion);
             // Add the interceptor to OkHttpClient
-            client = new OkHttpClient.Builder()
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .readTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .writeTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                    .addInterceptor(interceptor)
-                    .build();
+                    .addInterceptor(interceptor);
+
+            if(singletonBuilderConfig != null){
+                singletonBuilderConfig.configure(builder);
+            }
+
+            if (builderConfig != null) {
+                builderConfig.configure(builder);
+            }
+
+            client = builder.build();
         }
         return client;
     }
 
 
-    public static OkHttpClient getUnsafeHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion){
-        return getUnsafeHTTPClient(context, headerMap, apiVersion,false);
+    public static OkHttpClient getUnsafeHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, BuilderConfig builderConfig){
+        return getUnsafeHTTPClient(context, headerMap, apiVersion,false, builderConfig);
     }
 
-    public static OkHttpClient getUnsafeHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload) {
-        if(singletonUnsafeOkHttpClient != null){
-            return singletonUnsafeOkHttpClient;
+    public static OkHttpClient getUnsafeHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload, BuilderConfig builderConfig) {
+        if(isUpload){
+            if(singletonUploadUnsafeClient != null){
+                return singletonUploadUnsafeClient;
+            }
+        } else {
+            if (singletonUnsafeClient != null) {
+                return singletonUnsafeClient;
+            }
         }
 
         try {
@@ -279,7 +347,7 @@ public class HttpClientUtils {
 
                 Interceptor interceptor = getInterceptor(headerMap, apiVersion);
                 // Add the interceptor to OkHttpClient
-                client = new OkHttpClient.Builder()
+                OkHttpClient.Builder builder = new OkHttpClient.Builder()
                         .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                         .readTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                         .writeTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
@@ -290,8 +358,17 @@ public class HttpClientUtils {
                             public boolean verify(String hostname, SSLSession session) {
                                 return true;
                             }
-                        })
-                        .build();
+                        });
+
+                if(singletonBuilderConfig != null){
+                    singletonBuilderConfig.configure(builder);
+                }
+
+                if (builderConfig != null) {
+                    builderConfig.configure(builder);
+                }
+
+                client = builder.build();
             }
 
             return client;
@@ -300,17 +377,22 @@ public class HttpClientUtils {
         }
     }
 
-    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, @IdRes int certRawResId){
-        return getCertificatePinnerHTTPClient(context,headerMap, apiVersion, false, certRawResId);
+    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, @IdRes int certRawResId, BuilderConfig builderConfig){
+        return getCertificatePinnerHTTPClient(context,headerMap, apiVersion, false, certRawResId, builderConfig);
     }
 
-    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload,  @IdRes int certRawResId){
+    public static OkHttpClient getCertificatePinnerHTTPClient(final Context context, Map<String, String> headerMap, String apiVersion, boolean isUpload,  @IdRes int certRawResId, BuilderConfig builderConfig){
         OkHttpClient client = null;
         if(context!= null) {
-            CustomTrust customTrust = new CustomTrust(context,headerMap,apiVersion, isUpload,certRawResId);
+            CustomTrust customTrust = new CustomTrust(context,headerMap,apiVersion, isUpload,certRawResId, builderConfig);
             client = customTrust.getClient();
         }
         return client;
+    }
+
+
+    interface BuilderConfig {
+        void configure(OkHttpClient.Builder builder);
     }
 
 
@@ -320,7 +402,7 @@ public class HttpClientUtils {
         private final Context context;
         private final int certRawResId;
 
-        public CustomTrust(final Context context, Map<String, String> headerMap,String apiVersion, boolean isUpload, @IdRes int certRawResId) {
+        public CustomTrust(final Context context, Map<String, String> headerMap,String apiVersion, boolean isUpload, @IdRes int certRawResId, BuilderConfig builderConfig) {
             this.context = context;
             this.certRawResId = certRawResId;
             X509TrustManager trustManager;
@@ -336,14 +418,23 @@ public class HttpClientUtils {
 
             Interceptor interceptor = getInterceptor(headerMap, apiVersion);
             // Add the interceptor to OkHttpClient
-            client = new OkHttpClient.Builder()
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .readTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .writeTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .addInterceptor(interceptor)
-                    .sslSocketFactory(sslSocketFactory, trustManager)
+                    .sslSocketFactory(sslSocketFactory, trustManager);
                     //.protocols(Arrays.asList(Protocol.HTTP_1_1))
-                    .build();
+
+            if(singletonBuilderConfig != null){
+                singletonBuilderConfig.configure(builder);
+            }
+
+            if (builderConfig != null) {
+                builderConfig.configure(builder);
+            }
+
+            client = builder.build();
         }
 
         public OkHttpClient getClient() {
@@ -459,19 +550,28 @@ public class HttpClientUtils {
     }
 
 
-    public static void setCustomPicassoSingletoneInstance(Context context, Map<String, String> headerMap, String apiVersion){
-        Picasso.setSingletonInstance(getPicassoInstance(context,headerMap, apiVersion));
+    public static void setCustomPicassoSingletoneInstance(Context context, Map<String, String> headerMap, String apiVersion, BuilderConfig builderConfig){
+        Picasso.setSingletonInstance(getPicassoInstance(context,headerMap, apiVersion, builderConfig));
     }
 
 
-    private static Picasso getPicassoInstance(Context context, Map<String, String> headerMap, String apiVersion){
+    private static Picasso getPicassoInstance(Context context, Map<String, String> headerMap, String apiVersion, BuilderConfig builderConfig){
         Interceptor interceptor = getInterceptor(headerMap, apiVersion);
-        OkHttpClient client = new OkHttpClient.Builder()
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(HttpClientUtils.IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(HttpClientUtils.IMAGE_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .writeTimeout(HttpClientUtils.IMAGE_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                .addInterceptor(interceptor)
-                .build();
+                .addInterceptor(interceptor);
+
+        if(singletonBuilderConfig != null){
+            singletonBuilderConfig.configure(builder);
+        }
+
+        if (builderConfig != null) {
+            builderConfig.configure(builder);
+        }
+
+        OkHttpClient client =  builder.build();
         Picasso picasso = new Picasso.Builder(context).downloader(new OkHttp3Downloader(client)).build();
         return picasso;
     }
