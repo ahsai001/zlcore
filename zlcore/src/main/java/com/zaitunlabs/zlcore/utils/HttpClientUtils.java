@@ -391,7 +391,7 @@ public class HttpClientUtils {
     }
 
 
-    interface BuilderConfig {
+    public interface BuilderConfig {
         void configure(OkHttpClient.Builder builder);
     }
 
