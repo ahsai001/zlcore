@@ -124,7 +124,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     }
 
     public void setArg(Context context, int position, String url, String defaultMessage, int bgColor){
-        ArrayList<String> headerList = HttpClientUtils.getHeaderList(false, true, true, true);
+        ArrayList<String> headerList = HttpClientUtils.getHeaderList(false, false, false, false);
         setArg(context, position,url,defaultMessage,-1, false, headerList);
     }
 
@@ -831,7 +831,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Uri fileUri = CommonUtils.handleFilePicker(GeneralWebViewFragment.this,FILE_REQUEST_CODE,requestCode,resultCode, data);
+        Uri fileUri = CommonUtils.handleFilePickerData(GeneralWebViewFragment.this,FILE_REQUEST_CODE,requestCode,resultCode, data);
         if(fileUri != null) {
             if (mFilePathCallback != null) {
                 mFilePathCallback.onReceiveValue(new Uri[]{fileUri});

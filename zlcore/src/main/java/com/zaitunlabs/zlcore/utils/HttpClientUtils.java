@@ -215,7 +215,7 @@ public class HttpClientUtils {
 
 
     public static OkHttpClient getHTTPClient(final Context context, String apiVersion, boolean isMeid, boolean isUpload){
-        List<String> headerList = getHeaderList(isMeid, true, true, true);
+        List<String> headerList = getHeaderList(isMeid, isMeid, isMeid, isMeid);
         Map<String, String> headerMap = getHeaderMap(context, headerList);
         return getHTTPClient(context,headerMap,apiVersion,isUpload);
     }
