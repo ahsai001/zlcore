@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
+import android.util.Base64;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -35,19 +35,21 @@ public class Lookup {
     private static final String PROVIDER = "BC";
     private static byte[] sKey;
 
-    private static boolean isSecure= false;
-
-
+    private static boolean isSecureEnabled = false;
     private static SQLiteWrapper sqLiteWrapper;
 
-    public static void init(Context context, boolean isSecure){
+    public static void init(Context context){
+        init(context, false);
+    }
+
+    public static void init(Context context, boolean isSecureEnabled){
         if(sqLiteWrapper == null) {
             sqLiteWrapper = SQLiteWrapper.getLookupDatabase(context);
         }
 
         // Initialize encryption/decryption key
-        Lookup.isSecure = isSecure;
-        if(isSecure) {
+        Lookup.isSecureEnabled = false;
+        if(isSecureEnabled) {
             try {
                 final String key = generateAesKeyName(context);
                 String value = get(key, null);
@@ -60,6 +62,8 @@ public class Lookup {
                 throw new IllegalStateException(e);
             }
         }
+
+        Lookup.isSecureEnabled = isSecureEnabled;
     }
 
 
@@ -191,37 +195,65 @@ public class Lookup {
 
     private static void checkCondition(){
         if(sqLiteWrapper == null){
-            throw new IllegalStateException("you need to run init(context) first, you can put it inside oncreate of Application");
+            throw new IllegalStateException("you need to run init method first, you can put it inside oncreate of Application");
         }
     }
 
+
+    private static void checkSecureCondition(){
+        if(!isSecureEnabled){
+            throw new IllegalStateException("you need to run init method first with value isSecuredEnabled true, you can put it inside oncreate of Application");
+        }
+    }
+
+
+
     //string
     public static String get(String key, String defaultValue){
+        return get(key, defaultValue, false);
+    }
+
+    public static String getS(String key, String defaultValue){
+        return get(key, defaultValue, true);
+    }
+
+    public static void set(String key, String value){
+        set(key,value, false);
+    }
+
+    public static void setS(String key, String value){
+        set(key,value, true);
+    }
+
+    private static String get(String key, String defaultValue, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
-        return lookup==null?defaultValue:(isSecure?decrypt(lookup.getString()):lookup.getString());
+        return lookup==null?defaultValue:(isSecureEnabled ?decrypt(lookup.getString()):lookup.getString());
     }
 
-    public static void set(String key, String value){
+
+    private static void set(String key, String value, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
         if(lookup != null){
-            lookup.setString(isSecure?encrypt(value):value);
+            lookup.setString(isSecureEnabled ?encrypt(value):value);
             lookup.update();
         } else {
             lookup = new SQLiteWrapper.TLookup();
             lookup.setKey(key);
-            lookup.setString(isSecure?encrypt(value):value);
+            lookup.setString(isSecureEnabled ?encrypt(value):value);
             lookup.save();
         }
     }
@@ -229,26 +261,44 @@ public class Lookup {
 
     //boolean
     public static boolean get(String key, boolean defaultValue){
+        return get(key, defaultValue, false);
+    }
+
+    public static boolean getS(String key, boolean defaultValue){
+        return get(key, defaultValue, true);
+    }
+
+    public static void set(String key, boolean value){
+        set(key,value, false);
+    }
+
+    public static void setS(String key, boolean value){
+        set(key,value, true);
+    }
+
+    private static boolean get(String key, boolean defaultValue, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
-        return lookup==null?defaultValue:(isSecure?Boolean.parseBoolean(decrypt(lookup.getString())):lookup.getBoolean());
+        return lookup==null?defaultValue:(isSecureEnabled ?Boolean.parseBoolean(decrypt(lookup.getString())):lookup.getBoolean());
     }
 
-    public static void set(String key, boolean value){
+    private static void set(String key, boolean value, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
         if(lookup != null){
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Boolean.toString(value)));
             } else {
                 lookup.setBoolean(value);
@@ -257,7 +307,7 @@ public class Lookup {
         } else {
             lookup = new SQLiteWrapper.TLookup();
             lookup.setKey(key);
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Boolean.toString(value)));
             } else {
                 lookup.setBoolean(value);
@@ -269,26 +319,44 @@ public class Lookup {
 
     //int
     public static int get(String key, int defaultValue){
+        return get(key, defaultValue, false);
+    }
+
+    public static int getS(String key, int defaultValue){
+        return get(key, defaultValue, true);
+    }
+
+    public static void set(String key, int value){
+        set(key,value, false);
+    }
+
+    public static void setS(String key, int value){
+        set(key,value, true);
+    }
+
+    private static int get(String key, int defaultValue, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
-        return lookup==null?defaultValue:(isSecure?Integer.parseInt(decrypt(lookup.getString())):lookup.getInt());
+        return lookup==null?defaultValue:(isSecureEnabled ?Integer.parseInt(decrypt(lookup.getString())):lookup.getInt());
     }
 
-    public static void set(String key, int value){
+    private static void set(String key, int value, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
         if(lookup != null){
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Integer.toString(value)));
             } else {
                 lookup.setInt(value);
@@ -297,7 +365,7 @@ public class Lookup {
         } else {
             lookup = new SQLiteWrapper.TLookup();
             lookup.setKey(key);
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Integer.toString(value)));
             } else {
                 lookup.setInt(value);
@@ -309,26 +377,44 @@ public class Lookup {
 
     //long
     public static long get(String key, long defaultValue){
+        return get(key, defaultValue, false);
+    }
+
+    public static long getS(String key, long defaultValue){
+        return get(key, defaultValue, true);
+    }
+
+    public static void set(String key, long value){
+        set(key,value, false);
+    }
+
+    public static void setS(String key, long value){
+        set(key,value, true);
+    }
+
+    private static long get(String key, long defaultValue, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
-        return lookup==null?defaultValue:(isSecure?Long.parseLong(decrypt(lookup.getString())):lookup.getLong());
+        return lookup==null?defaultValue:(isSecureEnabled ?Long.parseLong(decrypt(lookup.getString())):lookup.getLong());
     }
 
-    public static void set(String key, long value){
+    private static void set(String key, long value, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
         if(lookup != null){
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Long.toString(value)));
             } else {
                 lookup.setLong(value);
@@ -337,7 +423,7 @@ public class Lookup {
         } else {
             lookup = new SQLiteWrapper.TLookup();
             lookup.setKey(key);
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Long.toString(value)));
             } else {
                 lookup.setLong(value);
@@ -349,26 +435,44 @@ public class Lookup {
 
     //float
     public static float get(String key, float defaultValue){
+        return get(key, defaultValue, false);
+    }
+
+    public static float getS(String key, float defaultValue){
+        return get(key, defaultValue, true);
+    }
+
+    public static void set(String key, float value){
+        set(key,value, false);
+    }
+
+    public static void setS(String key, float value){
+        set(key,value, true);
+    }
+
+    private static float get(String key, float defaultValue, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
-        return lookup==null?defaultValue:(isSecure?Float.parseFloat(decrypt(lookup.getString())):lookup.getFloat());
+        return lookup==null?defaultValue:(isSecureEnabled ?Float.parseFloat(decrypt(lookup.getString())):lookup.getFloat());
     }
 
-    public static void set(String key, float value){
+    private static void set(String key, float value, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
         if(lookup != null){
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Float.toString(value)));
             } else {
                 lookup.setFloat(value);
@@ -377,7 +481,7 @@ public class Lookup {
         } else {
             lookup = new SQLiteWrapper.TLookup();
             lookup.setKey(key);
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Float.toString(value)));
             } else {
                 lookup.setFloat(value);
@@ -389,26 +493,44 @@ public class Lookup {
 
     //double
     public static double get(String key, double defaultValue){
+        return get(key, defaultValue, false);
+    }
+
+    public static double getS(String key, double defaultValue){
+        return get(key, defaultValue, true);
+    }
+
+    public static void set(String key, double value){
+        set(key,value, false);
+    }
+
+    public static void setS(String key, double value){
+        set(key,value, true);
+    }
+
+    private static double get(String key, double defaultValue, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
-        return lookup==null?defaultValue:(isSecure?Double.parseDouble(decrypt(lookup.getString())):lookup.getDouble());
+        return lookup==null?defaultValue:(isSecureEnabled ?Double.parseDouble(decrypt(lookup.getString())):lookup.getDouble());
     }
 
-    public static void set(String key, double value){
+    private static void set(String key, double value, boolean isSecureEnabled){
         checkCondition();
-        if(isSecure){
+        if(isSecureEnabled){
+            checkSecureCondition();
             key = encrypt(key);
         }
 
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
         if(lookup != null){
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Double.toString(value)));
             } else {
                 lookup.setDouble(value);
@@ -417,7 +539,7 @@ public class Lookup {
         } else {
             lookup = new SQLiteWrapper.TLookup();
             lookup.setKey(key);
-            if(isSecure){
+            if(isSecureEnabled){
                 lookup.setString(encrypt(Double.toString(value)));
             } else {
                 lookup.setDouble(value);
@@ -426,8 +548,22 @@ public class Lookup {
         }
     }
 
+
+
     public static void remove(String key){
+        remove(key, false);
+    }
+
+    public static void removeS(String key){
+        remove(key, true);
+    }
+
+    private static void remove(String key, boolean isSecureEnabled){
         checkCondition();
+        if(isSecureEnabled){
+            checkSecureCondition();
+            key = encrypt(key);
+        }
         SQLiteWrapper.TLookup lookup = sqLiteWrapper.findFirstWithCriteria(null, SQLiteWrapper.TLookup.class,
                 "key=?", new String[]{key});
         if(lookup != null){
