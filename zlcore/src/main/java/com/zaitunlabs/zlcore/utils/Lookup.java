@@ -202,7 +202,7 @@ public class Lookup {
 
     private static void checkSecureCondition(){
         if(!isSecureEnabled){
-            throw new IllegalStateException("you need to run init method first with value isSecuredEnabled true, you can put it inside oncreate of Application");
+            throw new IllegalStateException("you need to run init method first with parameter isSecuredEnabled true, you can put it inside oncreate of Application");
         }
     }
 
