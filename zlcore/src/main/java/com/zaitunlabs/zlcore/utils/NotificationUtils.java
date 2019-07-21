@@ -25,11 +25,16 @@ import androidx.core.content.ContextCompat;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.activities.InfoPopup;
+import com.zaitunlabs.zlcore.activities.MessageListActivity;
+import com.zaitunlabs.zlcore.activities.ReminderPopup;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static com.zaitunlabs.zlcore.activities.InfoPopup.EXTRA_DATA;
+import static com.zaitunlabs.zlcore.activities.InfoPopup.EXTRA_INFO_ID;
 
 
 /**
@@ -77,16 +82,16 @@ public class NotificationUtils {
 
 
             CustomTypeCallBackHandler customTypeCallBackHandler = null;
-            if(customTypeCallBackList != null && customTypeCallBackList.containsKey(type.toLowerCase())){
+            if(customTypeCallBackList != null && !TextUtils.isEmpty(type) && customTypeCallBackList.containsKey(type.toLowerCase())){
                 customTypeCallBackHandler = customTypeCallBackList.get(type);
             }
-
 
 
             if(type.toLowerCase().equals("wakeup")) {
                 //do nothing, just to wakeup this app,
             } else if(type.toLowerCase().equals("reminder")) {
                 //just show reminder, not notif, not popup, and not saved
+                ReminderPopup.start(context,title,body);
             } else if(customTypeCallBackHandler != null && !customTypeCallBackHandler.isShownInNotification()){
                 //custom handle without notification
                 customTypeCallBackHandler.handleCustomType();
@@ -97,6 +102,7 @@ public class NotificationUtils {
                 int nextIntentComponentType = INTENT_COMPONENT_TYPE_ACTIVITY;
 
                 if(messageListClass == null){
+                    messageListClass = MessageListActivity.class;
                 }
 
                 if(messageListClassData == null){
@@ -139,22 +145,28 @@ public class NotificationUtils {
                 } else if(type.toLowerCase().equals("notif+")){
                     intType = 2;
                     nextIntent = new Intent(context.getApplicationContext(), messageListClass);
+                    infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
                 } else if(type.toLowerCase().equals("popup")){
                     intType = 3;
                     nextIntent = new Intent(context.getApplicationContext(), messageListClass);
+                    infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
                 } else if(customTypeCallBackHandler != null && customTypeCallBackHandler.isShownInNotification()){
                     intType = customTypeCallBackHandler.getInformationTypeId();
                     nextIntentComponentType = customTypeCallBackHandler.getIntentComponentType();
                     nextIntent = customTypeCallBackHandler.handleCustomType();
                     if(customTypeCallBackHandler.isShownInInformationList()) {
+                        infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
                     }
                 }
 
                 if(type.toLowerCase().equals("popup")){
+                    InfoPopup.start(context, messageListClass, messageListClassData);
                 }
 
                 if(nextIntent != null) {
                     nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    nextIntent.putExtra(EXTRA_DATA, messageListClassData);
+                    nextIntent.putExtra(EXTRA_INFO_ID, infoId);
                 }
 
                 notif = getNotification(context,title, body, photo,
@@ -175,7 +187,7 @@ public class NotificationUtils {
     }
 
 
-    public static interface CustomTypeCallBackHandler {
+    public interface CustomTypeCallBackHandler {
         Intent handleCustomType();
         int getIntentComponentType();
         boolean isShownInNotification();
@@ -183,8 +195,8 @@ public class NotificationUtils {
         int getInformationTypeId();
     }
 
-    public static interface CallBackIntentFromNotification {
-        void showMessagesPage(Bundle bundle);
+    public interface CallBackIntentFromNotification {
+        void handle(Bundle data, boolean showMessagePage, long infoId);
     }
 
     public static void showNotification(Context context, String title, String content, Class nextActivity,
@@ -441,7 +453,7 @@ public class NotificationUtils {
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             notification = builder.build();
-        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
             notification = builder.getNotification();
         }
         return notification;
@@ -449,16 +461,18 @@ public class NotificationUtils {
 
     public static void handleIntentFromNotification(final Intent intent, CallBackIntentFromNotification callBackIntentFromNotification ){
         //place this in onCreate and onNewIntent
-        Bundle extraData = CommonUtils.getBundleIntent(intent, InfoPopup.EXTRA_DATA, null);
+        Bundle extraData = CommonUtils.getBundleIntent(intent, EXTRA_DATA, null);
+        final long extraInfoId = CommonUtils.getLongIntent(intent, EXTRA_INFO_ID, -1);
         if(extraData != null) {
-            callBackIntentFromNotification.showMessagesPage(extraData);
-        }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                long extraInfoId = CommonUtils.getLongIntent(intent, InfoPopup.EXTRA_INFO_ID, -1);
-                InfoUtils.scrollInfoList(extraInfoId);
+            callBackIntentFromNotification.handle(extraData, extraInfoId > -1, extraInfoId);
+            if(extraInfoId > -1) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        InfoUtils.scrollInfoList(extraInfoId);
+                    }
+                }, 200);
             }
-        },200);
+        }
     }
 }
