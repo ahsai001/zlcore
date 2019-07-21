@@ -47,7 +47,7 @@ public class NotificationUtils {
     public static void onMessageReceived(Context context, Map<String, Object> data, String notifTitle, String notifBody,
                                          Class homePageClass, Class messageListClass, Bundle messageListClassData,
                                          int appNameResId, int iconResId,
-                                         Map<String, CustomTypeCallBackHandler> customTypeCallBackList) {
+                                         Map<String, CustomTypeCallBackHandler> customTypeCallBackList, boolean isLoggedIn) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "zlcore:smartFirebaseMessagingServiceTAG");
 
@@ -73,7 +73,7 @@ public class NotificationUtils {
             String action = (String) data.get("action"); //url or full path class
             String isHeadsUp = (String) data.get("headsup"); //yes or no
 
-            if(needlogin.toLowerCase().equals("yes"))return;
+            if(!TextUtils.isEmpty(needlogin) && needlogin.toLowerCase().equals("yes") && !isLoggedIn)return;
 
 
             CustomTypeCallBackHandler customTypeCallBackHandler = null;
