@@ -2,8 +2,10 @@ package com.zaitunlabs.zlcore.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,8 +36,10 @@ import com.zaitunlabs.zlcore.views.CustomRecylerView;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ahsai on 6/13/2017.
@@ -157,14 +161,21 @@ public class InfoFragment extends BaseFragment {
                                 }
                                 WebViewActivity.start(view.getContext(),htmlContent,info.getTitle(), "",
                                         ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info.getId(), isMeid);
-                            } else {
-                                //may be this is activity name
-                                try {
-                                    Class nextClass = Class.forName(info.getInfoUrl());
-                                    Intent targetIntent = new Intent(view.getContext().getApplicationContext(), nextClass);
-                                    view.getContext().startActivity(targetIntent);
-                                } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
+                            } else if(info.getInfoUrl().startsWith("activity://")){
+                                Uri uri = Uri.parse(info.getInfoUrl());
+                                if(uri != null) {
+                                    try {
+                                        Class nextClass = Class.forName(uri.getHost());
+                                        Intent targetIntent = new Intent(view.getContext(), nextClass);
+                                        Set<String> keys = uri.getQueryParameterNames();
+                                        for (String key : keys){
+                                            String value = uri.getQueryParameter(key);
+                                            targetIntent.putExtra(key,value);
+                                        }
+                                        view.getContext().startActivity(targetIntent);
+                                    } catch (ClassNotFoundException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }

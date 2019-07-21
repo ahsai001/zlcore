@@ -27,6 +27,7 @@ import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.activities.InfoPopup;
 import com.zaitunlabs.zlcore.activities.MessageListActivity;
 import com.zaitunlabs.zlcore.activities.ReminderPopup;
+import com.zaitunlabs.zlcore.core.WebViewActivity;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import java.util.Set;
 
 import static com.zaitunlabs.zlcore.activities.InfoPopup.EXTRA_DATA;
 import static com.zaitunlabs.zlcore.activities.InfoPopup.EXTRA_INFO_ID;
+import static com.zaitunlabs.zlcore.core.WebViewActivity.PARAM_IS_MEID;
 
 
 /**
@@ -65,36 +67,35 @@ public class NotificationUtils {
             //notification
             notif = getNotification(context, notifTitle,notifBody, null, homePageClass, data, appNameResId, iconResId, null, true, false);
         }else{
-            //data
+            //data wajib fcm adalah type and needlogin
+            String needlogin = (String) data.get("needlogin"); //need login to notif, remind and saved, yes or no
+            if(!TextUtils.isEmpty(needlogin) && needlogin.toLowerCase().equals("yes") && !isLoggedIn)return;
+
+            String type = (String) data.get("type");
+            //predefined : 1. notif | 2. notif+ | 3. popup ==> notif+popup | 4. wakeup | 5. reminder
+            //notif+ dan popup harus ada messagelistactivity
+
+            //data custom fcm
             String title = (String) data.get("title");
             String body = (String) data.get("body");
             String photo = (String) data.get("photo"); //photo url
 
-            String type = (String) data.get("type");
-            //1. notif | 2. notif+ | 3. popup ==> notif+popup | 4. wakeup | 5. reminder
-            //notif+ dan popup harus ada messagelistactivity
-
-            String needlogin = (String) data.get("needlogin"); //need login to notif, remind and saved, yes or no
             String action = (String) data.get("action"); //url or full path class
             String isHeadsUp = (String) data.get("headsup"); //yes or no
-
-            if(!TextUtils.isEmpty(needlogin) && needlogin.toLowerCase().equals("yes") && !isLoggedIn)return;
-
 
             CustomTypeCallBackHandler customTypeCallBackHandler = null;
             if(customTypeCallBackList != null && !TextUtils.isEmpty(type) && customTypeCallBackList.containsKey(type.toLowerCase())){
                 customTypeCallBackHandler = customTypeCallBackList.get(type);
             }
 
-
             if(type.toLowerCase().equals("wakeup")) {
                 //do nothing, just to wakeup this app,
             } else if(type.toLowerCase().equals("reminder")) {
                 //just show reminder, not notif, not popup, and not saved
                 ReminderPopup.start(context,title,body);
-            } else if(customTypeCallBackHandler != null && !customTypeCallBackHandler.isShownInNotification()){
+            } else if(customTypeCallBackHandler != null && !customTypeCallBackHandler.isShownInNotifCenter(data)){
                 //custom handle without notification
-                customTypeCallBackHandler.handleCustomType();
+                customTypeCallBackHandler.handleCustom(data);
             } else {
                 //handle with notification
                 int intType = 1;
@@ -117,6 +118,16 @@ public class NotificationUtils {
                             Intent i = new Intent(Intent.ACTION_VIEW);
                             i.setData(Uri.parse(action));
                             nextIntent = Intent.createChooser(i, "open link with :").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        } else if(action.startsWith("webview://")){
+                            nextIntent = new Intent(context.getApplicationContext(), WebViewActivity.class);
+                            String htmlContent = action.replace("webview://","");
+                            if(htmlContent.startsWith("base64/")) {
+                                htmlContent = htmlContent.replace("base64/", "");
+                                htmlContent = CommonUtils.decodeBase64(htmlContent);
+                            }
+                            nextIntent.putExtra(WebViewActivity.PARAM_URL, htmlContent);
+                            nextIntent.putExtra(WebViewActivity.PARAM_PAGE_TAG, "webviewNotif");
+                            nextIntent.putExtra(PARAM_IS_MEID, false);
                         } else {
                             //may be this is class name
                             try {
@@ -138,6 +149,13 @@ public class NotificationUtils {
                             } catch (ClassNotFoundException e) {
                                 nextIntent = new Intent(context.getApplicationContext(), homePageClass);
                             }
+
+                            Uri uri = Uri.parse(action);
+                            Set<String> keys = uri.getQueryParameterNames();
+                            for (String key : keys){
+                                String value = uri.getQueryParameter(key);
+                                nextIntent.putExtra(key,value);
+                            }
                         }
                     } else {
                         nextIntent = new Intent(context.getApplicationContext(), homePageClass);
@@ -150,12 +168,20 @@ public class NotificationUtils {
                     intType = 3;
                     nextIntent = new Intent(context.getApplicationContext(), messageListClass);
                     infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
-                } else if(customTypeCallBackHandler != null && customTypeCallBackHandler.isShownInNotification()){
-                    intType = customTypeCallBackHandler.getInformationTypeId();
-                    nextIntentComponentType = customTypeCallBackHandler.getIntentComponentType();
-                    nextIntent = customTypeCallBackHandler.handleCustomType();
-                    if(customTypeCallBackHandler.isShownInInformationList()) {
-                        infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
+                } else if(customTypeCallBackHandler != null && customTypeCallBackHandler.isShownInNotifCenter(data)){
+                    customTypeCallBackHandler.handleCustom(data);
+                    intType = customTypeCallBackHandler.getTypeId(data);
+
+                    if(customTypeCallBackHandler.isShownInInfoList(data)) {
+                        nextIntent = new Intent(context.getApplicationContext(), messageListClass);
+                        infoId = InfoUtils.insertNewInfo(customTypeCallBackHandler.getTitle(data),
+                                customTypeCallBackHandler.getBody(data),
+                                customTypeCallBackHandler.getPhotoUrl(data),
+                                customTypeCallBackHandler.getInfoUrl(data),
+                                intType);
+                    } else {
+                        nextIntentComponentType = customTypeCallBackHandler.getNextIntentComponentType(data);
+                        nextIntent = customTypeCallBackHandler.getNextIntent(data);
                     }
                 }
 
@@ -188,11 +214,18 @@ public class NotificationUtils {
 
 
     public interface CustomTypeCallBackHandler {
-        Intent handleCustomType();
-        int getIntentComponentType();
-        boolean isShownInNotification();
-        boolean isShownInInformationList();
-        int getInformationTypeId();
+        void handleCustom(Map<String, Object> data);
+
+        boolean isShownInNotifCenter(Map<String, Object> data);
+        Intent getNextIntent(Map<String, Object> data);
+        int getNextIntentComponentType(Map<String, Object> data);
+
+        boolean isShownInInfoList(Map<String, Object> data);
+        String getTitle(Map<String, Object> data);
+        String getBody(Map<String, Object> data);
+        String getPhotoUrl(Map<String, Object> data);
+        String getInfoUrl(Map<String, Object> data);
+        int getTypeId(Map<String, Object> data);
     }
 
     public interface CallBackIntentFromNotification {
