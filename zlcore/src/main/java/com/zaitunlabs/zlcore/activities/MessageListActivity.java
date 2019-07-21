@@ -49,7 +49,7 @@ public class MessageListActivity extends BaseActivity {
 
         NotificationUtils.handleIntentFromNotification(getIntent(), new NotificationUtils.CallBackIntentFromNotification() {
             @Override
-            public void showMessagesPage(Bundle bundle) {
+            public void handle(Bundle data, boolean showMessagePage, long infoId) {
 
             }
         });
@@ -78,7 +78,7 @@ public class MessageListActivity extends BaseActivity {
         super.onNewIntent(intent);
         NotificationUtils.handleIntentFromNotification(intent, new NotificationUtils.CallBackIntentFromNotification() {
             @Override
-            public void showMessagesPage(Bundle bundle) {
+            public void handle(Bundle data, boolean showMessagePage, long infoId) {
 
             }
         });
