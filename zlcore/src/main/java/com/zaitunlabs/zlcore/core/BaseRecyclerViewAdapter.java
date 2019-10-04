@@ -98,6 +98,34 @@ implements SwipeDragCallback.SwipeDragInterface {
         });
     }
 
+    protected void setViewLongClickable(final HV viewHolder, View view){
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(onChildViewClickListener != null) {
+                    int position = viewHolder.getAdapterPosition();
+                    onChildViewClickListener.onLongClick(view, (DM)modelList.get(position), position);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+
+    private OnChildViewClickListener<DM> onChildViewClickListener;
+
+    public void setOnChildViewClickListener(OnChildViewClickListener<DM> onChildViewClickListener){
+        this.onChildViewClickListener = onChildViewClickListener;
+    }
+
+    public interface OnChildViewClickListener<DM> {
+        void onClick(View view, DM dataModel, int position);
+        void onLongClick(View view, DM dataModel, int position);
+    }
+
+
+
     @Override
     public void onItemDrag(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         int fromPosition = viewHolder.getAdapterPosition();
@@ -181,12 +209,5 @@ implements SwipeDragCallback.SwipeDragInterface {
         return ItemTouchHelper.LEFT | ItemTouchHelper.START | ItemTouchHelper.RIGHT | ItemTouchHelper.END;
     }
 
-    private OnChildViewClickListener<DM> onChildViewClickListener;
-    public void setOnChildViewClickListener(OnChildViewClickListener<DM> onChildViewClickListener){
-        this.onChildViewClickListener = onChildViewClickListener;
-    }
 
-    public interface OnChildViewClickListener<DM> {
-        public void onClick(View view, DM dataModel, int position);
-    }
 }
