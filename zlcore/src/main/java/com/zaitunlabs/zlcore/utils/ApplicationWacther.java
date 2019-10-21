@@ -130,7 +130,7 @@ public class ApplicationWacther {
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
-				boolean isOnline = CommonUtils.isOnline(appContext);
+				boolean isOnline = CommonUtil.isOnline(appContext);
 				Iterator<AppWatcherListener> iterator = listeners.values().iterator();
 				while (iterator.hasNext()) {
 					AppWatcherListener listener = iterator.next();

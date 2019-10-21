@@ -42,11 +42,11 @@ import static com.zaitunlabs.zlcore.core.WebViewActivity.PARAM_IS_MEID;
 /**
  * Created by ahmad s on 2/24/2016.
  */
-public class NotificationUtils {
+public class NotificationUtil {
 
     public static int getID() {
-        synchronized (NotificationUtils.class){
-            return IntegerIDUtils.getID();
+        synchronized (NotificationUtil.class){
+            return IntegerIDUtil.getID();
         }
     }
 
@@ -123,7 +123,7 @@ public class NotificationUtils {
                             String htmlContent = action.replace("webview://","");
                             if(htmlContent.startsWith("base64/")) {
                                 htmlContent = htmlContent.replace("base64/", "");
-                                htmlContent = CommonUtils.decodeBase64(htmlContent);
+                                htmlContent = CommonUtil.decodeBase64(htmlContent);
                             }
                             nextIntent.putExtra(WebViewActivity.PARAM_URL, htmlContent);
                             nextIntent.putExtra(WebViewActivity.PARAM_PAGE_TAG, "webviewNotif");
@@ -163,18 +163,18 @@ public class NotificationUtils {
                 } else if(type.toLowerCase().equals("notif+")){
                     intType = 2;
                     nextIntent = new Intent(context.getApplicationContext(), messageListClass);
-                    infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
+                    infoId = InfoUtil.insertNewInfo(title, body, photo, action, intType);
                 } else if(type.toLowerCase().equals("popup")){
                     intType = 3;
                     nextIntent = new Intent(context.getApplicationContext(), messageListClass);
-                    infoId = InfoUtils.insertNewInfo(title, body, photo, action, intType);
+                    infoId = InfoUtil.insertNewInfo(title, body, photo, action, intType);
                 } else if(customTypeCallBackHandler != null && customTypeCallBackHandler.isShownInNotifCenter(data)){
                     customTypeCallBackHandler.handleCustom(data);
                     intType = customTypeCallBackHandler.getTypeId(data);
 
                     if(customTypeCallBackHandler.isShownInInfoList(data)) {
                         nextIntent = new Intent(context.getApplicationContext(), messageListClass);
-                        infoId = InfoUtils.insertNewInfo(customTypeCallBackHandler.getTitle(data),
+                        infoId = InfoUtil.insertNewInfo(customTypeCallBackHandler.getTitle(data),
                                 customTypeCallBackHandler.getBody(data),
                                 customTypeCallBackHandler.getPhotoUrl(data),
                                 customTypeCallBackHandler.getInfoUrl(data),
@@ -205,7 +205,7 @@ public class NotificationUtils {
 
         if(notif != null){
             NotificationManagerCompat nm = NotificationManagerCompat.from(context);
-            nm.notify(NotificationUtils.getID(), notif);
+            nm.notify(NotificationUtil.getID(), notif);
         }
 
 
@@ -234,7 +234,7 @@ public class NotificationUtils {
 
     public static void showNotification(Context context, String title, String content, Class nextActivity,
                                         HashMap<String, Object> data, int appNameResId, int iconResId, boolean autocancel, boolean isHeadsUp){
-        showNotification(context,title,content, null, nextActivity,data,appNameResId,iconResId, NotificationUtils.getID(),null, autocancel, isHeadsUp);
+        showNotification(context,title,content, null, nextActivity,data,appNameResId,iconResId, NotificationUtil.getID(),null, autocancel, isHeadsUp);
     }
 
     public static void showNotification(Context context, String title, String content, Class nextActivity,
@@ -354,7 +354,7 @@ public class NotificationUtils {
             }
             if(TextUtils.isEmpty(pendingIntentAction)) {
                 if(TextUtils.isEmpty(nextIntent.getAction())) {
-                    nextIntent.setAction("com.zaitunlabs.zlcore.general_reminder_notification" + NotificationUtils.getID());
+                    nextIntent.setAction("com.zaitunlabs.zlcore.general_reminder_notification" + NotificationUtil.getID());
                 }
             } else {
                 nextIntent.setAction(pendingIntentAction);
@@ -378,7 +378,7 @@ public class NotificationUtils {
 
             if(TextUtils.isEmpty(pendingIntentAction)) {
                 if(TextUtils.isEmpty(deleteIntent.getAction())) {
-                    deleteIntent.setAction("com.zaitunlabs.zlcore.general_reminder_notification" + "_delete" + NotificationUtils.getID());
+                    deleteIntent.setAction("com.zaitunlabs.zlcore.general_reminder_notification" + "_delete" + NotificationUtil.getID());
                 }
             } else {
                 deleteIntent.setAction(pendingIntentAction+"_delete");
@@ -412,10 +412,10 @@ public class NotificationUtils {
 
         Bitmap iconBitMap = null;
         if (!TextUtils.isEmpty(imageUrl)) {
-            iconBitMap = CommonUtils.getBitmapFromURL(imageUrl);
+            iconBitMap = CommonUtil.getBitmapFromURL(imageUrl);
         }
 
-        String channelID = CommonUtils.getPackageName(context);
+        String channelID = CommonUtil.getPackageName(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String name = context.getString(R.string.app_name);
@@ -439,7 +439,7 @@ public class NotificationUtils {
         if(iconBitMap != null) {
             NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
             bigPictureStyle.setBigContentTitle(title);
-            bigPictureStyle.setSummaryText(CommonUtils.fromHtml(notifText).toString());
+            bigPictureStyle.setSummaryText(CommonUtil.fromHtml(notifText).toString());
             bigPictureStyle.bigPicture(iconBitMap);
             builder.setStyle(bigPictureStyle);
         } else {
@@ -494,15 +494,15 @@ public class NotificationUtils {
 
     public static void handleIntentFromNotification(final Intent intent, CallBackIntentFromNotification callBackIntentFromNotification ){
         //place this in onCreate and onNewIntent
-        Bundle extraData = CommonUtils.getBundleIntent(intent, EXTRA_DATA, null);
-        final long extraInfoId = CommonUtils.getLongIntent(intent, EXTRA_INFO_ID, -1);
+        Bundle extraData = CommonUtil.getBundleIntent(intent, EXTRA_DATA, null);
+        final long extraInfoId = CommonUtil.getLongIntent(intent, EXTRA_INFO_ID, -1);
         if(extraData != null) {
             callBackIntentFromNotification.handle(extraData, extraInfoId > -1, extraInfoId);
             if(extraInfoId > -1) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        InfoUtils.scrollInfoList(extraInfoId);
+                        InfoUtil.scrollInfoList(extraInfoId);
                     }
                 }, 200);
             }

@@ -26,9 +26,9 @@ import com.zaitunlabs.zlcore.api.APIConstant;
 import com.zaitunlabs.zlcore.api.APIResponse;
 import com.zaitunlabs.zlcore.models.CheckVersionModel;
 import com.zaitunlabs.zlcore.core.BaseActivity;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
-import com.zaitunlabs.zlcore.utils.PermissionUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
+import com.zaitunlabs.zlcore.utils.PermissionUtil;
 
 import org.json.JSONObject;
 
@@ -45,7 +45,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
     private TextView bottomTextView;
     private String checkVersionUrl;
     private boolean isContinueNextPage = false;
-    private PermissionUtils permissionUtils;
+    private PermissionUtil permissionUtil;
 
     public static void showSplashScreen(Context context, String checkVersionUrl, Class splashClass){
         Intent splashIntent = new Intent(context, splashClass);
@@ -76,7 +76,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
 
-        checkVersionUrl = CommonUtils.getStringIntent(getIntent(),PARAM_CHECK_VERSION_URL,null);
+        checkVersionUrl = CommonUtil.getStringIntent(getIntent(),PARAM_CHECK_VERSION_URL,null);
         if(TextUtils.isEmpty(checkVersionUrl)) {
             checkVersionUrl = getCheckVersionUrl();
         }
@@ -90,7 +90,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
 
         if(!TextUtils.isEmpty(checkVersionUrl)) {
             if(isMeidIncluded()) {
-                permissionUtils = PermissionUtils.checkPermissionAndGo(this, 1041, new Runnable() {
+                permissionUtil = PermissionUtil.checkPermissionAndGo(this, 1041, new Runnable() {
                     @Override
                     public void run() {
                         pushyMeInit();
@@ -98,7 +98,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
                 }, new Runnable() {
                     @Override
                     public void run() {
-                        CommonUtils.showToast(BaseSplashActivity.this, "Please give permission to run this application");
+                        CommonUtil.showToast(BaseSplashActivity.this, "Please give permission to run this application");
                         finish();
                     }
                 }, Manifest.permission.READ_PHONE_STATE);
@@ -118,13 +118,13 @@ public abstract class BaseSplashActivity extends BaseActivity {
             if (checkVersionModel.getStatus() == APIResponse.GENERIC_RESPONSE.OK) {
                 readyDoNextAction();
             } else if (checkVersionModel.getStatus() == APIResponse.GENERIC_RESPONSE.NEED_UPDATE) {
-                CommonUtils.showDialog3Option(BaseSplashActivity.this,
+                CommonUtil.showDialog3Option(BaseSplashActivity.this,
                         checkVersionModel.getTitle(),
                         checkVersionModel.getMessage(),
                         getString(R.string.zlcore_download_option_dialog_init), new Runnable() {
                             @Override
                             public void run() {
-                                CommonUtils.openBrowser(BaseSplashActivity.this, checkVersionModel.getDetail());
+                                CommonUtil.openBrowser(BaseSplashActivity.this, checkVersionModel.getDetail());
                                 finish();
                             }
                         }, getString(R.string.zlcore_close_option_dialog_init), new Runnable() {
@@ -139,7 +139,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
                             }
                         });
             } else if (checkVersionModel.getStatus() == APIResponse.GENERIC_RESPONSE.NEED_SHOW_MESSAGE) {
-                CommonUtils.showInfo(BaseSplashActivity.this,
+                CommonUtil.showInfo(BaseSplashActivity.this,
                         checkVersionModel.getTitle(), checkVersionModel.getMessage(),
                         new Runnable() {
                             @Override
@@ -167,7 +167,7 @@ public abstract class BaseSplashActivity extends BaseActivity {
 
         if(!TextUtils.isEmpty(checkVersionUrl)) {
             AndroidNetworking.post(checkVersionUrl)
-                    .setOkHttpClient(HttpClientUtils.getHTTPClient(BaseSplashActivity.this, APIConstant.API_VERSION, isMeidIncluded()))
+                    .setOkHttpClient(HttpClientUtil.getHTTPClient(BaseSplashActivity.this, APIConstant.API_VERSION, isMeidIncluded()))
                     .addBodyParameter("appid", APIConstant.API_APPID)
                     .setPriority(Priority.HIGH)
                     .setTag("checkversion")
@@ -238,8 +238,8 @@ public abstract class BaseSplashActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(permissionUtils != null) {
-            permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(permissionUtil != null) {
+            permissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

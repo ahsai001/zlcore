@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 import com.zaitunlabs.zlcore.utils.Prefs;
 
 import java.util.Calendar;
@@ -20,11 +20,11 @@ public class SholatReminderReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-       CommonUtils.runCodeInWakeLock(context, reminderReceiverTAG, new Runnable() {
+       CommonUtil.runCodeInWakeLock(context, reminderReceiverTAG, new Runnable() {
            @Override
            public void run() {
-               int code = CommonUtils.getIntIntent(intent, ShaumSholatReminderService.PARAM_SHOLAT_CODE, -1);
-               String prefCode = CommonUtils.getStringIntent(intent, ShaumSholatReminderService.PARAM_PREFS_SHOLAT_CODE, null);
+               int code = CommonUtil.getIntIntent(intent, ShaumSholatReminderService.PARAM_SHOLAT_CODE, -1);
+               String prefCode = CommonUtil.getStringIntent(intent, ShaumSholatReminderService.PARAM_PREFS_SHOLAT_CODE, null);
 
                String contentOfNotif = "";
                int reminderIntervalTime = 5;
@@ -61,7 +61,7 @@ public class SholatReminderReceiver extends BroadcastReceiver {
 
                long time = Prefs.with(context).getLong(prefCode,-1);
                if(time+(reminderIntervalTime*60*1000) >= Calendar.getInstance().getTimeInMillis()) {
-                   CommonUtils.showNotification(context, context.getString(R.string.app_name), contentOfNotif, null, null, R.string.app_name, R.mipmap.icon, false, false);
+                   CommonUtil.showNotification(context, context.getString(R.string.app_name), contentOfNotif, null, null, R.string.app_name, R.mipmap.icon, false, false);
                }
            }
        });

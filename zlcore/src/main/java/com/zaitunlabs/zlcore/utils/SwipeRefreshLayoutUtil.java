@@ -9,11 +9,11 @@ import java.lang.ref.WeakReference;
  * Created by ahsai on 7/18/2018.
  */
 
-public class SwipeRefreshLayoutUtils {
+public class SwipeRefreshLayoutUtil {
     private WeakReference<SwipeRefreshLayout> swipeRefreshLayoutRef;
     private Runnable refreshAction;
-    public static SwipeRefreshLayoutUtils init(final SwipeRefreshLayout swipeRefreshLayout, Runnable refreshAction) {
-        final SwipeRefreshLayoutUtils swipeRefreshLayoutUtils = new SwipeRefreshLayoutUtils();
+    public static SwipeRefreshLayoutUtil init(final SwipeRefreshLayout swipeRefreshLayout, Runnable refreshAction) {
+        final SwipeRefreshLayoutUtil swipeRefreshLayoutUtils = new SwipeRefreshLayoutUtil();
         if(swipeRefreshLayout != null) {
             swipeRefreshLayoutUtils.swipeRefreshLayoutRef = new WeakReference<SwipeRefreshLayout>(swipeRefreshLayout);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

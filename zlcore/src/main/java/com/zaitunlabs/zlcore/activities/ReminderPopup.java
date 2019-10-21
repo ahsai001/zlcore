@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 
 public class ReminderPopup extends BaseActivity {
     public static final String ARG_TITLE = "arg_title";
@@ -48,8 +48,8 @@ public class ReminderPopup extends BaseActivity {
         //
 
 
-        String title = CommonUtils.getStringIntent(getIntent(),ARG_TITLE, "");
-        String body = CommonUtils.getStringIntent(getIntent(),ARG_BODY, "");
+        String title = CommonUtil.getStringIntent(getIntent(),ARG_TITLE, "");
+        String body = CommonUtil.getStringIntent(getIntent(),ARG_BODY, "");
 
         if(!TextUtils.isEmpty(title)){
             TextView titleView = (TextView) findViewById(R.id.reminder_popup_titleView);

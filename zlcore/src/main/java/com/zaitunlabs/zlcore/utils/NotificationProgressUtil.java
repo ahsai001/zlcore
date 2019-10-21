@@ -9,7 +9,7 @@ import androidx.core.app.NotificationCompat;
  * Created by ahsai on 2/14/2018.
  */
 
-public class NotificationProgressUtils {
+public class NotificationProgressUtil {
     private int notifID;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
@@ -17,9 +17,9 @@ public class NotificationProgressUtils {
     private String desc;
     private int icon;
 
-    public NotificationProgressUtils(Context context, String title, String desc, int icon, int notifID){
+    public NotificationProgressUtil(Context context, String title, String desc, int icon, int notifID){
         mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(context,CommonUtils.getPackageName(context));
+        mBuilder = new NotificationCompat.Builder(context, CommonUtil.getPackageName(context));
         mBuilder.setContentTitle(title)
                 .setContentText(desc)
                 .setSmallIcon(icon);

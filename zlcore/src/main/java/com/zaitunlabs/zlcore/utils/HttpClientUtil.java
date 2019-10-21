@@ -50,7 +50,7 @@ import okhttp3.Response;
  */
 
 
-public class HttpClientUtils {
+public class HttpClientUtil {
     private static final int DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
     private static final int DATA_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
     private static final int DATA_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
@@ -112,28 +112,28 @@ public class HttpClientUtils {
             for (String header : headerList){
                 switch (header){
                     case "Authorization" :
-                        headerMap.put("Authorization", HttpClientUtils.getAuthAPIKey());
+                        headerMap.put("Authorization", HttpClientUtil.getAuthAPIKey());
                         break;
                     case "x-screensize":
-                        headerMap.put("x-screensize", CommonUtils.getDisplayMetricsDensityDPIInString(context));
+                        headerMap.put("x-screensize", CommonUtil.getDisplayMetricsDensityDPIInString(context));
                         break;
                     case "x-model":
                         headerMap.put("x-model", getModelNumberInUrlEncode());
                         break;
                     case "x-meid":
-                        headerMap.put("x-meid", CommonUtils.getMeid(context));
+                        headerMap.put("x-meid", CommonUtil.getMeid(context));
                         break;
                     case "x-packagename":
                         headerMap.put("x-packagename", context.getPackageName());
                         break;
                     case "x-versionname":
-                        headerMap.put("x-versionname", CommonUtils.getVersionName(context));
+                        headerMap.put("x-versionname", CommonUtil.getVersionName(context));
                         break;
                     case "x-versioncode":
-                        headerMap.put("x-versioncode", ""+ CommonUtils.getVersionCode(context)+"");
+                        headerMap.put("x-versioncode", ""+ CommonUtil.getVersionCode(context)+"");
                         break;
                     case "x-lang":
-                        headerMap.put("x-lang", CommonUtils.getCurrentDeviceLanguage(context));
+                        headerMap.put("x-lang", CommonUtil.getCurrentDeviceLanguage(context));
                         break;
                     case "x-platform":
                         headerMap.put("x-platform", "android");
@@ -141,7 +141,7 @@ public class HttpClientUtils {
                     case "x-os":
                         String osVersion = "";
                         try {
-                            osVersion = CommonUtils.urlEncode(Build.VERSION.RELEASE);
+                            osVersion = CommonUtil.urlEncode(Build.VERSION.RELEASE);
                         } catch (UnsupportedEncodingException e) {
                             ////e.printStackTrace();
                         }
@@ -152,19 +152,19 @@ public class HttpClientUtils {
                         break;
                     case "x-androidid":
                         if(TextUtils.isEmpty(androidId)){
-                            androidId = CommonUtils.getAndroidID(context);
+                            androidId = CommonUtil.getAndroidID(context);
                         }
                         headerMap.put("x-androidid", androidId);
                         break;
                     case "x-randomuuid":
                         if(TextUtils.isEmpty(randomUUID)){
-                            randomUUID = CommonUtils.getRandomUUID(context);
+                            randomUUID = CommonUtil.getRandomUUID(context);
                         }
                         headerMap.put("x-randomuuid", randomUUID);
                         break;
                     case "x-useragent":
                         try {
-                            userAgent = CommonUtils.urlEncode(System.getProperty("http.agent"));
+                            userAgent = CommonUtil.urlEncode(System.getProperty("http.agent"));
                         } catch (UnsupportedEncodingException e) {
                             ////e.printStackTrace();
                         }
@@ -172,7 +172,7 @@ public class HttpClientUtils {
                         break;
                     case "User-Agent":
                         try {
-                            userAgent = CommonUtils.urlEncode(System.getProperty("http.agent"));
+                            userAgent = CommonUtil.urlEncode(System.getProperty("http.agent"));
                         } catch (UnsupportedEncodingException e) {
                             ////e.printStackTrace();
                         }
@@ -190,7 +190,7 @@ public class HttpClientUtils {
         if (builderConfig == null) {
             throw new IllegalArgumentException("CUstomOkHttpBuilder must not be null.");
         }
-        synchronized (HttpClientUtils.class) {
+        synchronized (HttpClientUtil.class) {
             if (singletonBuilderConfig != null) {
                 throw new IllegalStateException("Singleton instance already exists.");
             }
@@ -202,7 +202,7 @@ public class HttpClientUtils {
         if (okHttpClient == null) {
             throw new IllegalArgumentException("OkHttpClient must not be null.");
         }
-        synchronized (HttpClientUtils.class) {
+        synchronized (HttpClientUtil.class) {
             if (singletonClient != null) {
                 throw new IllegalStateException("Singleton instance already exists.");
             }
@@ -214,7 +214,7 @@ public class HttpClientUtils {
         if (okHttpClient == null) {
             throw new IllegalArgumentException("OkHttpClient must not be null.");
         }
-        synchronized (HttpClientUtils.class) {
+        synchronized (HttpClientUtil.class) {
             if (singletonUploadClient != null) {
                 throw new IllegalStateException("Singleton instance already exists.");
             }
@@ -226,7 +226,7 @@ public class HttpClientUtils {
         if (unsafeOkHttpClient == null) {
             throw new IllegalArgumentException("OkHttpClient must not be null.");
         }
-        synchronized (HttpClientUtils.class) {
+        synchronized (HttpClientUtil.class) {
             if (singletonUnsafeClient != null) {
                 throw new IllegalStateException("Singleton instance already exists.");
             }
@@ -238,7 +238,7 @@ public class HttpClientUtils {
         if (unsafeOkHttpClient == null) {
             throw new IllegalArgumentException("OkHttpClient must not be null.");
         }
-        synchronized (HttpClientUtils.class) {
+        synchronized (HttpClientUtil.class) {
             if (singletonUploadUnsafeClient != null) {
                 throw new IllegalStateException("Singleton instance already exists.");
             }
@@ -283,9 +283,9 @@ public class HttpClientUtils {
             Interceptor interceptor = getInterceptor(headerMap, apiVersion);
             // Add the interceptor to OkHttpClient
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                    .readTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                    .writeTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                    .connectTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                    .readTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                    .writeTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .addInterceptor(interceptor);
 
             if(singletonBuilderConfig != null){
@@ -348,9 +348,9 @@ public class HttpClientUtils {
                 Interceptor interceptor = getInterceptor(headerMap, apiVersion);
                 // Add the interceptor to OkHttpClient
                 OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                        .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                        .readTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                        .writeTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                        .connectTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                        .readTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                        .writeTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                         .addInterceptor(interceptor)
                         .sslSocketFactory(sslSocketFactory, (X509TrustManager)trustAllCerts[0])
                         .hostnameVerifier(new HostnameVerifier() {
@@ -419,9 +419,9 @@ public class HttpClientUtils {
             Interceptor interceptor = getInterceptor(headerMap, apiVersion);
             // Add the interceptor to OkHttpClient
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .connectTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                    .readTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                    .writeTimeout(isUpload ? HttpClientUtils.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtils.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                    .connectTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                    .readTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                    .writeTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .addInterceptor(interceptor)
                     .sslSocketFactory(sslSocketFactory, trustManager);
                     //.protocols(Arrays.asList(Protocol.HTTP_1_1))
@@ -521,9 +521,9 @@ public class HttpClientUtils {
     public static String getModelNumberInUrlEncode(){
         String model = "";
         try {
-            model = CommonUtils.urlEncode(CommonUtils.getModelNumber());
+            model = CommonUtil.urlEncode(CommonUtil.getModelNumber());
         } catch (UnsupportedEncodingException e) {
-            model = CommonUtils.getModelNumber();
+            model = CommonUtil.getModelNumber();
         }
         return model;
     }
@@ -558,9 +558,9 @@ public class HttpClientUtils {
     private static Picasso getPicassoInstance(Context context, Map<String, String> headerMap, String apiVersion, BuilderConfig builderConfig){
         Interceptor interceptor = getInterceptor(headerMap, apiVersion);
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .connectTimeout(HttpClientUtils.IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                .readTimeout(HttpClientUtils.IMAGE_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                .writeTimeout(HttpClientUtils.IMAGE_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .connectTimeout(HttpClientUtil.IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .readTimeout(HttpClientUtil.IMAGE_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .writeTimeout(HttpClientUtil.IMAGE_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .addInterceptor(interceptor);
 
         if(singletonBuilderConfig != null){
@@ -617,7 +617,7 @@ public class HttpClientUtils {
                 sslMessage = context.getText(R.string.zlcore_notification_error_ssl_cert_invalid).toString();
         }
 
-        CommonUtils.showDialog2Option(context, context.getText(R.string.zlcore_notification_error_ssl_title).toString(), sslMessage,
+        CommonUtil.showDialog2Option(context, context.getText(R.string.zlcore_notification_error_ssl_title).toString(), sslMessage,
                 context.getText(R.string.zlcore_notification_error_ssl_continue_text).toString(), new Runnable() {
                     @Override
                     public void run() {

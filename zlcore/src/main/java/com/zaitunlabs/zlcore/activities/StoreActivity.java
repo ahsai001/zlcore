@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +14,7 @@ import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.fragments.StoreActivityFragment;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 
 public class StoreActivity extends BaseActivity {
     public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
@@ -38,7 +38,7 @@ public class StoreActivity extends BaseActivity {
         });
 
 
-        final boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
+        final boolean isMeid = CommonUtil.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
         showFragment(R.id.fragment, StoreActivityFragment.class, new PostFragmentInstantiation<StoreActivityFragment>() {
             @Override
             public void postInstantiation(StoreActivityFragment fragment) {

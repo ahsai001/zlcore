@@ -11,9 +11,9 @@ import com.zaitunlabs.zlcore.activities.BaseLoginActivity;
  * Created by ahsai on 6/19/2017.
  */
 
-public class LoginUtils {
+public class LoginUtil {
     public static AlertDialog logout(final Activity activity, final Class loginClass, final Class classAfterLogin, final Runnable runAfterLogout){
-        return CommonUtils.showDialog2Option(activity, activity.getString(R.string.zlcore_login_utils_logout_confirmation_title),
+        return CommonUtil.showDialog2Option(activity, activity.getString(R.string.zlcore_login_utils_logout_confirmation_title),
                 activity.getString(R.string.zlcore_login_utils_logout_confirmation_message),
                 activity.getString(R.string.zlcore_login_utils_logout_button_title), new Runnable() {
                     @Override
@@ -34,7 +34,7 @@ public class LoginUtils {
     }
 
     public static AlertDialog logout(Activity activity, final Runnable runAfterLogout){
-        return CommonUtils.showDialog2Option(activity, activity.getString(R.string.zlcore_login_utils_logout_confirmation_title),
+        return CommonUtil.showDialog2Option(activity, activity.getString(R.string.zlcore_login_utils_logout_confirmation_title),
                 activity.getString(R.string.zlcore_login_utils_logout_confirmation_message),
                 activity.getString(R.string.zlcore_login_utils_logout_button_title), new Runnable() {
                     @Override
@@ -53,7 +53,7 @@ public class LoginUtils {
     }
 
     public static AlertDialog relogin(final Activity activity, final Class loginClass, final Runnable runBeforeShowingLogin, final Class classAfterLogin){
-        return CommonUtils.showDialog1Option(activity, activity.getString(R.string.zlcore_login_utils_relogin_confirmation_title),
+        return CommonUtil.showDialog1Option(activity, activity.getString(R.string.zlcore_login_utils_relogin_confirmation_title),
                 activity.getString(R.string.zlcore_login_utils_relogin_confirmation_message),
                 activity.getString(R.string.zlcore_general_wording_ok), new Runnable() {
                     @Override
@@ -69,7 +69,7 @@ public class LoginUtils {
     }
 
     public static AlertDialog relogin(final Activity activity, final Class loginClass, final Runnable runBeforeShowingLogin, final int requestCode){
-        return CommonUtils.showDialog1Option(activity, activity.getString(R.string.zlcore_login_utils_relogin_confirmation_title),
+        return CommonUtil.showDialog1Option(activity, activity.getString(R.string.zlcore_login_utils_relogin_confirmation_title),
                 activity.getString(R.string.zlcore_login_utils_relogin_confirmation_message),
                 "OK", new Runnable() {
                     @Override

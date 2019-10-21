@@ -47,7 +47,7 @@ import java.util.Locale;
  * Created by ahsai on 4/25/2018.
  */
 
-public class ViewUtils {
+public class ViewUtil {
 
     /**
      * Finds the first child in #rootView that is an instance of #clazz
@@ -157,7 +157,7 @@ public class ViewUtils {
     public static Drawable getLeftHeadTableBackground(Context context, int borderColor, int fillColor, int radiusInDp){
         GradientDrawable borderDrawable = new GradientDrawable();
         borderDrawable.setShape(GradientDrawable.RECTANGLE);
-        float radiusInPixel = CommonUtils.getPixelFromDip2(context, radiusInDp);
+        float radiusInPixel = CommonUtil.getPixelFromDip2(context, radiusInDp);
         borderDrawable.setCornerRadii(new float[]{radiusInPixel, radiusInPixel, 0, 0, 0, 0, 0, 0});
         borderDrawable.setColor(borderColor);
 
@@ -168,8 +168,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) twoDp);
@@ -195,8 +195,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) oneDp);
@@ -214,7 +214,7 @@ public class ViewUtils {
     public static Drawable getRightHeadTableBackground(Context context, int borderColor, int fillColor, int radiusInDp){
         GradientDrawable borderDrawable = new GradientDrawable();
         borderDrawable.setShape(GradientDrawable.RECTANGLE);
-        float radiusInPixel = CommonUtils.getPixelFromDip2(context, radiusInDp);
+        float radiusInPixel = CommonUtil.getPixelFromDip2(context, radiusInDp);
         borderDrawable.setCornerRadii(new float[]{0,0, radiusInPixel, radiusInPixel, 0, 0, 0, 0});
         borderDrawable.setColor(borderColor);
 
@@ -225,8 +225,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) oneDp);
@@ -252,8 +252,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) twoDp);
@@ -277,8 +277,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) oneDp);
@@ -302,8 +302,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) oneDp);
@@ -320,7 +320,7 @@ public class ViewUtils {
     public static Drawable getLeftTailTableBackground(Context context, int borderColor, int fillColor, int radiusInDp){
         GradientDrawable borderDrawable = new GradientDrawable();
         borderDrawable.setShape(GradientDrawable.RECTANGLE);
-        float radiusInPixel = CommonUtils.getPixelFromDip2(context, radiusInDp);
+        float radiusInPixel = CommonUtil.getPixelFromDip2(context, radiusInDp);
         borderDrawable.setCornerRadii(new float[]{0,0, 0, 0, 0, 0, radiusInPixel, radiusInPixel});
         borderDrawable.setColor(borderColor);
 
@@ -331,8 +331,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) twoDp);
@@ -357,8 +357,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) oneDp);
@@ -376,7 +376,7 @@ public class ViewUtils {
     public static Drawable getRightTailTableBackground(Context context, int borderColor, int fillColor, int radiusInDp){
         GradientDrawable borderDrawable = new GradientDrawable();
         borderDrawable.setShape(GradientDrawable.RECTANGLE);
-        float radiusInPixel = CommonUtils.getPixelFromDip2(context, radiusInDp);
+        float radiusInPixel = CommonUtil.getPixelFromDip2(context, radiusInDp);
         borderDrawable.setCornerRadii(new float[]{0,0, 0, 0, radiusInPixel, radiusInPixel, 0,0});
         borderDrawable.setColor(borderColor);
 
@@ -387,8 +387,8 @@ public class ViewUtils {
 
         Drawable[] layers = {borderDrawable, fillDrawable};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
-        float oneDp = CommonUtils.getPixelFromDip2(context, 1);
-        float twoDp = CommonUtils.getPixelFromDip2(context, 2);
+        float oneDp = CommonUtil.getPixelFromDip2(context, 1);
+        float twoDp = CommonUtil.getPixelFromDip2(context, 2);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             layerDrawable.setLayerInsetLeft(1, (int) oneDp);
@@ -494,7 +494,7 @@ public class ViewUtils {
         AnimatorSet pressAnim = new AnimatorSet();
         ObjectAnimator translateZPressAnim = new ObjectAnimator();
         translateZPressAnim.setPropertyName("translationZ");
-        translateZPressAnim.setFloatValues(CommonUtils.getPixelFromDip2(targetView.getContext(), 6));
+        translateZPressAnim.setFloatValues(CommonUtil.getPixelFromDip2(targetView.getContext(), 6));
         translateZPressAnim.setDuration(100);
         ObjectAnimator scaleXPressAnim = new ObjectAnimator();
         scaleXPressAnim.setPropertyName("scaleX");
@@ -511,7 +511,7 @@ public class ViewUtils {
         AnimatorSet normalAnim = new AnimatorSet();
         ObjectAnimator translateZNormalAnim = new ObjectAnimator();
         translateZNormalAnim.setPropertyName("translationZ");
-        translateZNormalAnim.setFloatValues(CommonUtils.getPixelFromDip2(targetView.getContext(), 0));
+        translateZNormalAnim.setFloatValues(CommonUtil.getPixelFromDip2(targetView.getContext(), 0));
         translateZNormalAnim.setDuration(100);
         ObjectAnimator scaleXNormalAnim = new ObjectAnimator();
         scaleXNormalAnim.setPropertyName("scaleX");
@@ -555,10 +555,10 @@ public class ViewUtils {
         Date defaultDate = Calendar.getInstance().getTime();
         String dateStringFromEditText = editText.getText().toString();
         if(!TextUtils.isEmpty(dateStringFromEditText)){
-            defaultDate = DateStringUtils.getDateFromString(dateFormat,dateStringFromEditText, locale==null?Locale.getDefault():locale);
+            defaultDate = DateStringUtil.getDateFromString(dateFormat,dateStringFromEditText, locale==null?Locale.getDefault():locale);
         }
 
-        CommonUtils.showDatePicker(null, fragmentManager, tag, new DatePickerDialog.OnDateSetListener() {
+        CommonUtil.showDatePicker(null, fragmentManager, tag, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 SimpleDateFormat sfd = new SimpleDateFormat(dateFormat, locale == null ? Locale.getDefault() : locale);
@@ -569,13 +569,13 @@ public class ViewUtils {
                 editText.setTag(false);
 
                 if (isHideKeyboardForThis) {
-                    CommonUtils.hideKeyboard(editText.getContext(), editText);
+                    CommonUtil.hideKeyboard(editText.getContext(), editText);
                 }
 
                 if (nextEditText != null) {
                     nextEditText.requestFocus();
                     if (isShowKeyboardForNext) {
-                        CommonUtils.showKeyboard(nextEditText.getContext());
+                        CommonUtil.showKeyboard(nextEditText.getContext());
                     }
                 }
             }
@@ -636,7 +636,7 @@ public class ViewUtils {
                 if(event.getAction() == MotionEvent.ACTION_UP){
                     if(editText.hasFocus()){
                         if(!((Boolean) v.getTag())) {
-                            CommonUtils.showPopupMenu(editText.getContext(), menuResID, editText, new PopupMenu.OnDismissListener() {
+                            CommonUtil.showPopupMenu(editText.getContext(), menuResID, editText, new PopupMenu.OnDismissListener() {
                                         @Override
                                         public void onDismiss(PopupMenu menu) {
                                             editText.setTag(false);
@@ -651,14 +651,14 @@ public class ViewUtils {
                                             if (nextEditText != null) {
                                                 nextEditText.requestFocus();
                                                 if (isShowKeyboardForNext) {
-                                                    CommonUtils.showKeyboard(nextEditText.getContext());
+                                                    CommonUtil.showKeyboard(nextEditText.getContext());
                                                 }
                                             }
                                             return false;
                                         }
                                     });
                             if(isHideKeyboardThis){
-                                CommonUtils.hideKeyboard(editText.getContext(),editText);
+                                CommonUtil.hideKeyboard(editText.getContext(),editText);
                             }
                         }
                     }
@@ -673,7 +673,7 @@ public class ViewUtils {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     v.setTag(true);
-                    CommonUtils.showPopupMenu(editText.getContext(), menuResID, editText, new PopupMenu.OnDismissListener() {
+                    CommonUtil.showPopupMenu(editText.getContext(), menuResID, editText, new PopupMenu.OnDismissListener() {
                                 @Override
                                 public void onDismiss(PopupMenu menu) {
                                     editText.setTag(false);
@@ -688,14 +688,14 @@ public class ViewUtils {
                                     if (nextEditText != null) {
                                         nextEditText.requestFocus();
                                         if (isShowKeyboardForNext) {
-                                            CommonUtils.showKeyboard(nextEditText.getContext());
+                                            CommonUtil.showKeyboard(nextEditText.getContext());
                                         }
                                     }
                                     return false;
                                 }
                             });
                     if(isHideKeyboardThis){
-                        CommonUtils.hideKeyboard(editText.getContext(),editText);
+                        CommonUtil.hideKeyboard(editText.getContext(),editText);
                     }
                 } else {
                     v.setTag(false);

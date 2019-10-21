@@ -8,17 +8,17 @@ import java.lang.ref.WeakReference;
  * Created by ahsai on 7/28/2018.
  */
 
-public class ViewEnablerUtils extends ReachLostUtils {
+public class ViewEnablerUtil extends ReachLostUtil {
     private WeakReference<View> targetViewRef;
 
-    public ViewEnablerUtils(View targetView, int targetReportTotal){
+    public ViewEnablerUtil(View targetView, int targetReportTotal){
         this.targetViewRef = new WeakReference<View>(targetView);
         setTargetedDoneTotal(targetReportTotal);
         setActionWhenReachTarget(new Runnable() {
             @Override
             public void run() {
-                if(ViewEnablerUtils.this.targetViewRef != null) {
-                    View targetView = ViewEnablerUtils.this.targetViewRef.get();
+                if(ViewEnablerUtil.this.targetViewRef != null) {
+                    View targetView = ViewEnablerUtil.this.targetViewRef.get();
                     if(targetView != null) {
                         targetView.setEnabled(true);
                     }
@@ -28,8 +28,8 @@ public class ViewEnablerUtils extends ReachLostUtils {
         setActionWhenLostTarget(new Runnable() {
             @Override
             public void run() {
-                if(ViewEnablerUtils.this.targetViewRef != null) {
-                    View targetView = ViewEnablerUtils.this.targetViewRef.get();
+                if(ViewEnablerUtil.this.targetViewRef != null) {
+                    View targetView = ViewEnablerUtil.this.targetViewRef.get();
                     if(targetView != null) {
                         targetView.setEnabled(false);
                     }
@@ -41,8 +41,8 @@ public class ViewEnablerUtils extends ReachLostUtils {
     @Override
     public void init() {
         if(targetedDoneTotal > 0){
-            if(ViewEnablerUtils.this.targetViewRef != null) {
-                View targetView = ViewEnablerUtils.this.targetViewRef.get();
+            if(ViewEnablerUtil.this.targetViewRef != null) {
+                View targetView = ViewEnablerUtil.this.targetViewRef.get();
                 if(targetView != null) {
                     targetView.setEnabled(false);
                 }

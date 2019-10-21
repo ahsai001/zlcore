@@ -28,8 +28,8 @@ import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.models.InformationModel;
 import com.zaitunlabs.zlcore.core.BaseActivity;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DateStringUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DateStringUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -93,8 +93,8 @@ public class InfoPopup extends BaseActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        action = (Class)CommonUtils.getSerializableIntent(getIntent(),EXTRA_CLASS,null);
-        extraData = (Bundle) CommonUtils.getBundleIntent(getIntent(),EXTRA_DATA,new Bundle());
+        action = (Class) CommonUtil.getSerializableIntent(getIntent(),EXTRA_CLASS,null);
+        extraData = (Bundle) CommonUtil.getBundleIntent(getIntent(),EXTRA_DATA,new Bundle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -213,16 +213,16 @@ public class InfoPopup extends BaseActivity {
         @Override
         public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-            titleView.setText(CommonUtils.getStringFragmentArgument(getArguments(),ARG_TITLE,""));
+            titleView.setText(CommonUtil.getStringFragmentArgument(getArguments(),ARG_TITLE,""));
 
             SparseBooleanArray collapseStatus = new SparseBooleanArray();
             collapseStatus.put(0,true);
 
-            bodyView.setText(CommonUtils.getStringFragmentArgument(getArguments(),ARG_BODY,""),collapseStatus,0);
+            bodyView.setText(CommonUtil.getStringFragmentArgument(getArguments(),ARG_BODY,""),collapseStatus,0);
 
-            timeView.setText(DateStringUtils.getDateTimeInString((Date) CommonUtils.getSerializableFragmentArgument(getArguments(),ARG_TIME, Calendar.getInstance().getTime()), null));
+            timeView.setText(DateStringUtil.getDateTimeInString((Date) CommonUtil.getSerializableFragmentArgument(getArguments(),ARG_TIME, Calendar.getInstance().getTime()), null));
 
-            String photo = CommonUtils.getStringFragmentArgument(getArguments(),ARG_PHOTO,"");
+            String photo = CommonUtil.getStringFragmentArgument(getArguments(),ARG_PHOTO,"");
             if(!TextUtils.isEmpty(photo) && URLUtil.isValidUrl(photo)){
                 imageView.setVisibility(View.VISIBLE);
                 Picasso.get().load(photo).error(R.drawable.ic_error).into(imageView);
@@ -232,11 +232,11 @@ public class InfoPopup extends BaseActivity {
             }
 
 
-            action = (Class)CommonUtils.getSerializableFragmentArgument(getArguments(),ARG_ACTION,null);
+            action = (Class) CommonUtil.getSerializableFragmentArgument(getArguments(),ARG_ACTION,null);
 
-            page = CommonUtils.getIntFragmentArgument(getArguments(),ARG_PAGE,-1);
+            page = CommonUtil.getIntFragmentArgument(getArguments(),ARG_PAGE,-1);
 
-            infoId = CommonUtils.getLongFragmentArgument(getArguments(),ARG_INFO_ID, -1);
+            infoId = CommonUtil.getLongFragmentArgument(getArguments(),ARG_INFO_ID, -1);
 
             view.setTag(infoId);
 

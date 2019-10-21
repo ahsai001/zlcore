@@ -19,7 +19,7 @@ import java.util.List;
  * Created by ahsai on 7/16/2018.
  */
 
-public class TableViewUtils {
+public class TableViewUtil {
     private Context context;
     private NestedScrollView topRootView;
     private HorizontalScrollView rootView;
@@ -41,7 +41,7 @@ public class TableViewUtils {
     private int tableRadiusInDp;
 
 
-    public TableViewUtils(Context context){
+    public TableViewUtil(Context context){
         this.context = context;
         createNewParentView();
         headerColumName = new ArrayList<>();
@@ -58,7 +58,7 @@ public class TableViewUtils {
 
     }
 
-    public TableViewUtils init(DataList<String> headRow, int borderColor, int fillColor, int tableRadiusInDp){
+    public TableViewUtil init(DataList<String> headRow, int borderColor, int fillColor, int tableRadiusInDp){
         this.headerColumName.clear();
         this.headerColumName.addAll(headRow.getArrayList());
         this.borderColor = borderColor;
@@ -67,53 +67,53 @@ public class TableViewUtils {
         return this;
     }
 
-    public TableViewUtils setBody(List<List<String>> data){
+    public TableViewUtil setBody(List<List<String>> data){
         this.data.clear();
         this.data.addAll(data);
         return this;
     }
 
-    public TableViewUtils addBody(List<List<String>> data){
+    public TableViewUtil addBody(List<List<String>> data){
         this.data.addAll(data);
         return this;
     }
 
-    public TableViewUtils setHeaderResStyle(int headerResStyle) {
+    public TableViewUtil setHeaderResStyle(int headerResStyle) {
         this.headerResStyle = headerResStyle;
         return this;
     }
 
-    public TableViewUtils setBodyResStyle(int bodyResStyle) {
+    public TableViewUtil setBodyResStyle(int bodyResStyle) {
         this.bodyResStyle = bodyResStyle;
         return this;
     }
 
-    public TableViewUtils setHeaderColor(int headerFillColor, int headerTextColor) {
+    public TableViewUtil setHeaderColor(int headerFillColor, int headerTextColor) {
         this.headerFillColor = headerFillColor;
         this.headerTextColor = headerTextColor;
         this.isHeaderFill = true;
         return this;
     }
 
-    public TableViewUtils setBodyColor(int bodyFillColor, int bodyTextColor) {
+    public TableViewUtil setBodyColor(int bodyFillColor, int bodyTextColor) {
         this.bodyFillColor = bodyFillColor;
         this.bodyTextColor = bodyTextColor;
         this.isBodyFill = true;
         return this;
     }
 
-    public TableViewUtils setTailColor(int tailFillColor) {
+    public TableViewUtil setTailColor(int tailFillColor) {
         this.tailFillColor = tailFillColor;
         this.isTailFill = true;
         return this;
     }
 
-    public TableViewUtils render(){
+    public TableViewUtil render(){
         render(true);
         return this;
     }
 
-    public TableViewUtils render(boolean createNewParentView){
+    public TableViewUtil render(boolean createNewParentView){
         int headerFillColor = this.isHeaderFill ? this.headerFillColor : this.fillColor;
         int bodyFillColor = this.isBodyFill ? this.bodyFillColor : this.fillColor;
         int tailFillColor = this.isTailFill ? this.tailFillColor : this.fillColor;
@@ -137,11 +137,11 @@ public class TableViewUtils {
             textView.setText(headerColumName.get(i));
 
             if(i==0){
-                textView.setBackground(ViewUtils.getLeftHeadTableBackground(context, borderColor, headerFillColor,tableRadiusInDp));
+                textView.setBackground(ViewUtil.getLeftHeadTableBackground(context, borderColor, headerFillColor,tableRadiusInDp));
             } else if(i== headerColumName.size()-1){
-                textView.setBackground(ViewUtils.getRightHeadTableBackground(context, borderColor, headerFillColor,tableRadiusInDp));
+                textView.setBackground(ViewUtil.getRightHeadTableBackground(context, borderColor, headerFillColor,tableRadiusInDp));
             } else {
-                textView.setBackground(ViewUtils.getCenterHeadTableBackground(context, borderColor, headerFillColor));
+                textView.setBackground(ViewUtil.getCenterHeadTableBackground(context, borderColor, headerFillColor));
             }
 
             if(isHeaderFill) {
@@ -165,11 +165,11 @@ public class TableViewUtils {
                 }
                 textView.setText(rowData.get(i));
                 if(i==0){
-                    textView.setBackground(ViewUtils.getLeftBodyTableBackground(context, borderColor, bodyFillColor));
+                    textView.setBackground(ViewUtil.getLeftBodyTableBackground(context, borderColor, bodyFillColor));
                 } else if(i==rowData.size()-1){
-                    textView.setBackground(ViewUtils.getRightBodyTableBackground(context, borderColor, bodyFillColor));
+                    textView.setBackground(ViewUtil.getRightBodyTableBackground(context, borderColor, bodyFillColor));
                 } else {
-                    textView.setBackground(ViewUtils.getCenterBodyTableBackground(context, borderColor, bodyFillColor));
+                    textView.setBackground(ViewUtil.getCenterBodyTableBackground(context, borderColor, bodyFillColor));
                 }
 
                 if(isBodyFill) {
@@ -192,11 +192,11 @@ public class TableViewUtils {
                 textView = new TextView(context);
             }
             if(i==0){
-                textView.setBackground(ViewUtils.getLeftTailTableBackground(context, borderColor, tailFillColor,tableRadiusInDp));
+                textView.setBackground(ViewUtil.getLeftTailTableBackground(context, borderColor, tailFillColor,tableRadiusInDp));
             } else if(i== headerColumName.size()-1){
-                textView.setBackground(ViewUtils.getRightTailTableBackground(context, borderColor, tailFillColor,tableRadiusInDp));
+                textView.setBackground(ViewUtil.getRightTailTableBackground(context, borderColor, tailFillColor,tableRadiusInDp));
             } else {
-                textView.setBackground(ViewUtils.getCenterTailTableBackground(context, borderColor, tailFillColor));
+                textView.setBackground(ViewUtil.getCenterTailTableBackground(context, borderColor, tailFillColor));
             }
             footerRow.addView(textView, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,15 +27,14 @@ import com.zaitunlabs.zlcore.models.InformationModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.events.InfoPositionEvent;
 import com.zaitunlabs.zlcore.events.UpdateInfoListEvent;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.EventsUtils;
-import com.zaitunlabs.zlcore.utils.InfoUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.EventsUtil;
+import com.zaitunlabs.zlcore.utils.InfoUtil;
 import com.zaitunlabs.zlcore.views.CustomRecylerView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +68,7 @@ public class InfoFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        EventsUtils.register(this);
+        EventsUtil.register(this);
         initInfoList();
     }
 
@@ -106,7 +104,7 @@ public class InfoFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        EventsUtils.unregister(this);
+        EventsUtil.unregister(this);
         super.onDestroy();
     }
 
@@ -139,7 +137,7 @@ public class InfoFragment extends BaseFragment {
         }));*/
 
 
-        final boolean isMeid = CommonUtils.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
+        final boolean isMeid = CommonUtil.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
 
         mAdapter.setOnCardClickListener(new InfoAdapter.OnCardClickListener() {
             @Override
@@ -152,12 +150,12 @@ public class InfoFragment extends BaseFragment {
                         //text/photo
                         if(!TextUtils.isEmpty(info.getInfoUrl())) {
                             if (URLUtil.isValidUrl(info.getInfoUrl())){
-                                CommonUtils.openBrowser(view.getContext(), info.getInfoUrl());
+                                CommonUtil.openBrowser(view.getContext(), info.getInfoUrl());
                             } else if(info.getInfoUrl().startsWith("webview://")){
                                 String htmlContent = info.getInfoUrl().replace("webview://","");
                                 if(htmlContent.startsWith("base64/")) {
                                     htmlContent = htmlContent.replace("base64/", "");
-                                    htmlContent = CommonUtils.decodeBase64(htmlContent);
+                                    htmlContent = CommonUtil.decodeBase64(htmlContent);
                                 }
                                 WebViewActivity.start(view.getContext(),htmlContent,info.getTitle(), "",
                                         ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info.getId(), isMeid);
@@ -192,10 +190,10 @@ public class InfoFragment extends BaseFragment {
                     info.save();
 
                     //notify list
-                    InfoUtils.notifyUpdateInfoList(position, true);
+                    InfoUtil.notifyUpdateInfoList(position, true);
 
                     //notify infoCounter
-                    InfoUtils.notifyInfoCounter();
+                    InfoUtil.notifyInfoCounter();
                 }
             }
         });
@@ -204,25 +202,25 @@ public class InfoFragment extends BaseFragment {
             @Override
             public void onClick(View view, final int position) {
                 final InformationModel info = infoList.get(position);
-                CommonUtils.showPopupMenu(view.getContext(), info.isRead()?R.menu.menu_info_item_unread:R.menu.menu_info_item, view, null,
+                CommonUtil.showPopupMenu(view.getContext(), info.isRead()?R.menu.menu_info_item_unread:R.menu.menu_info_item, view, null,
                         new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
                                 if(item.getItemId() == R.id.action_mark_as_read) {
                                     info.setRead(true);
                                     info.save();
-                                    InfoUtils.notifyInfoCounter();
-                                    InfoUtils.notifyUpdateInfoList(position, true);
+                                    InfoUtil.notifyInfoCounter();
+                                    InfoUtil.notifyUpdateInfoList(position, true);
                                 } else if(item.getItemId() == R.id.action_mark_as_unread) {
                                     info.setRead(false);
                                     info.save();
-                                    InfoUtils.notifyInfoCounter();
-                                    InfoUtils.notifyUpdateInfoList(position, false);
+                                    InfoUtil.notifyInfoCounter();
+                                    InfoUtil.notifyUpdateInfoList(position, false);
                                 } else if(item.getItemId() == R.id.action_delete) {
                                     info.delete();
                                     infoList.remove(position);
                                     mAdapter.notifyDataSetChanged();
-                                    InfoUtils.notifyInfoCounter();
+                                    InfoUtil.notifyInfoCounter();
                                 }
                                 return true;
                             }
@@ -264,7 +262,7 @@ public class InfoFragment extends BaseFragment {
 
     private void loadInfo() {
         mAdapter.notifyDataSetChanged();
-        InfoUtils.notifyInfoCounter();
+        InfoUtil.notifyInfoCounter();
     }
 
 
@@ -285,17 +283,17 @@ public class InfoFragment extends BaseFragment {
         if (item.getItemId() == R.id.action_mark_all_as_read){
             InformationModel.markAllAsRead();
             mAdapter.markAllAsRead();
-            InfoUtils.notifyInfoCounter();
+            InfoUtil.notifyInfoCounter();
             getActivity().invalidateOptionsMenu();
-            CommonUtils.showSnackBar(getActivity(),getString(R.string.zlcore_infofragment_mark_all_as_read_success));
+            CommonUtil.showSnackBar(getActivity(),getString(R.string.zlcore_infofragment_mark_all_as_read_success));
             return true;
         } else if (item.getItemId() == R.id.action_delete_all){
             InformationModel.deleteAllInfo();
             infoList.clear();
             mAdapter.notifyDataSetChanged();
-            InfoUtils.notifyInfoCounter();
+            InfoUtil.notifyInfoCounter();
             getActivity().invalidateOptionsMenu();
-            CommonUtils.showSnackBar(getActivity(),getString(R.string.zlcore_infofragment_delete_all_messages_success));
+            CommonUtil.showSnackBar(getActivity(),getString(R.string.zlcore_infofragment_delete_all_messages_success));
             return true;
         }
         return super.onOptionsItemSelected(item);

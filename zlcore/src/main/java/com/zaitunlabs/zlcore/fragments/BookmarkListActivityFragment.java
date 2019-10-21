@@ -19,7 +19,7 @@ import com.zaitunlabs.zlcore.adapters.BookmarkListAdapter;
 import com.zaitunlabs.zlcore.models.BookmarkModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.events.ShowBookmarkInfoEvent;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 import com.zaitunlabs.zlcore.views.CustomRecylerView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -101,7 +101,7 @@ public class BookmarkListActivityFragment extends BaseFragment {
         adapter.setOnMoreOptionClickListener(new BookmarkListAdapter.OnMoreOptionClickListener() {
             @Override
             public void onClick(View view, final int position) {
-                CommonUtils.showPopupMenu(view.getContext(), R.menu.menu_bookmark_list, view, null, new PopupMenu.OnMenuItemClickListener() {
+                CommonUtil.showPopupMenu(view.getContext(), R.menu.menu_bookmark_list, view, null, new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         String title = bookmarkModelList.get(position).getTitle();

@@ -29,7 +29,7 @@ import com.zaitunlabs.zlcore.modules.about.SimpleExpandableListAdapter;
 import com.zaitunlabs.zlcore.modules.about.SimpleItemDescriptionModel;
 import com.zaitunlabs.zlcore.modules.shaum_sholat.CountDownSholatReminderUtils;
 import com.zaitunlabs.zlcore.core.CanvasActivity;
-import com.zaitunlabs.zlcore.utils.FileUtils;
+import com.zaitunlabs.zlcore.utils.FileUtil;
 import com.zaitunlabs.zlcore.views.ASTextView;
 import com.zaitunlabs.zlcore.views.CanvasLayout;
 import com.zaitunlabs.zlcore.views.CanvasSection;
@@ -181,7 +181,7 @@ public class VersionChangeHistoryCanvas extends CanvasActivity {
 		try {
 			List<SimpleItemDescriptionModel> data = null;
 			Gson gson = new Gson();
-			String listString = FileUtils.getStringFromRawFile(context, AboutUs.riwayatRawFile);
+			String listString = FileUtil.getStringFromRawFile(context, AboutUs.riwayatRawFile);
 			data = gson.fromJson(listString, new TypeToken<List<SimpleItemDescriptionModel>>(){}.getType());
 
 			Iterator<SimpleItemDescriptionModel> iterator = data.iterator();

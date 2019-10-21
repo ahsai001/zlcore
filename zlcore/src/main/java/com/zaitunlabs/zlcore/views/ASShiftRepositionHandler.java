@@ -10,7 +10,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout.LayoutParams;
 
 
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 import java.util.ArrayList;
 
@@ -207,7 +207,7 @@ public abstract class ASShiftRepositionHandler {
 		LayoutParams param = (LayoutParams)view.getLayoutParams();
 
 
-		//DebugUtils.logW("JEJAK", ">>>>>>>>>>>cc 1 "+param.leftMargin+" "+param.topMargin);
+		//DebugUtil.logW("JEJAK", ">>>>>>>>>>>cc 1 "+param.leftMargin+" "+param.topMargin);
 
 		int x, y;
 		if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
@@ -227,18 +227,18 @@ public abstract class ASShiftRepositionHandler {
 			//update section coordinate
 			updatePosition(commonTypeValue.left, commonTypeValue.top);
 
-			DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new xy "+x+" "+y);
-			DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new common xy "+commonTypeValue.left+" "+commonTypeValue.top);
+			DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new xy "+x+" "+y);
+			DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" new common xy "+commonTypeValue.left+" "+commonTypeValue.top);
 
 			if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
 				view.setTranslationX(fromDownDX);
 				view.setTranslationY(fromDownDY);
-				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setTranslation");
+				DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setTranslation");
 			}else{
 				param.leftMargin = x;
 				param.topMargin = y;
 				view.setLayoutParams(param);
-				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setLayoutParams");
+				DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" setLayoutParams");
 			}
 			postStepUpdate(view, (int)param.width, (int)param.height, true);
 		}
@@ -270,17 +270,17 @@ public abstract class ASShiftRepositionHandler {
 			int oldHeight = ((CanvasSection)view).getSectionHeight();
 
 			oldParamTypeValue = convertRectFromCommonToParamType(new Rect(oldX, oldY, oldX+oldWidth, oldY+oldHeight));
-			DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" get oldParamTypeValue");
+			DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" get oldParamTypeValue");
 		}
 
 
 		paramTypeValue = convertRectFromCommonToParamType(new Rect(left, top, left+width, top+height));
 
 
-		DebugUtils.logD("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove common xy "+paramTypeValue.left+" "+paramTypeValue.top);
-		//DebugUtils.logW("JEJAK", ">>>>>>>>>>>cc 3 old xy "+oldParamTypeValue.left+" "+oldParamTypeValue.top);
+		DebugUtil.logD("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove common xy "+paramTypeValue.left+" "+paramTypeValue.top);
+		//DebugUtil.logW("JEJAK", ">>>>>>>>>>>cc 3 old xy "+oldParamTypeValue.left+" "+oldParamTypeValue.top);
 
-		DebugUtils.logD("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove update "+left+" "+top);
+		DebugUtil.logD("JEJAK", ">>>>>>>>>>>cc "+((CanvasSection)view).getSectionName()+" resizemove update "+left+" "+top);
 
 		//update section coordinate
 		updatePosition(left, top);
@@ -292,11 +292,11 @@ public abstract class ASShiftRepositionHandler {
 			Animation anim = null;
 			if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
 				LayoutParams params = (LayoutParams) view.getLayoutParams();
-				//DebugUtils.logW("JEJAK", ">>>>>>>>>>> 2 "+params.leftMargin+" "+params.topMargin);
-				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation");
+				//DebugUtil.logW("JEJAK", ">>>>>>>>>>> 2 "+params.leftMargin+" "+params.topMargin);
+				DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation");
 				anim = new TranslateAnimation(oldParamTypeValue.left - params.leftMargin, paramTypeValue.left - params.leftMargin, oldParamTypeValue.top - params.topMargin, paramTypeValue.top - params.topMargin);
 			}else{
-				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation");
+				DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation");
 				anim = new ResizeMoveAnimation(view, paramTypeValue.left, paramTypeValue.top, paramTypeValue.width(), paramTypeValue.height());
 			}
 
@@ -320,7 +320,7 @@ public abstract class ASShiftRepositionHandler {
 				        param.leftMargin = (int) paramTypeValue.left;
 				        param.topMargin = (int) paramTypeValue.top;
 				        view.setLayoutParams(param);
-				        DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" onAnimationEnd");
+				        DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" onAnimationEnd");
 				        postStepUpdate(view, (int)param.width, (int)param.height, false);
 					//}
 					if(dimensionStateListener != null){
@@ -340,17 +340,17 @@ public abstract class ASShiftRepositionHandler {
 			if(Build.VERSION.SDK_INT >= SDK_INT_LIMIT_USE_TRANSLATE_ANIMATION){
 				anim.setDuration(400);
 			    view.startAnimation(anim);
-			    DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation 2");
+			    DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" TranslateAnimation 2");
 			}else{
 				((ResizeMoveAnimation)anim).setAnimListener(new ResizeMoveAnimation.ASAnimListener() {
 					@Override
 					public void animationRepeat(float width, float height) {
-						DebugUtils.logW("JEJAK", ">>>>>>>>>>>");
+						DebugUtil.logW("JEJAK", ">>>>>>>>>>>");
 						postStepUpdate(view, (int) width, (int) height, true);
 					}
 				});
 				anim.startNow();
-				DebugUtils.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation 2");
+				DebugUtil.logD("JEJAK", ">>>>>>>>>>> "+((CanvasSection)view).getSectionName()+" ResizeMoveAnimation 2");
 			}
 		}else{
 			//view.setDrawingCacheEnabled(false);

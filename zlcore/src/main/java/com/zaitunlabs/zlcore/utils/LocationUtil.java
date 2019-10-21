@@ -10,12 +10,11 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
 
 /**
  * Created by ahmad s on 3/14/2016.
  */
-public class LocationUtils implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationUtil implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private android.location.Location mLastLocation;
 
@@ -27,7 +26,7 @@ public class LocationUtils implements GoogleApiClient.ConnectionCallbacks, Googl
 
     private Context mContext;
 
-    public LocationUtils(Context mContext) {
+    public LocationUtil(Context mContext) {
         this.mContext = mContext;
     }
 
@@ -101,7 +100,7 @@ public class LocationUtils implements GoogleApiClient.ConnectionCallbacks, Googl
                 if(updateLocationCallback != null){
                     updateLocationCallback.failed("");
                 }
-                CommonUtils.showToast(mContext, mContext.getString(R.string.zlcore_warning_failed_get_location_with_gps));
+                CommonUtil.showToast(mContext, mContext.getString(R.string.zlcore_warning_failed_get_location_with_gps));
             }
             stop();
         }

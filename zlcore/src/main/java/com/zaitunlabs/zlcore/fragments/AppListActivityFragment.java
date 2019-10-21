@@ -31,8 +31,8 @@ import com.zaitunlabs.zlcore.models.AppListPagingModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewLoadMoreListener;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewTouchListener;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
 import com.zaitunlabs.zlcore.views.CustomRecylerView;
 
 import org.json.JSONObject;
@@ -114,9 +114,9 @@ public class AppListActivityFragment extends BaseFragment {
                 String url = appListDataModels.get(position).getUrl();
 
                 if (!TextUtils.isEmpty(unique)){
-                    CommonUtils.openPlayStore(view.getContext(),unique);
+                    CommonUtil.openPlayStore(view.getContext(),unique);
                 } else if (!TextUtils.isEmpty(url) && URLUtil.isValidUrl(url)){
-                    CommonUtils.openBrowser(view.getContext(),url);
+                    CommonUtil.openBrowser(view.getContext(),url);
                 }
             }
 
@@ -185,10 +185,10 @@ public class AppListActivityFragment extends BaseFragment {
 
 
     private void fetchAppListData(final Context context, final int loadingPage, final AppListModel appListModel){
-        final boolean isMeid = CommonUtils.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
+        final boolean isMeid = CommonUtil.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
 
         AndroidNetworking.get(APIConstant.API_OTHER_APPS +"/"+countPerPage+"/"+loadingPage)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(context, APIConstant.API_VERSION, isMeid))
+                .setOkHttpClient(HttpClientUtil.getHTTPClient(context, APIConstant.API_VERSION, isMeid))
                 .setPriority(Priority.HIGH)
                 .setTag("othersapp")
                 .build()
@@ -200,7 +200,7 @@ public class AppListActivityFragment extends BaseFragment {
                             swipeRefreshLayout.setRefreshing(false);
                             adapter.hideProgress();
                             String message = response.optString("message");
-                            CommonUtils.showSnackBar(context,message);
+                            CommonUtil.showSnackBar(context,message);
                             return;
                         }
                         AppListModel responseListModel = new GsonBuilder()
@@ -246,7 +246,7 @@ public class AppListActivityFragment extends BaseFragment {
                         } else {
                             adapter.hideProgress();
                         }
-                        CommonUtils.showSnackBar(context,anError.getErrorDetail());
+                        CommonUtil.showSnackBar(context,anError.getErrorDetail());
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });

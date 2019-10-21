@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,39 +39,39 @@ public class BaseFragment extends Fragment{
 
     @Override
     public void onAttach(Context context) {
-        DebugUtils.logV(TAG,"onAttach");
+        DebugUtil.logV(TAG,"onAttach");
         super.onAttach(context);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        DebugUtils.logV(TAG,"onCreate");
+        DebugUtil.logV(TAG,"onCreate");
         super.onCreate(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        DebugUtils.logV(TAG,"onCreateView");
+        DebugUtil.logV(TAG,"onCreateView");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        DebugUtils.logV(TAG,"onViewCreated");
+        DebugUtil.logV(TAG,"onViewCreated");
         super.onViewCreated(view, savedInstanceState);
     }
 
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        DebugUtils.logV(TAG,"onActivityCreated");
+        DebugUtil.logV(TAG,"onActivityCreated");
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onDestroyView() {
-        DebugUtils.logV(TAG,"onDestroyView");
+        DebugUtil.logV(TAG,"onDestroyView");
         for (AsyncTask asyncTask : asyncTaskList) {
             if (asyncTask.getStatus() == AsyncTask.Status.RUNNING){
                 asyncTask.cancel(true);
@@ -83,14 +83,14 @@ public class BaseFragment extends Fragment{
 
     @Override
     public void onDestroy() {
-        DebugUtils.logV(TAG,"onDestroy");
+        DebugUtil.logV(TAG,"onDestroy");
         super.onDestroy();
     }
 
 
     @Override
     public void onDetach() {
-        DebugUtils.logV(TAG,"onDetach");
+        DebugUtil.logV(TAG,"onDetach");
         super.onDetach();
     }
 

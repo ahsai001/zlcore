@@ -10,8 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.zaitunlabs.zlcore.R;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,33 +23,88 @@ import java.util.regex.Pattern;
  * Created by ahsai on 11/21/2017.
  */
 
-public class FormValidationUtils {
+public class FormValidationUtil {
+    public static final String MESSAGE_PLEASE_FILL_THIS = "Please fill this";
+    public static final String MESSAGE_EMAIL_IS_INVALID = "Email is invalid";
+
+    public static final String MESSAGE_PLEASE_INSERT_WITH_VALID_FORMAT = "Please insert with valid format";
+    public static final String MESSAGE_NEED_SET_REGEX_PATTERN = "You need to set Regexp Pattern first";
+    public static final String MESSAGE_PLEASE_FILL_ALPHA_NUMERIC_ONLY = "Please fill with alpha numeric only";
+    public static final String MESSAGE_PLEASE_FILL_NUMERIC_ONLY = "Please fill with numeric only";
+    public static final String MESSAGE_VALUE_IS_DIFFERENT = "The value is different with %1$s";
+    public static final String MESSAGE_DATA_MUST_BE_COUNT_DIGITS = "Data must be %1$d %2$s";
+    public static final String MESSAGE_PHONE_FORMAT_IS_INVALID = "Phone format is invalid";
+    public static final String MESSAGE_YOU_MUST_CHECK_THIS = "You must check this";
+    public static final String MESSAGE_URL_FORMAT_IS_INVALID = "Url format is invalid";
+    public static final String MESSAGE_DATE_FORMAT_IS_INVALID = "Date format is invalid";
+
     public static final int DefaultType = 1;
     public static final int IdleType = 2;
     public static final int UnfocusType = 3;
     private Context context;
+    private int defaultValidationType;
     private List<Validator> mValidatorList;
+    private ViewEnablerUtil viewEnablerUtil = null;
 
-    public FormValidationUtils(Context context){
+    public FormValidationUtil(Context context){
+        this(context, DefaultType);
+    }
+
+    public FormValidationUtil(Context context, int defaultValidationType){
         this.context = context.getApplicationContext();
         mValidatorList = new ArrayList<>();
-    }
-    public void addValidator(Validator validator){
-        addValidator(validator,DefaultType);
+        this.defaultValidationType = defaultValidationType;
     }
 
-    public void addValidator(Validator validator, int validationType){
+
+    public void addValidator(Validator validator){
         mValidatorList.add(validator);
-        if(validationType == DefaultType) {
-        } else if(validationType == IdleType){
-            enableTypingValidation(validator);
-        } else if(validationType == UnfocusType){
-            enableUnfocusValidation(validator);
+    }
+
+    public void setEnablerView(View view){
+        viewEnablerUtil = new ViewEnablerUtil(view, mValidatorList.size());
+        viewEnablerUtil.init();
+    }
+
+    public void init(){
+        for (Validator validator : mValidatorList){
+            int validationType = validator.getValidationType();
+
+            if(validationType == IdleType){
+                enableTypingValidation(validator);
+            } else if(validationType == UnfocusType){
+                enableUnfocusValidation(validator);
+            }
+
+
+            if(viewEnablerUtil != null) {
+                validator.addOnValidationCallback(new OnValidationCallback() {
+                    @Override
+                    public boolean onSuccess(View view, AbstractValidatorRule validatorRule) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onFailed(View view, AbstractValidatorRule validatorRule, String message) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onComplete(View view, boolean allRuleValid) {
+                        if(allRuleValid){
+                            viewEnablerUtil.done(String.valueOf(view.getId()));
+                        } else {
+                            viewEnablerUtil.unDone(String.valueOf(view.getId()));
+                        }
+                    }
+                });
+                validator.setAlwaysShowErrorOnView(true);
+            }
         }
     }
 
     private void enableUnfocusValidation(final Validator validator) {
-        CommonUtils.performTaskWhenUnFocus(validator.mView, new Runnable() {
+        CommonUtil.performTaskWhenUnFocus(validator.mView, new Runnable() {
             @Override
             public void run() {
                 validator.validate();
@@ -61,7 +114,7 @@ public class FormValidationUtils {
 
     private void enableTypingValidation(final Validator validator){
         if(validator.mView instanceof EditText) {
-            CommonUtils.performTaskWhenTypeIdle((EditText) validator.mView, new Runnable() {
+            CommonUtil.performTaskWhenTypeIdle((EditText) validator.mView, new Runnable() {
                 @Override
                 public void run() {
                     validator.validate();
@@ -142,8 +195,9 @@ public class FormValidationUtils {
         private View mView;
         private Object packet;
         private List<AbstractValidatorRule> mRuleList;
-        private OnValidationCallback onValidationCallback;
+        private List<OnValidationCallback> onValidationCallbackList = new ArrayList<>();
         private boolean alwaysShowErrorOnView = false;
+        private int validationType = DefaultType;
 
         private void setup(Context context, View mView, Object packet){
             this.mContext = context.getApplicationContext();
@@ -182,19 +236,26 @@ public class FormValidationUtils {
             setup(context,editText,null);
         }
 
-        public Validator addValidatorRule(AbstractValidatorRule validatorRule){
+        public Validator addRule(AbstractValidatorRule validatorRule){
             mRuleList.add(validatorRule);
             return this;
         }
 
-        public Validator setOnValidationCallback(OnValidationCallback onValidationCallback, boolean alwaysShowErrorOnView) {
-            this.onValidationCallback = onValidationCallback;
-            this.alwaysShowErrorOnView = alwaysShowErrorOnView;
+        public Validator addOnValidationCallback(OnValidationCallback onValidationCallback) {
+            this.onValidationCallbackList.add(onValidationCallback);
             return this;
         }
 
-        public Validator setOnValidationCallback(OnValidationCallback onValidationCallback){
-            setOnValidationCallback(onValidationCallback, false);
+        public void setAlwaysShowErrorOnView(boolean alwaysShowErrorOnView) {
+            this.alwaysShowErrorOnView = alwaysShowErrorOnView;
+        }
+
+        public int getValidationType() {
+            return validationType;
+        }
+
+        public Validator setValidationType(int validationType) {
+            this.validationType = validationType;
             return this;
         }
 
@@ -211,47 +272,53 @@ public class FormValidationUtils {
                         e.printStackTrace();
                     }
                     if (!isValid) {
-                        if(onValidationCallback != null){
+                        if(onValidationCallbackList.size() > 0){
                             if(alwaysShowErrorOnView){
                                 mTextView.setError(rule.getMessage());
                             }
-                            if(onValidationCallback.onFailed(mView, rule, rule.getMessage()))break;
+                            for (OnValidationCallback callback : onValidationCallbackList){
+                                if(callback.onFailed(mView, rule, rule.getMessage()))break;
+                                //TODO: need riset in break statement
+                            }
+
                         } else {
                             mTextView.setError(rule.getMessage());
                         }
                     } else {
-                        if(onValidationCallback != null){
+                        if(onValidationCallbackList.size() > 0){
                             successCount++;
                             if(alwaysShowErrorOnView){
                                 mTextView.setError(null);
                             }
-                            if(onValidationCallback.onSuccess(mView, rule))break;
+                            for (OnValidationCallback callback : onValidationCallbackList){
+                                if(callback.onSuccess(mView, rule))break;
+                                //TODO: need riset in break statement
+                            }
                         } else {
                             mTextView.setError(null);
                         }
                     }
                 }
             }
-            if(onValidationCallback != null){
-                onValidationCallback.onComplete(mView, successCount == mRuleList.size());
+            if(onValidationCallbackList.size() > 0){
+                for (OnValidationCallback callback : onValidationCallbackList) {
+                    callback.onComplete(mView, successCount == mRuleList.size());
+                }
             }
         }
     }
 
     public interface OnValidationCallback{
-        public boolean onSuccess(View view, AbstractValidatorRule validatorRule);
-        public boolean onFailed(View view, AbstractValidatorRule validatorRule, String message);
-        public void onComplete(View view, boolean allRuleValid);
+        boolean onSuccess(View view, AbstractValidatorRule validatorRule);
+        boolean onFailed(View view, AbstractValidatorRule validatorRule, String message);
+        void onComplete(View view, boolean allRuleValid);
     }
 
     public static abstract class AbstractValidatorRule{
-        private Context mContext;
         private String mErrorMessage;
-        public AbstractValidatorRule(Context context){
-            this.mContext = context.getApplicationContext();
+        public AbstractValidatorRule(){
         }
-        public AbstractValidatorRule(Context context, String errorMessage){
-            this.mContext = context.getApplicationContext();
+        public AbstractValidatorRule(String errorMessage){
             this.mErrorMessage = errorMessage;
         }
         public abstract boolean isValid(View view, String value, Object packet) throws ValidatorException;
@@ -259,14 +326,6 @@ public class FormValidationUtils {
 
         public String getMessage(){
             return mErrorMessage;
-        }
-
-        public Context getContext() {
-            return mContext;
-        }
-
-        public void setContext(Context mContext) {
-            this.mContext = mContext;
         }
 
         public void setErrorMessage(String mErrorMessage) {
@@ -278,13 +337,12 @@ public class FormValidationUtils {
 
     //Validation Rules definition
     public static class NotEmptyValidatorRule extends AbstractValidatorRule{
-        public NotEmptyValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_fill_this));
+        public NotEmptyValidatorRule() {
+            setErrorMessage(MESSAGE_PLEASE_FILL_THIS);
         }
 
-        public NotEmptyValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public NotEmptyValidatorRule(String errorMessage) {
+            setErrorMessage(errorMessage);
         }
 
         @Override
@@ -295,13 +353,12 @@ public class FormValidationUtils {
 
     public static class EmailValidatorRule extends AbstractValidatorRule{
         private String mDomainName = "";
-        public EmailValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_email_is_invalid));
+        public EmailValidatorRule() {
+            setErrorMessage(MESSAGE_EMAIL_IS_INVALID);
         }
 
-        public EmailValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public EmailValidatorRule(String errorMessage) {
+            super(errorMessage);
         }
 
         @Override
@@ -329,13 +386,12 @@ public class FormValidationUtils {
 
     public static class RegExpValidatorRule extends AbstractValidatorRule{
         private Pattern mPattern;
-        public RegExpValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_insert_with_valid_format));
+        public RegExpValidatorRule() {
+            setErrorMessage(MESSAGE_PLEASE_INSERT_WITH_VALID_FORMAT);
         }
 
-        public RegExpValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public RegExpValidatorRule(String errorMessage) {
+            super(errorMessage);
         }
 
         @Override
@@ -343,7 +399,7 @@ public class FormValidationUtils {
             if (mPattern != null) {
                 return mPattern.matcher(value).matches();
             }
-            throw new ValidatorException(view.getContext().getString(R.string.zlcore_form_validations_utils_need_set_regex_pattern));
+            throw new ValidatorException(MESSAGE_NEED_SET_REGEX_PATTERN);
         }
 
         public void setPattern(String pattern) {
@@ -357,13 +413,12 @@ public class FormValidationUtils {
 
 
     public static class AlphaNumericValidatorRule extends AbstractValidatorRule{
-        public AlphaNumericValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_fill_alpha_numeric_only));
+        public AlphaNumericValidatorRule() {
+            setErrorMessage(MESSAGE_PLEASE_FILL_ALPHA_NUMERIC_ONLY);
         }
 
-        public AlphaNumericValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public AlphaNumericValidatorRule(String errorMessage) {
+            super(errorMessage);
         }
 
         @Override
@@ -374,13 +429,12 @@ public class FormValidationUtils {
     }
 
     public static class NumericValidatorRule extends AbstractValidatorRule{
-        public NumericValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_please_fill_numeric_only));
+        public NumericValidatorRule() {
+            setErrorMessage(MESSAGE_PLEASE_FILL_NUMERIC_ONLY);
         }
 
-        public NumericValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public NumericValidatorRule(String errorMessage) {
+            super(errorMessage);
         }
 
         @Override
@@ -398,14 +452,13 @@ public class FormValidationUtils {
 
     public static class SameValueValidatorRule extends AbstractValidatorRule{
         private String comparedFieldName;
-        public SameValueValidatorRule(Context context, String comparedFieldName) {
-            super(context);
+        public SameValueValidatorRule(String comparedFieldName) {
             this.comparedFieldName = comparedFieldName;
-            setErrorMessage(String.format(context.getString(R.string.zlcore_form_validations_utils_value_is_different),comparedFieldName));
+            setErrorMessage(String.format(MESSAGE_VALUE_IS_DIFFERENT,comparedFieldName));
         }
 
-        public SameValueValidatorRule(Context context, String errorMessage, String comparedFieldName) {
-            super(context, errorMessage);
+        public SameValueValidatorRule(String errorMessage, String comparedFieldName) {
+            super(errorMessage);
             this.comparedFieldName = comparedFieldName;
         }
 
@@ -419,14 +472,13 @@ public class FormValidationUtils {
 
     public static class CountValidatorRule extends AbstractValidatorRule{
         private int count;
-        public CountValidatorRule(Context context, int count) {
-            super(context);
-            setErrorMessage(String.format(context.getString(R.string.zlcore_form_validations_utils_data_must_be_count_digits),count,(count>1?"digits":"digit")));
+        public CountValidatorRule(int count) {
+            setErrorMessage(String.format(MESSAGE_DATA_MUST_BE_COUNT_DIGITS,count,(count>1?"digits":"digit")));
             this.count = count;
         }
 
-        public CountValidatorRule(Context context, String errorMessage, int count) {
-            super(context, errorMessage);
+        public CountValidatorRule(String errorMessage, int count) {
+            super(errorMessage);
             this.count = count;
         }
 
@@ -437,13 +489,12 @@ public class FormValidationUtils {
     }
 
     public static class PhoneValidatorRule extends AbstractValidatorRule{
-        public PhoneValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_phone_format_is_invalid));
+        public PhoneValidatorRule() {
+            setErrorMessage(MESSAGE_PHONE_FORMAT_IS_INVALID);
         }
 
-        public PhoneValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public PhoneValidatorRule(String errorMessage) {
+            super(errorMessage);
         }
 
         @Override
@@ -455,12 +506,11 @@ public class FormValidationUtils {
 
     public static class MustCheckedValidatorRule extends AbstractValidatorRule{
         public MustCheckedValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_you_must_check_this));
+            setErrorMessage(MESSAGE_YOU_MUST_CHECK_THIS);
         }
 
-        public MustCheckedValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public MustCheckedValidatorRule(String errorMessage) {
+            super(errorMessage);
         }
 
         @Override
@@ -490,13 +540,12 @@ public class FormValidationUtils {
 
 
     public static class URLValidatorRule extends AbstractValidatorRule{
-        public URLValidatorRule(Context context) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_url_format_is_invalid));
+        public URLValidatorRule() {
+            setErrorMessage(MESSAGE_URL_FORMAT_IS_INVALID);
         }
 
-        public URLValidatorRule(Context context, String errorMessage) {
-            super(context, errorMessage);
+        public URLValidatorRule(String errorMessage) {
+            super(errorMessage);
         }
 
         @Override
@@ -509,15 +558,14 @@ public class FormValidationUtils {
     public static class DateValidatorRule extends AbstractValidatorRule{
         private String dateFormat;
         private Locale locale;
-        public DateValidatorRule(Context context, String dateFormat, Locale locale) {
-            super(context);
-            setErrorMessage(context.getString(R.string.zlcore_form_validations_utils_date_format_is_invalid));
+        public DateValidatorRule(String dateFormat, Locale locale) {
+            setErrorMessage(MESSAGE_DATE_FORMAT_IS_INVALID);
             this.dateFormat = dateFormat;
             this.locale = locale;
         }
 
-        public DateValidatorRule(Context context, String errorMessage, String dateFormat, Locale locale) {
-            super(context, errorMessage);
+        public DateValidatorRule(String errorMessage, String dateFormat, Locale locale) {
+            super(errorMessage);
             this.dateFormat = dateFormat;
             this.locale = locale;
         }
@@ -537,7 +585,7 @@ public class FormValidationUtils {
 
 
 
-    public static class ValidatorException extends java.lang.Exception {
+    public static class ValidatorException extends Exception {
         public ValidatorException() {
             super();
         }
@@ -557,31 +605,34 @@ public class FormValidationUtils {
 
 
     //helper method
+    public Validator addNotEmptyValidatorForView(View view){
+       return addNotEmptyValidatorForView(view, null);
+    }
 
-    public Validator addNotEmptyValidatorForView(Context context, View view){
-        Validator newValidator = new FormValidationUtils.Validator(context, view);
-        newValidator.addValidatorRule(new NotEmptyValidatorRule(context));
+    public Validator addNotEmptyValidatorForView(View view, String errorMessage){
+        return addNotEmptyValidatorForView(defaultValidationType, view, errorMessage);
+    }
+
+    public Validator addNotEmptyValidatorForView(int validationType, View view){
+        return addNotEmptyValidatorForView(validationType, view, null);
+    }
+
+    public Validator addNotEmptyValidatorForView(int validationType, View view, String errorMessage){
+        Validator newValidator = new FormValidationUtil.Validator(context, view);
+        newValidator.addRule(TextUtils.isEmpty(errorMessage)?new NotEmptyValidatorRule():new NotEmptyValidatorRule(errorMessage));
+        newValidator.setValidationType(validationType);
         addValidator(newValidator);
         return newValidator;
     }
 
-    public Validator addNotEmptyValidatorForView(Context context, View view, String errorMessage){
-        Validator newValidator = new FormValidationUtils.Validator(context, view);
-        newValidator.addValidatorRule(new NotEmptyValidatorRule(context, errorMessage));
-        addValidator(newValidator);
-        return newValidator;
+
+    public Validator addNewValidatorForView(View view){
+        return addNewValidatorForView(defaultValidationType, view);
     }
 
-    public Validator addEmailValidatorForView(Context context, View view){
-        Validator newValidator = new FormValidationUtils.Validator(context, view);
-        newValidator.addValidatorRule(new EmailValidatorRule(context));
-        addValidator(newValidator);
-        return newValidator;
-    }
-
-    public Validator addEmailValidatorForView(Context context, View view, String errorMessage){
-        Validator newValidator = new FormValidationUtils.Validator(context, view);
-        newValidator.addValidatorRule(new EmailValidatorRule(context, errorMessage));
+    public Validator addNewValidatorForView(int validationType, View view){
+        Validator newValidator = new FormValidationUtil.Validator(context, view);
+        newValidator.setValidationType(validationType);
         addValidator(newValidator);
         return newValidator;
     }

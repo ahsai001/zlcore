@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.CountDownTimer;
 import android.widget.TextView;
 
-import com.zaitunlabs.zlcore.utils.DateStringUtils;
+import com.zaitunlabs.zlcore.utils.DateStringUtil;
 import com.zaitunlabs.zlcore.utils.Prefs;
 
 import java.lang.ref.WeakReference;
@@ -59,7 +59,7 @@ public class CountDownSholatReminderUtils {
                 public void onTick(long millisUntilFinished) {
                     TextView view = targetViewRef.get();
                     if(view !=  null) {
-                        view.setText(sholatType + " " + DateStringUtils.getDurationInString(millisUntilFinished/1000));
+                        view.setText(sholatType + " " + DateStringUtil.getDurationInString(millisUntilFinished/1000));
                     }
                 }
 

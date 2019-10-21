@@ -16,8 +16,8 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 /**
  * sekarang masih gak support untuk di add ke CanvasSection dengan scroll aktif, (akan di riset)
@@ -146,7 +146,7 @@ public class ASAnimatedImageView extends ASImageView {
 				iv.setImageResource(leftImageID);
 				iv.setScaleType(ScaleType.FIT_XY);
 				iv.setAdjustViewBounds(true);
-				Bitmap bmp = CommonUtils.getBitmapFromView(iv, offScreenCanvas.getWidth() * 1 / 7, offScreenCanvas.getHeight() * 1/2);
+				Bitmap bmp = CommonUtil.getBitmapFromView(iv, offScreenCanvas.getWidth() * 1 / 7, offScreenCanvas.getHeight() * 1/2);
 				if(bmp != null)
 					offScreenCanvas.drawBitmap(bmp, 10, offScreenCanvas.getHeight()/4, null);
 			}
@@ -160,7 +160,7 @@ public class ASAnimatedImageView extends ASImageView {
 				tv.setTypeface(currentTypeFace);
 				tv.setTextColor(currentColor);
 				tv.setText(currentActiveText);
-				Bitmap bmp = CommonUtils.getBitmapFromView(tv, offScreenCanvas.getWidth() * 3 / 5, offScreenCanvas.getHeight());
+				Bitmap bmp = CommonUtil.getBitmapFromView(tv, offScreenCanvas.getWidth() * 3 / 5, offScreenCanvas.getHeight());
 				if(bmp != null)
 					offScreenCanvas.drawBitmap(bmp, offScreenCanvas.getWidth() * 1 / 5, 0, null);
 			}
@@ -169,7 +169,7 @@ public class ASAnimatedImageView extends ASImageView {
 				iv.setImageResource(rightImageID);
 				iv.setScaleType(ScaleType.FIT_XY);
 				iv.setAdjustViewBounds(true);
-				Bitmap bmp = CommonUtils.getBitmapFromView(iv, offScreenCanvas.getWidth() * 1 / 7, offScreenCanvas.getHeight()*1/2);
+				Bitmap bmp = CommonUtil.getBitmapFromView(iv, offScreenCanvas.getWidth() * 1 / 7, offScreenCanvas.getHeight()*1/2);
 				if(bmp != null)
 					offScreenCanvas.drawBitmap(bmp, offScreenCanvas.getWidth() * 6 / 7,offScreenCanvas.getHeight()/4, null);
 			}
@@ -188,26 +188,26 @@ public class ASAnimatedImageView extends ASImageView {
 		int action = event.getAction();
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			DebugUtils.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_DOWN");
+			DebugUtil.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_DOWN");
 			isPressed = true;
 			postInvalidate();
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
-			DebugUtils.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_OUTSIDE");
+			DebugUtil.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_OUTSIDE");
 			if (isPressed) {
 				isPressed = false;
 				postInvalidate();
 			}
 			break;
 		case MotionEvent.ACTION_CANCEL:
-			DebugUtils.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_CANCEL");
+			DebugUtil.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_CANCEL");
 			if (isPressed) {
 				isPressed = false;
 				postInvalidate();
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			DebugUtils.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_MOVE");
+			DebugUtil.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_MOVE");
 			if ((event.getX() > this.getWidth() || event.getX() < 0)
 					|| (event.getY() > this.getHeight() || event.getY() < 0)) {
 				if (isPressed) {
@@ -217,7 +217,7 @@ public class ASAnimatedImageView extends ASImageView {
 			}
 			break;
 		case MotionEvent.ACTION_UP:
-			DebugUtils.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_UP");
+			DebugUtil.logE("onTouchEvent", "ASAnimatedImageView MotionEvent.ACTION_UP");
 			if (isPressed) {
 				if (listener != null)
 					listener.onClick(this);

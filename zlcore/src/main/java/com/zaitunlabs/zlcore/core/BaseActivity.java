@@ -12,7 +12,7 @@ import android.transition.Transition;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.utils.ApplicationWacther;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +139,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected int getRequestCode(Intent intent){
-        int requestCode = CommonUtils.getIntIntent(intent, EXTRA_REQUEST_CODE,-1);
+        int requestCode = CommonUtil.getIntIntent(intent, EXTRA_REQUEST_CODE,-1);
         return requestCode;
     }
 
@@ -184,9 +184,9 @@ public class BaseActivity extends AppCompatActivity {
         if(!canExit){
             canExit = true;
             if(TextUtils.isEmpty(message)) {
-                CommonUtils.showSnackBar(this, getString(R.string.zlcore_warning_press_once_again_to_close_app));
+                CommonUtil.showSnackBar(this, getString(R.string.zlcore_warning_press_once_again_to_close_app));
             } else {
-                CommonUtils.showSnackBar(this, message);
+                CommonUtil.showSnackBar(this, message);
             }
             new Handler().postDelayed(new Runnable() {
                 @Override

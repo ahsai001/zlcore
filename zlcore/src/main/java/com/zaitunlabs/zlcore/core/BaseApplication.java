@@ -12,11 +12,11 @@ import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.constants.ZLCoreConstanta;
 import com.zaitunlabs.zlcore.events.ReInitializeDatabaseEvent;
 import com.zaitunlabs.zlcore.utils.ApplicationWacther;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
-import com.zaitunlabs.zlcore.utils.EventsUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
+import com.zaitunlabs.zlcore.utils.EventsUtil;
 import com.zaitunlabs.zlcore.utils.Hawk;
-import com.zaitunlabs.zlcore.utils.PlayServiceUtils;
+import com.zaitunlabs.zlcore.utils.PlayServiceUtil;
 import com.zaitunlabs.zlcore.utils.audio.BackSoundService;
 
 import org.acra.ACRA;
@@ -41,9 +41,9 @@ public class BaseApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-		DebugUtils.logD("Application", this.getClass().getSimpleName() + ":onCreate");
+		DebugUtil.logD("Application", this.getClass().getSimpleName() + ":onCreate");
 		// inisialisasi untuk crash done engine
-		if(!PlayServiceUtils.isGooglePlayServicesAvailable(this)) {
+		if(!PlayServiceUtil.isGooglePlayServicesAvailable(this)) {
 			ConfigurationBuilder configurationBuilder = new ConfigurationBuilder(this);
 			configurationBuilder.setReportSenderFactoryClasses(CustomACRASenderFactory.class);
 			configurationBuilder.setMailTo(ZLCoreConstanta.getCrashMailTo(this));
@@ -78,7 +78,7 @@ public class BaseApplication extends Application {
 
 		Hawk.init(this);
 
-		EventsUtils.register(this);
+		EventsUtil.register(this);
 	}
 
 	private void dbInitialize(){
@@ -113,15 +113,15 @@ public class BaseApplication extends Application {
 
 	@Override
 	public void onLowMemory() {
-		DebugUtils.logD("Application", this.getClass().getSimpleName()
+		DebugUtil.logD("Application", this.getClass().getSimpleName()
 				+ ":onLowMemory");
-		DebugUtils.logE("LOW_MEMORY", "low memory occured");
+		DebugUtil.logE("LOW_MEMORY", "low memory occured");
 		super.onLowMemory();
 	}
 
 	@Override
 	public void onTerminate() {
-		DebugUtils.logD("Application", this.getClass().getSimpleName()
+		DebugUtil.logD("Application", this.getClass().getSimpleName()
 				+ ":onTerminate");
 		
 		if (BackSoundService.isRunning()) {
@@ -130,7 +130,7 @@ public class BaseApplication extends Application {
 		ApplicationWacther.getInstance(this).unregisterAppWatcherListener(this);
 
 		ActiveAndroid.dispose();
-		EventsUtils.unregister(this);
+		EventsUtil.unregister(this);
 		super.onTerminate();
 	}
 
@@ -139,7 +139,7 @@ public class BaseApplication extends Application {
 	private class CustomACRASender implements ReportSender {
 		@Override
 		public void send(Context context, CrashReportData report) throws ReportSenderException {
-			CommonUtils.sendEmail(BaseApplication.this, ZLCoreConstanta.getCrashMailTo(context), BaseApplication.this.getPackageName()+" Crash Report", report.toString(), "An error has occurred! Send an error done?");
+			CommonUtil.sendEmail(BaseApplication.this, ZLCoreConstanta.getCrashMailTo(context), BaseApplication.this.getPackageName()+" Crash Report", report.toString(), "An error has occurred! Send an error done?");
 		}
 	}
 

@@ -14,7 +14,7 @@ import java.util.List;
  * Created by ahsai on 5/30/2018.
  */
 
-public class FormCommonUtils {
+public class FormCommonUtil {
     public static void setSpinnerList(Context context, Spinner spinner, DataList<String> titleViewList,
                                       DataList<String> valueList,
                                       AdapterView.OnItemSelectedListener onItemSelectedListener){

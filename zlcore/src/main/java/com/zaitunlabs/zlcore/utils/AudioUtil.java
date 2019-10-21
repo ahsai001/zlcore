@@ -11,7 +11,7 @@ import java.net.ContentHandler;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-public class AudioUtils {
+public class AudioUtil {
     public static void setRingerModeNormal(Context context){
         AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
         am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);

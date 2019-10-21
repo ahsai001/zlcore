@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.idunnololz.widgets.AnimatedExpandableListView;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
-import com.zaitunlabs.zlcore.utils.LinkUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
+import com.zaitunlabs.zlcore.utils.LinkUtil;
 
 public class SimpleExpandableListAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
 	private final SparseArray<SimpleExpandableDataModel> data;
@@ -26,12 +26,12 @@ public class SimpleExpandableListAdapter extends AnimatedExpandableListView.Anim
 
 		int fontHeight = 0;
 		int groupIndicatoHeight = 0;
-		fontHeight = (int) CommonUtils.getFontHeight("T")+10;
-		float scale = CommonUtils.getDisplayMetricsScaledDensity(act);
-		groupIndicatoHeight = (int) (CommonUtils.getImageDimension(activity.getBaseContext(), android.R.attr.groupIndicator).y+(30*scale));
+		fontHeight = (int) CommonUtil.getFontHeight("T")+10;
+		float scale = CommonUtil.getDisplayMetricsScaledDensity(act);
+		groupIndicatoHeight = (int) (CommonUtil.getImageDimension(activity.getBaseContext(), android.R.attr.groupIndicator).y+(30*scale));
 		groupHeight = Math.max(fontHeight, groupIndicatoHeight);
-		DebugUtils.logW("HEIGHT", "groupIndicatoHeight : "+groupIndicatoHeight);
-		DebugUtils.logW("HEIGHT", "fontHeight : "+fontHeight);
+		DebugUtil.logW("HEIGHT", "groupIndicatoHeight : "+groupIndicatoHeight);
+		DebugUtil.logW("HEIGHT", "fontHeight : "+fontHeight);
 
 		this.isZL = isZL;
 	}
@@ -57,17 +57,17 @@ public class SimpleExpandableListAdapter extends AnimatedExpandableListView.Anim
 		textView = (TextView) convertView;
 		textView.setText(children);
 
-		LinkUtils.autoLink(textView, new LinkUtils.OnClickListener() {
+		LinkUtil.autoLink(textView, new LinkUtil.OnClickListener() {
 
 			@Override
 			public void onLinkClicked(String link) {
-				DebugUtils.logI("", "link : " + link);
-				CommonUtils.openBrowser(activity, link);
+				DebugUtil.logI("", "link : " + link);
+				CommonUtil.openBrowser(activity, link);
 			}
 
 			@Override
 			public void onClicked() {
-				DebugUtils.logI("", " link clicked");
+				DebugUtil.logI("", " link clicked");
 			}
 		});
 
@@ -127,13 +127,13 @@ public class SimpleExpandableListAdapter extends AnimatedExpandableListView.Anim
 
 		text.setHeight(groupHeight);
 
-		int padding = CommonUtils.getIntAttrValue(activity, android.R.attr.paddingTop);
-		text.setPadding(CommonUtils.getIntAttrValue(activity, android.R.attr.expandableListPreferredItemPaddingLeft), padding, padding, padding);
+		int padding = CommonUtil.getIntAttrValue(activity, android.R.attr.paddingTop);
+		text.setPadding(CommonUtil.getIntAttrValue(activity, android.R.attr.expandableListPreferredItemPaddingLeft), padding, padding, padding);
 
 		text.setGravity(Gravity.CENTER_VERTICAL);
 
 		if(isZL) {
-			if (CommonUtils.isOdd(groupPosition)) {
+			if (CommonUtil.isOdd(groupPosition)) {
 				text.setBackgroundColor(Color.argb(200, 0, 0, 0));
 			} else {
 				text.setBackgroundColor(Color.argb(50, 0, 0, 0));

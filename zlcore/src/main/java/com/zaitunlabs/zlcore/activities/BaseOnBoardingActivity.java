@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 import com.zaitunlabs.zlcore.utils.Prefs;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public abstract class BaseOnBoardingActivity extends BaseActivity {
             return;
         }
 
-        onBoardingOnlyShown = CommonUtils.getBooleanIntent(getIntent(),ONBOARDING_ONLY_SHOWN,false);
+        onBoardingOnlyShown = CommonUtil.getBooleanIntent(getIntent(),ONBOARDING_ONLY_SHOWN,false);
         if(!onBoardingOnlyShown){
             if(Prefs.with(this).getBoolean(ONBOARDING_COMPLETED_STATE,false)){
                 finishOnboarding();

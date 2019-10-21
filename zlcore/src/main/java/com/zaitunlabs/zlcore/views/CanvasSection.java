@@ -13,8 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 
 /**
@@ -236,10 +236,10 @@ public class CanvasSection extends FrameLayout {
 				GestureDetector mGestureDetector = new GestureDetector(this.getContext(), new GestureDetector.SimpleOnGestureListener(){
 					public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 						if(Math.abs(distanceY) > Math.abs(distanceX)) {
-							DebugUtils.logE("vScroll", getSectionName()+" onScroll: TRUE");
+							DebugUtil.logE("vScroll", getSectionName()+" onScroll: TRUE");
 			                return true;
 			            }
-						DebugUtils.logE("vScroll", getSectionName()+" onScroll: FALSE");
+						DebugUtil.logE("vScroll", getSectionName()+" onScroll: FALSE");
 			            return false;
 					};
 				});
@@ -247,13 +247,13 @@ public class CanvasSection extends FrameLayout {
 				@Override
 				public boolean onInterceptTouchEvent(MotionEvent ev) {
 					boolean value = super.onInterceptTouchEvent(ev);
-					DebugUtils.logE("vScroll", getSectionName()+" onInterceptTouchEvent: " + value);
+					DebugUtil.logE("vScroll", getSectionName()+" onInterceptTouchEvent: " + value);
 					return value;
 				}
 				@Override
 				public boolean dispatchTouchEvent(MotionEvent ev) {
 					boolean value = super.dispatchTouchEvent(ev);
-					DebugUtils.logE("vScroll", getSectionName()+" dispatchTouchEvent: " + value);
+					DebugUtil.logE("vScroll", getSectionName()+" dispatchTouchEvent: " + value);
 					return value;
 				}
 			};
@@ -284,7 +284,7 @@ public class CanvasSection extends FrameLayout {
 				@Override
 				public boolean onInterceptTouchEvent(MotionEvent ev) {
 					boolean value = super.onInterceptTouchEvent(ev);
-					DebugUtils.logE("hScroll", getSectionName()+" onInterceptTouchEvent: " + value);
+					DebugUtil.logE("hScroll", getSectionName()+" onInterceptTouchEvent: " + value);
 					//set return false, agar move event di asmovable menu bisa aktif
 					onTouchEvent(ev);
 					return false;
@@ -292,7 +292,7 @@ public class CanvasSection extends FrameLayout {
 				@Override
 				public boolean dispatchTouchEvent(MotionEvent ev) {
 					boolean value = super.dispatchTouchEvent(ev);
-					DebugUtils.logE("hScroll", getSectionName()+" dispatchTouchEvent: " + value);
+					DebugUtil.logE("hScroll", getSectionName()+" dispatchTouchEvent: " + value);
 					return value;
 				}
 			};
@@ -317,13 +317,13 @@ public class CanvasSection extends FrameLayout {
 				@Override
 				public boolean onInterceptTouchEvent(MotionEvent ev) {
 					boolean value = super.onInterceptTouchEvent(ev);
-					DebugUtils.logE("sectionLayout", getSectionName()+" onInterceptTouchEvent: " + value);
+					DebugUtil.logE("sectionLayout", getSectionName()+" onInterceptTouchEvent: " + value);
 					return value;
 				}
 				@Override
 				public boolean dispatchTouchEvent(MotionEvent ev) {
 					boolean value = super.dispatchTouchEvent(ev);
-					DebugUtils.logE("sectionLayout", getSectionName()+" dispatchTouchEvent: " + value);
+					DebugUtil.logE("sectionLayout", getSectionName()+" dispatchTouchEvent: " + value);
 					return value;
 				}
 			};
@@ -336,13 +336,13 @@ public class CanvasSection extends FrameLayout {
 				@Override
 				public boolean onInterceptTouchEvent(MotionEvent ev) {
 					boolean value = super.onInterceptTouchEvent(ev);
-					DebugUtils.logE("sectionLayout", getSectionName()+" onInterceptTouchEvent: " + value);
+					DebugUtil.logE("sectionLayout", getSectionName()+" onInterceptTouchEvent: " + value);
 					return value;
 				}
 				@Override
 				public boolean dispatchTouchEvent(MotionEvent ev) {
 					boolean value = super.dispatchTouchEvent(ev);
-					DebugUtils.logE("sectionLayout", getSectionName()+" dispatchTouchEvent: " + value);
+					DebugUtil.logE("sectionLayout", getSectionName()+" dispatchTouchEvent: " + value);
 					return value;
 				}
 			};
@@ -368,11 +368,11 @@ public class CanvasSection extends FrameLayout {
 			@Override
 			protected void postStepUpdate(View view, int viewWidth, int viewHeight, boolean isInRepeatState) {
 				//do nothing now
-				//DebugUtils.logW("postStepUpdate", ">>>>>>>>>>>>>>>>>>>>>>>");
+				//DebugUtil.logW("postStepUpdate", ">>>>>>>>>>>>>>>>>>>>>>>");
 
 
 				//if(!isInRepeatState){
-					//DebugUtils.logW("postStepUpdate", "not in repeatstate");
+					//DebugUtil.logW("postStepUpdate", "not in repeatstate");
 					if(linearLayout != null){
 
 						RelativeLayout.LayoutParams param = (RelativeLayout.LayoutParams) linearLayout.getLayoutParams();
@@ -383,10 +383,10 @@ public class CanvasSection extends FrameLayout {
 						}
 						linearLayout.setLayoutParams(param);
 
-						//DebugUtils.logW("postStepUpdate", "linearLayout");
+						//DebugUtil.logW("postStepUpdate", "linearLayout");
 					}else{
 						int childrenCount = CanvasSection.this.sectionLayout.getChildCount();
-						//DebugUtils.logW("postStepUpdate", "sectionLayout");
+						//DebugUtil.logW("postStepUpdate", "sectionLayout");
 
 						int parentWidth = viewWidth;
 						int parentHeight = viewHeight;
@@ -455,7 +455,7 @@ public class CanvasSection extends FrameLayout {
 		this.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View arg0, MotionEvent arg1) {
-				//DebugUtils.logE("setOnTouchListener", getSectionName()+"",false);
+				//DebugUtil.logE("setOnTouchListener", getSectionName()+"",false);
 				return gestureDetector.handleOnTouch(arg0, arg1);
 				//return true;
 			}
@@ -468,9 +468,9 @@ public class CanvasSection extends FrameLayout {
 			setParentWidth(newParentWidth);
 			setParentHeight(newParentHeight);
 
-			DebugUtils.logD("ahmad", "parent width:"+getParentWidth()+" - parent section widht:"+parent.getSectionWidth()+" - child section width:"+getSectionWidth());
+			DebugUtil.logD("ahmad", "parent width:"+getParentWidth()+" - parent section widht:"+parent.getSectionWidth()+" - child section width:"+getSectionWidth());
 
-			DebugUtils.logD("ahmad", "before child "+getSectionName()+": w/h => "+getSectionWidthInPixel()+"/"+getSectionHeightInPixel());
+			DebugUtil.logD("ahmad", "before child "+getSectionName()+": w/h => "+getSectionWidthInPixel()+"/"+getSectionHeightInPixel());
 			int childWidth = (int) Math.round((getParentWidth() * getSectionWidth()) / (100));
 
 			int childHeight = (int) Math.round((getParentHeight() * getSectionHeight()) / (100));
@@ -491,7 +491,7 @@ public class CanvasSection extends FrameLayout {
 			setSectionHeightInPixel(childHeight);
 
 
-			DebugUtils.logD("ahmad", "after child " + getSectionName() + ": w/h => " + getSectionWidthInPixel() + "/" + getSectionHeightInPixel());
+			DebugUtil.logD("ahmad", "after child " + getSectionName() + ": w/h => " + getSectionWidthInPixel() + "/" + getSectionHeightInPixel());
 
 			int childrenCount = CanvasSection.this.sectionLayout.getChildCount();
 			for(int x = 0; x < childrenCount; x++){
@@ -510,42 +510,42 @@ public class CanvasSection extends FrameLayout {
 		String actString = "";
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_DOWN");
 			actString = "MotionEvent.ACTION_DOWN";
 			break;
 		case MotionEvent.ACTION_MOVE:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_MOVE");
 			actString = "MotionEvent.ACTION_MOVE";
 			break;
 		case MotionEvent.ACTION_UP:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_UP");
 			actString = "MotionEvent.ACTION_UP";
 			break;
 		case MotionEvent.ACTION_CANCEL:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_CANCEL");
 			actString = "MotionEvent.ACTION_CANCEL";
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_OUTSIDE");
 			actString = "MotionEvent.ACTION_OUTSIDE";
 			break;
 		case MotionEvent.ACTION_POINTER_DOWN:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_DOWN");
 			actString = "MotionEvent.ACTION_POINTER_DOWN";
 			break;
 		case MotionEvent.ACTION_POINTER_UP:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_UP");
 			actString = "MotionEvent.ACTION_POINTER_UP";
 			break;
 		default:
-			DebugUtils.logD("dispatchTouchEvent",
+			DebugUtil.logD("dispatchTouchEvent",
 			getSectionName()+" MotionEvent.DEFAULT");
 			actString = "MotionEvent.DEFAULT";
 			break;
@@ -566,7 +566,7 @@ public class CanvasSection extends FrameLayout {
 		 * return true; }
 		 */
 		boolean returnValue = super.dispatchTouchEvent(ev);
-		DebugUtils.logE("dispatchTouchEvent", getSectionName()+" "+actString+" "+"returnValue : "+returnValue);
+		DebugUtil.logE("dispatchTouchEvent", getSectionName()+" "+actString+" "+"returnValue : "+returnValue);
 		return returnValue;
 		// super.dispatchTouchEvent(ev);
 		// return true;
@@ -579,49 +579,49 @@ public class CanvasSection extends FrameLayout {
 		String actString = "";
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_DOWN");
 			actString = "MotionEvent.ACTION_DOWN";
 			break;
 		case MotionEvent.ACTION_MOVE:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_MOVE");
 			actString = "MotionEvent.ACTION_MOVE";
 			break;
 		case MotionEvent.ACTION_UP:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_UP");
 			actString = "MotionEvent.ACTION_UP";
 			break;
 		case MotionEvent.ACTION_CANCEL:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_CANCEL");
 			actString = "MotionEvent.ACTION_CANCEL";
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_OUTSIDE");
 			actString = "MotionEvent.ACTION_OUTSIDE";
 			break;
 		case MotionEvent.ACTION_POINTER_DOWN:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_DOWN");
 			actString = "MotionEvent.ACTION_POINTER_DOWN";
 			break;
 		case MotionEvent.ACTION_POINTER_UP:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.ACTION_POINTER_UP");
 			actString = "MotionEvent.ACTION_POINTER_UP";
 			break;
 		default:
-			DebugUtils.logD("onInterceptTouchEvent",
+			DebugUtil.logD("onInterceptTouchEvent",
 			getSectionName()+" MotionEvent.DEFAULT");
 			actString = "MotionEvent.DEFAULT";
 			break;
 		}
 		
 		boolean returnValue = super.onInterceptTouchEvent(ev);
-		DebugUtils.logE("onInterceptTouchEvent", getSectionName()+" "+actString+" "+"returnValue : "+returnValue);
+		DebugUtil.logE("onInterceptTouchEvent", getSectionName()+" "+actString+" "+"returnValue : "+returnValue);
 		return returnValue;
 		// handleTouchEvent(ev);
 		// return false;
@@ -762,8 +762,8 @@ public class CanvasSection extends FrameLayout {
 
 		
 
-		DebugUtils.logW("SECTION", "height "+getSectionName()+": "+viewHeight);
-		DebugUtils.logW("SECTION", "leftX "+getSectionName()+": "+leftX);
+		DebugUtil.logW("SECTION", "height "+getSectionName()+": "+viewHeight);
+		DebugUtil.logW("SECTION", "leftX "+getSectionName()+": "+leftX);
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 				viewWidth, viewHeight);
@@ -821,10 +821,10 @@ public class CanvasSection extends FrameLayout {
 		//section.setTag(SECTION_NAME_TAG, sectionName);
 		
 		if(isUseDefaultAppearAnimation){
-			section.setAppearAnim(CommonUtils.setViewAnim_Appearslidedownfromtop(null, 800));
+			section.setAppearAnim(CommonUtil.setViewAnim_Appearslidedownfromtop(null, 800));
 		}
 		if(isUseDefaultDisappearAnimation){
-			section.setDisappearAnim(CommonUtils.setViewAnim_disappearslideupfromBottom(null, 800));
+			section.setDisappearAnim(CommonUtil.setViewAnim_disappearslideupfromBottom(null, 800));
 		}
 
 		addViewWithFrame(section, left, top, width, height);
@@ -905,13 +905,13 @@ public class CanvasSection extends FrameLayout {
 			@Override
 			public boolean dispatchTouchEvent(MotionEvent ev) {
 				boolean value = super.dispatchTouchEvent(ev);
-				DebugUtils.logE("linearLayout", getSectionName()+" dispatchTouchEvent: " + value);
+				DebugUtil.logE("linearLayout", getSectionName()+" dispatchTouchEvent: " + value);
 				return value;
 			}
 			@Override
 			public boolean onInterceptTouchEvent(MotionEvent ev) {
 				boolean value = super.onInterceptTouchEvent(ev);
-				DebugUtils.logE("linearLayout", getSectionName()+" onInterceptTouchEvent: " + value);
+				DebugUtil.logE("linearLayout", getSectionName()+" onInterceptTouchEvent: " + value);
 				return value;
 			}
 		};

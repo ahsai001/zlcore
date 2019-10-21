@@ -20,8 +20,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -71,13 +71,13 @@ public class BackSoundService extends Service {
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onConfigurationChanged");
 	}
 
 	@Override
 	public void onCreate() {
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onCreate");
 		super.onCreate();
 		if (mp == null) {
@@ -103,7 +103,7 @@ public class BackSoundService extends Service {
 
 	@Override
 	public void onDestroy() {
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onDestroy");
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -127,7 +127,7 @@ public class BackSoundService extends Service {
 
 	@Override
 	public void onLowMemory() {
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onLowMemory");
 		// TODO Auto-generated method stub
 		super.onLowMemory();
@@ -135,7 +135,7 @@ public class BackSoundService extends Service {
 
 	@Override
 	public void onRebind(Intent intent) {
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onRebind");
 		// TODO Auto-generated method stub
 		super.onRebind(intent);
@@ -143,7 +143,7 @@ public class BackSoundService extends Service {
 
 	@Override
 	public void onStart(Intent intent, int startId) {
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onStart");
 		// TODO Auto-generated method stub
 		super.onStart(intent, startId);
@@ -151,9 +151,9 @@ public class BackSoundService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		int action = CommonUtils.getIntIntent(intent, STRING_ACTION,
+		int action = CommonUtil.getIntIntent(intent, STRING_ACTION,
 				ACTION_NONE);
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onStartCommand");
 
 
@@ -161,8 +161,8 @@ public class BackSoundService extends Service {
 			switch (action) {
 				case ACTION_START:
 					isPlaying = true;
-					sources = CommonUtils.getArrayStringIntent(intent, STRING_SOURCES, null);
-					int position = CommonUtils.getIntIntent(intent, STRING_POSITION, 0);
+					sources = CommonUtil.getArrayStringIntent(intent, STRING_SOURCES, null);
+					int position = CommonUtil.getIntIntent(intent, STRING_POSITION, 0);
 					currentposplay = position;
 					playSong(sources[currentposplay]);
 					// sendMessageToUI(titles[currentposplay], images[currentposplay]);
@@ -216,14 +216,14 @@ public class BackSoundService extends Service {
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onUnbind");
 		return super.onUnbind(intent);
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		DebugUtils.logD("BackSoundService", this.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", this.getClass().getSimpleName()
 				+ ":onBind");
 		return mMessenger.getBinder();
 	}
@@ -273,9 +273,9 @@ public class BackSoundService extends Service {
 
 	private void showNotification() {
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		CharSequence text = getText(CommonUtils.getIDResource(this, "string",
+		CharSequence text = getText(CommonUtil.getIDResource(this, "string",
 				"audioplaying"));
-		Notification notification = new Notification(CommonUtils.getIDResource(
+		Notification notification = new Notification(CommonUtil.getIDResource(
 				this, "drawable", "icon"), text, System.currentTimeMillis());
 		PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0,
 				new Intent(this, StopPlayerReceiver.class), 0);
@@ -284,7 +284,7 @@ public class BackSoundService extends Service {
 		//notification.setLatestEventInfo(this, title, text, contentIntent);
 		notification.flags = Notification.FLAG_ONGOING_EVENT;
 		mNotificationManager.notify(
-				CommonUtils.getIDResource(this, "string", "audioplaying"),
+				CommonUtil.getIDResource(this, "string", "audioplaying"),
 				notification);
 	}
 
@@ -381,7 +381,7 @@ public class BackSoundService extends Service {
 		in.putExtra(BackSoundService.STRING_POSITION, 0);
 		in.putExtra(BackSoundService.STRING_SOURCES, sources);
 		ctx.startService(in);
-		DebugUtils.logD("BackSoundService", ctx.getClass().getSimpleName()
+		DebugUtil.logD("BackSoundService", ctx.getClass().getSimpleName()
 				+ ":startBackSound");
 	}
 
@@ -391,7 +391,7 @@ public class BackSoundService extends Service {
 			in.putExtra(BackSoundService.STRING_ACTION,
 					BackSoundService.ACTION_PAUSE);
 			ctx.startService(in);
-			DebugUtils.logD("BackSoundService", ctx.getClass().getSimpleName()
+			DebugUtil.logD("BackSoundService", ctx.getClass().getSimpleName()
 					+ ":pauseBackSound");
 		}
 	}
@@ -402,7 +402,7 @@ public class BackSoundService extends Service {
 			in.putExtra(BackSoundService.STRING_ACTION,
 					BackSoundService.ACTION_RESUME);
 			ctx.startService(in);
-			DebugUtils.logD("BackSoundService", ctx.getClass().getSimpleName()
+			DebugUtil.logD("BackSoundService", ctx.getClass().getSimpleName()
 					+ ":resumeBackSound");
 		}
 	}
@@ -412,7 +412,7 @@ public class BackSoundService extends Service {
 		if (BackSoundService.isRunning()) {
 			Intent in = new Intent(ctx, BackSoundService.class);
 			ctx.stopService(in);
-			DebugUtils.logD("BackSoundService", ctx.getClass().getSimpleName()
+			DebugUtil.logD("BackSoundService", ctx.getClass().getSimpleName()
 					+ ":stopBackSound stopService");
 		}
 	}

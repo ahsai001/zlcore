@@ -6,7 +6,7 @@ import org.greenrobot.eventbus.EventBus;
  * Created by ahsai on 6/15/2017.
  */
 
-public class EventsUtils {
+public class EventsUtil {
     public static void register(Object subscriber){
         EventBus.getDefault().register(subscriber);
     }

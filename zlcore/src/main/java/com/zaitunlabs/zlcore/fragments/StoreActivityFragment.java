@@ -36,8 +36,8 @@ import com.zaitunlabs.zlcore.models.StorePagingModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewLoadMoreListener;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewTouchListener;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
 import com.zaitunlabs.zlcore.views.CustomRecylerView;
 
 import org.json.JSONObject;
@@ -122,9 +122,9 @@ public class StoreActivityFragment extends BaseFragment {
                 String url = storeDataModels.get(position).getUrl();
 
                 if (!TextUtils.isEmpty(unique)){
-                    CommonUtils.openPlayStore(view.getContext(),unique);
+                    CommonUtil.openPlayStore(view.getContext(),unique);
                 } else if (!TextUtils.isEmpty(url) && URLUtil.isValidUrl(url)){
-                    CommonUtils.openBrowser(view.getContext(),url);
+                    CommonUtil.openBrowser(view.getContext(),url);
                 }
             }
 
@@ -189,10 +189,10 @@ public class StoreActivityFragment extends BaseFragment {
 
 
     private void fetchStoreData(final Context context, final int loadingPage, final StoreModel storeModel){
-        boolean isMeid = CommonUtils.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
+        boolean isMeid = CommonUtil.getBooleanFragmentArgument(getArguments(), PARAM_IS_MEID, false);
 
         ANRequest.PostRequestBuilder builder = AndroidNetworking.post(APIConstant.API_STORE +"/"+countPerPage+"/"+loadingPage)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(context, APIConstant.API_VERSION, isMeid))
+                .setOkHttpClient(HttpClientUtil.getHTTPClient(context, APIConstant.API_VERSION, isMeid))
                 .setPriority(Priority.HIGH)
                 .setTag("store");
         if(!TextUtils.isEmpty(searchTerm)){
@@ -207,7 +207,7 @@ public class StoreActivityFragment extends BaseFragment {
                             swipeRefreshLayout.setRefreshing(false);
                             adapter.hideProgress();
                             String message = response.optString("message");
-                            CommonUtils.showToast(context,message);
+                            CommonUtil.showToast(context,message);
                             return;
                         }
                         StoreModel responseListModel = new GsonBuilder()
@@ -253,7 +253,7 @@ public class StoreActivityFragment extends BaseFragment {
                         } else {
                             adapter.hideProgress();
                         }
-                        CommonUtils.showSnackBar(context,anError.getErrorDetail());
+                        CommonUtil.showSnackBar(context,anError.getErrorDetail());
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });

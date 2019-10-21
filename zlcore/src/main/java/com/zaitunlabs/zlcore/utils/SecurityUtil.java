@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by ahsai on 5/28/2018.
  */
 
-public class SecurityUtils {
+public class SecurityUtil {
     private static String convertedToHex(byte[] data) {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < data.length; i++) {

@@ -6,7 +6,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.Transformation;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 
 public class ResizeMoveAnimation extends Animation {
@@ -63,8 +63,8 @@ public class ResizeMoveAnimation extends Animation {
         mFromHeight = param.height;
         mFromWidth = param.width;
         
-        DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)v).getSectionName()+" ResizeMoveAnimation from w="+mFromWidth+" h="+mFromHeight);
-        DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)v).getSectionName()+" ResizeMoveAnimation to w="+mToWidth+" h="+mToHeight);
+        DebugUtil.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)v).getSectionName()+" ResizeMoveAnimation from w="+mFromWidth+" h="+mFromHeight);
+        DebugUtil.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)v).getSectionName()+" ResizeMoveAnimation to w="+mToWidth+" h="+mToHeight);
 
         currentWidth = param.width;
         currentHeight = param.height;
@@ -109,7 +109,7 @@ public class ResizeMoveAnimation extends Animation {
         float left = (mToX - mFromX) * interpolatedTime + mFromX;
         float top = (mToY - mFromY) * interpolatedTime + mFromY;
         
-        DebugUtils.logD("COUNTER", "ke-" + x++);
+        DebugUtil.logD("COUNTER", "ke-" + x++);
         
         param.height = (int) height;
         param.width = (int) width;
@@ -117,7 +117,7 @@ public class ResizeMoveAnimation extends Animation {
         param.topMargin = (int) top;
         mView.setLayoutParams(param);
         
-        DebugUtils.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)mView).getSectionName()+" ResizeMoveAnimation current x="+param.leftMargin+" y="+param.topMargin);
+        DebugUtil.logW("JEJAK", ">>>>>>>>>>> "+((CanvasSection)mView).getSectionName()+" ResizeMoveAnimation current x="+param.leftMargin+" y="+param.topMargin);
 
         
         currentWidth = width;
@@ -132,7 +132,7 @@ public class ResizeMoveAnimation extends Animation {
 				}
 			});
 			*/
-            DebugUtils.logW("JEJAK", "invoke listener");
+            DebugUtil.logW("JEJAK", "invoke listener");
 			animListener.animationRepeat(currentWidth, currentHeight);
         }
     }

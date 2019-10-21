@@ -24,8 +24,8 @@ import com.google.android.gms.common.util.IOUtils;
  * @author ahmad
  * @version 1.0.0
  */
-public class FileUtils {
-	public FileUtils() {
+public class FileUtil {
+	public FileUtil() {
 		// TODO Auto-generated constructor stub
 	}
 	

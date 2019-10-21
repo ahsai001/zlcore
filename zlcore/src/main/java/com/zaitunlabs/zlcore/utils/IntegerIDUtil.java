@@ -7,13 +7,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by ahmad s on 2/24/2016.
  */
-public class IntegerIDUtils {
+public class IntegerIDUtil {
     private static AtomicInteger atomicInteger = null;
     private static final String ATOMIC_INIT_VALUE_FOR_NOTIF = "atomic_init_value_for_increment_id";
     private static final int init_value = 0;
     private static final int max_value = 65535;
     public static int getID(Context context) {
-        synchronized (IntegerIDUtils.class){
+        synchronized (IntegerIDUtil.class){
             if(atomicInteger == null){
                 int init = Prefs.with(context).getInt(ATOMIC_INIT_VALUE_FOR_NOTIF, init_value);
                 atomicInteger = new AtomicInteger(init);
@@ -33,7 +33,7 @@ public class IntegerIDUtils {
     }
 
     public static int getID() {
-        synchronized (IntegerIDUtils.class){
+        synchronized (IntegerIDUtil.class){
             return (int) (System.currentTimeMillis()/1000);
         }
     }

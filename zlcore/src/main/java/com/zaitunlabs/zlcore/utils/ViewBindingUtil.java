@@ -23,31 +23,31 @@ import java.util.Map;
  * Created by ahsai on 7/13/2018.
  */
 
-public class ViewBindingUtils <T extends View> {
+public class ViewBindingUtil<T extends View> {
     private Map<Integer, Class<T>> idViewClassMaps;
     private Map<Integer, View> idViewMaps;
     private View parentView;
 
-    public ViewBindingUtils(){
+    public ViewBindingUtil(){
         idViewMaps = new HashMap<>();
         idViewClassMaps = new HashMap<>();
     }
 
-    public ViewBindingUtils <T> setParentView(View parentView){
+    public ViewBindingUtil<T> setParentView(View parentView){
         this.parentView = parentView;
         return this;
     }
 
-    public ViewBindingUtils <T> init(){
+    public ViewBindingUtil<T> init(){
         findViews(parentView);
         return this;
     }
 
-    public static <T extends View> ViewBindingUtils <T> initWithParentView(View parentView){
-        ViewBindingUtils <T> viewBindingUtils = new ViewBindingUtils<T>();
-        viewBindingUtils.setParentView(parentView);
-        viewBindingUtils.findViews(viewBindingUtils.parentView);
-        return viewBindingUtils;
+    public static <T extends View> ViewBindingUtil<T> initWithParentView(View parentView){
+        ViewBindingUtil<T> viewBindingUtil = new ViewBindingUtil<T>();
+        viewBindingUtil.setParentView(parentView);
+        viewBindingUtil.findViews(viewBindingUtil.parentView);
+        return viewBindingUtil;
     }
 
     private void findViews(View view){

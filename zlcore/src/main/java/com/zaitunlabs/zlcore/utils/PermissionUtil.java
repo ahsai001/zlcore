@@ -21,38 +21,38 @@ import java.util.ArrayList;
  * Created by ahsai on 12/7/2017.
  */
 
-public class PermissionUtils {
+public class PermissionUtil {
     private int requestCode;
     private Runnable taskWillDo;
     private Runnable taskIfDenied;
     private Object activityOrFragment;
 
-    public PermissionUtils(Object activityOrFragment, int requestCode, Runnable taskWillDo, Runnable taskIfDenied){
+    public PermissionUtil(Object activityOrFragment, int requestCode, Runnable taskWillDo, Runnable taskIfDenied){
         this.activityOrFragment = activityOrFragment;
         this.requestCode = requestCode;
         this.taskWillDo = taskWillDo;
         this.taskIfDenied = taskIfDenied;
     }
 
-    public static PermissionUtils checkPermissionAndGo(Object activityOrFragment, int requestCode, boolean showDialogInit, String initTitle, String initBody, Runnable taskWillDo, Runnable taskIfDenied,String... permissions){
-        PermissionUtils permissionUtils = null;
+    public static PermissionUtil checkPermissionAndGo(Object activityOrFragment, int requestCode, boolean showDialogInit, String initTitle, String initBody, Runnable taskWillDo, Runnable taskIfDenied, String... permissions){
+        PermissionUtil permissionUtil = null;
         if(permissions != null && permissions.length > 0) {
-            permissionUtils = new PermissionUtils(activityOrFragment, requestCode, taskWillDo, taskIfDenied);
-            if (permissionUtils.arePermissionsGranted(showDialogInit, initTitle, initBody, permissions)) {
+            permissionUtil = new PermissionUtil(activityOrFragment, requestCode, taskWillDo, taskIfDenied);
+            if (permissionUtil.arePermissionsGranted(showDialogInit, initTitle, initBody, permissions)) {
                 taskWillDo.run();
             }
         } else {
             taskWillDo.run();
         }
-        return  permissionUtils;
+        return permissionUtil;
     }
 
-    public static PermissionUtils checkPermissionAndGo(Object activityOrFragment, int requestCode, Runnable taskWillDo, Runnable taskIfDenied,String... permissions){
+    public static PermissionUtil checkPermissionAndGo(Object activityOrFragment, int requestCode, Runnable taskWillDo, Runnable taskIfDenied, String... permissions){
         return  checkPermissionAndGo(activityOrFragment, requestCode, true, null, null, taskWillDo, taskIfDenied, permissions);
     }
 
 
-    public static PermissionUtils checkPermissionAndGo(Object activityOrFragment, int requestCode, Runnable taskWillDo,String... permissions){
+    public static PermissionUtil checkPermissionAndGo(Object activityOrFragment, int requestCode, Runnable taskWillDo, String... permissions){
         return checkPermissionAndGo(activityOrFragment, requestCode, taskWillDo, null, permissions);
     }
 
@@ -80,7 +80,7 @@ public class PermissionUtils {
 
             if(needRequested.size() > 0){
                 if(showDialogInit) {
-                    CommonUtils.showDialog2Option(getContext(), initTitle==null?getContext().getString(R.string.zlcore_permission_utils_permission_title):initTitle, initBody==null?getContext().getString(R.string.zlcore_permission_utils_permission_message):initBody,
+                    CommonUtil.showDialog2Option(getContext(), initTitle==null?getContext().getString(R.string.zlcore_permission_utils_permission_title):initTitle, initBody==null?getContext().getString(R.string.zlcore_permission_utils_permission_message):initBody,
                             getContext().getString(R.string.zlcore_general_wording_ok), new Runnable() {
                                 @Override
                                 public void run() {
@@ -155,7 +155,7 @@ public class PermissionUtils {
                     }
                 }
                 if(isAnyNeverAskAgainChecked){
-                    CommonUtils.showDialog2Option(getContext(), getContext().getString(R.string.zlcore_permission_utils_permission_title), getContext().getString(R.string.zlcore_permission_utils_permission_message_enable_from_setting),
+                    CommonUtil.showDialog2Option(getContext(), getContext().getString(R.string.zlcore_permission_utils_permission_title), getContext().getString(R.string.zlcore_permission_utils_permission_message_enable_from_setting),
                             getContext().getString(R.string.zlcore_general_wording_cancel), new Runnable() {
                                 @Override
                                 public void run() {

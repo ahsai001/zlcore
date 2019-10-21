@@ -19,12 +19,12 @@ import java.util.List;
 /**
  * Created by ahmad s on 4/12/2016.
  */
-public class PlayServiceUtils implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class PlayServiceUtil implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient = null;
     private Context mContext = null;
 
-    public PlayServiceUtils(Context context){
+    public PlayServiceUtil(Context context){
         this.mContext = context;
     }
 
@@ -33,7 +33,7 @@ public class PlayServiceUtils implements GoogleApiClient.ConnectionCallbacks, Go
         return mGoogleApiClient;
     }
 
-    public PlayServiceUtils init(Api... apis) {
+    public PlayServiceUtil init(Api... apis) {
         if (isGooglePlayServicesAvailable(this.mContext)) {
             buildGoogleApiClient(apis);
         }

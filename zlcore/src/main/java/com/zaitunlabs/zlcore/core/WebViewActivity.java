@@ -18,11 +18,10 @@ import android.webkit.WebView;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.fragments.GeneralWebViewFragment;
 import com.zaitunlabs.zlcore.fragments.InfoFragment;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -46,11 +45,11 @@ public class WebViewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_layout_webview);
 
-        url = CommonUtils.getStringIntent(getIntent(),PARAM_URL,null);
-        title = CommonUtils.getStringIntent(getIntent(),PARAM_TITLE,null);
-        bgColor = CommonUtils.getIntIntent(getIntent(),PARAM_BG_COLOR,-1);
-        defaultMessage = CommonUtils.getStringIntent(getIntent(),PARAM_DEFAULT_MESSAGE,null);
-        pageTag = CommonUtils.getStringIntent(getIntent(),PARAM_PAGE_TAG,null);
+        url = CommonUtil.getStringIntent(getIntent(),PARAM_URL,null);
+        title = CommonUtil.getStringIntent(getIntent(),PARAM_TITLE,null);
+        bgColor = CommonUtil.getIntIntent(getIntent(),PARAM_BG_COLOR,-1);
+        defaultMessage = CommonUtil.getStringIntent(getIntent(),PARAM_DEFAULT_MESSAGE,null);
+        pageTag = CommonUtil.getStringIntent(getIntent(),PARAM_PAGE_TAG,null);
 
         Toolbar toolbar =  (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,9 +70,9 @@ public class WebViewActivity extends BaseActivity {
         transaction = getSupportFragmentManager().beginTransaction();
         newFragment = new WebViewFragment();
 
-        boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
+        boolean isMeid = CommonUtil.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
         if(isMeid){
-            ArrayList<String> headerList = HttpClientUtils.getHeaderList(true, true, true, true);
+            ArrayList<String> headerList = HttpClientUtil.getHeaderList(true, true, true, true);
             newFragment.setArg(this,1, url, defaultMessage, bgColor, false, headerList);
         } else {
             newFragment.setArg(this,1, url, defaultMessage, bgColor);
@@ -155,13 +154,13 @@ public class WebViewActivity extends BaseActivity {
             /** Show a toast from the web page */
             @JavascriptInterface
             public void showToast(String toast) {
-                CommonUtils.showToast(activity,toast);
+                CommonUtil.showToast(activity,toast);
             }
 
 
             @JavascriptInterface
             public void showInfo(String title, String info) {
-                CommonUtils.showInfo(activity,title,info);
+                CommonUtil.showInfo(activity,title,info);
             }
 
             @JavascriptInterface

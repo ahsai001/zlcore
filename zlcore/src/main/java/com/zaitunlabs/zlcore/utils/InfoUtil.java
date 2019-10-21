@@ -11,7 +11,7 @@ import org.greenrobot.eventbus.EventBus;
  * Created by ahsai on 6/16/2017.
  */
 
-public class InfoUtils {
+public class InfoUtil {
     public static long insertNewInfo(String title, String body, String photoUrl, String infoUrl, int type){
         InformationModel newInfo = new InformationModel(title, body, photoUrl, infoUrl, type);
 

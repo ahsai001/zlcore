@@ -17,9 +17,9 @@ import com.androidnetworking.interfaces.UploadProgressListener;
 import com.zaitunlabs.zlcore.api.APIConstant;
 import com.zaitunlabs.zlcore.events.UploadCallbackEvent;
 import com.zaitunlabs.zlcore.fragments.InfoFragment;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
-import com.zaitunlabs.zlcore.utils.NotificationProgressUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
+import com.zaitunlabs.zlcore.utils.NotificationProgressUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
@@ -75,23 +75,23 @@ public class DataIntentService extends JobIntentService {
     }
 
     private void handleActionUpload(Intent intent) {
-        String url = CommonUtils.getStringIntent(intent, PARAM_URL,null);
-        int icon = CommonUtils.getIntIntent(intent, PARAM_ICON,1);
-        String title = CommonUtils.getStringIntent(intent, PARAM_TITLE,null);
-        String desc = CommonUtils.getStringIntent(intent, PARAM_DESC,null);
-        int notifID = CommonUtils.getIntIntent(intent, PARAM_NOTIFID,-1);
-        FileParts files = (FileParts) CommonUtils.getSerializableIntent(intent, PARAM_FILES,null);
-        HeaderParts headers = (HeaderParts) CommonUtils.getSerializableIntent(intent, PARAM_HEADERS,null);
-        BodyParts bodys = (BodyParts) CommonUtils.getSerializableIntent(intent, PARAM_BODYS,null);
-        final Extras extras = (Extras) CommonUtils.getSerializableIntent(intent, PARAM_EXTRAS,null);
-        boolean isMeid = CommonUtils.getBooleanIntent(intent, PARAM_IS_MEID, false);
-        final String tag = CommonUtils.getStringIntent(intent, PARAM_TAG,null);
+        String url = CommonUtil.getStringIntent(intent, PARAM_URL,null);
+        int icon = CommonUtil.getIntIntent(intent, PARAM_ICON,1);
+        String title = CommonUtil.getStringIntent(intent, PARAM_TITLE,null);
+        String desc = CommonUtil.getStringIntent(intent, PARAM_DESC,null);
+        int notifID = CommonUtil.getIntIntent(intent, PARAM_NOTIFID,-1);
+        FileParts files = (FileParts) CommonUtil.getSerializableIntent(intent, PARAM_FILES,null);
+        HeaderParts headers = (HeaderParts) CommonUtil.getSerializableIntent(intent, PARAM_HEADERS,null);
+        BodyParts bodys = (BodyParts) CommonUtil.getSerializableIntent(intent, PARAM_BODYS,null);
+        final Extras extras = (Extras) CommonUtil.getSerializableIntent(intent, PARAM_EXTRAS,null);
+        boolean isMeid = CommonUtil.getBooleanIntent(intent, PARAM_IS_MEID, false);
+        final String tag = CommonUtil.getStringIntent(intent, PARAM_TAG,null);
 
-        final NotificationProgressUtils progressUtils = new NotificationProgressUtils(this,
+        final NotificationProgressUtil progressUtils = new NotificationProgressUtil(this,
                 title, desc, icon, notifID);
 
         ANRequest.MultiPartBuilder builder = AndroidNetworking.upload(url)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, isMeid, true));
+                .setOkHttpClient(HttpClientUtil.getHTTPClient(this, APIConstant.API_VERSION, isMeid, true));
 
 
         if(headers != null){
@@ -131,22 +131,22 @@ public class DataIntentService extends JobIntentService {
 
 
     private void handleActionPost(Intent intent) {
-        String url = CommonUtils.getStringIntent(intent, PARAM_URL,null);
-        int icon = CommonUtils.getIntIntent(intent, PARAM_ICON,1);
-        String title = CommonUtils.getStringIntent(intent, PARAM_TITLE,null);
-        String desc = CommonUtils.getStringIntent(intent, PARAM_DESC,null);
-        int notifID = CommonUtils.getIntIntent(intent, PARAM_NOTIFID,-1);
-        HeaderParts headers = (HeaderParts) CommonUtils.getSerializableIntent(intent, PARAM_HEADERS,null);
-        BodyParts bodys = (BodyParts) CommonUtils.getSerializableIntent(intent, PARAM_BODYS,null);
-        final Extras extras = (Extras) CommonUtils.getSerializableIntent(intent, PARAM_EXTRAS,null);
-        boolean isMeid = CommonUtils.getBooleanIntent(intent, PARAM_IS_MEID, false);
-        final String tag = CommonUtils.getStringIntent(intent, PARAM_TAG,null);
+        String url = CommonUtil.getStringIntent(intent, PARAM_URL,null);
+        int icon = CommonUtil.getIntIntent(intent, PARAM_ICON,1);
+        String title = CommonUtil.getStringIntent(intent, PARAM_TITLE,null);
+        String desc = CommonUtil.getStringIntent(intent, PARAM_DESC,null);
+        int notifID = CommonUtil.getIntIntent(intent, PARAM_NOTIFID,-1);
+        HeaderParts headers = (HeaderParts) CommonUtil.getSerializableIntent(intent, PARAM_HEADERS,null);
+        BodyParts bodys = (BodyParts) CommonUtil.getSerializableIntent(intent, PARAM_BODYS,null);
+        final Extras extras = (Extras) CommonUtil.getSerializableIntent(intent, PARAM_EXTRAS,null);
+        boolean isMeid = CommonUtil.getBooleanIntent(intent, PARAM_IS_MEID, false);
+        final String tag = CommonUtil.getStringIntent(intent, PARAM_TAG,null);
 
-        final NotificationProgressUtils progressUtils = new NotificationProgressUtils(this,
+        final NotificationProgressUtil progressUtils = new NotificationProgressUtil(this,
                 title, desc, icon, notifID);
 
         ANRequest.PostRequestBuilder builder = AndroidNetworking.post(url)
-                .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, isMeid));
+                .setOkHttpClient(HttpClientUtil.getHTTPClient(this, APIConstant.API_VERSION, isMeid));
 
         if(headers != null){
             builder.addHeaders(headers.getHeaderList());

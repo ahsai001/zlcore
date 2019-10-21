@@ -16,7 +16,7 @@ import android.widget.TextView;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class LinkUtils {
+public final class LinkUtil {
 	public static final Pattern URL_PATTERN =
 			Pattern.compile(
 					"((?:(http|https|Http|Https):\\/\\/(?:(?:[a-zA-Z0-9\\$\\-\\_\\.\\+\\!\\*\\'\\(\\)"

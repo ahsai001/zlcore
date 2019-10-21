@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,8 +13,8 @@ import android.view.View;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.fragments.InfoFragment;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.NotificationUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.NotificationUtil;
 
 public class MessageListActivity extends BaseActivity {
     public static final String PARAM_IS_MEID = InfoFragment.PARAM_IS_MEID;
@@ -38,7 +38,7 @@ public class MessageListActivity extends BaseActivity {
             }
         });
 
-        final boolean isMeid = CommonUtils.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
+        final boolean isMeid = CommonUtil.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
 
         showFragment(R.id.fragment, InfoFragment.class, new PostFragmentInstantiation<InfoFragment>() {
             @Override
@@ -47,7 +47,7 @@ public class MessageListActivity extends BaseActivity {
             }
         }, savedInstanceState, "messageList");
 
-        NotificationUtils.handleIntentFromNotification(getIntent(), new NotificationUtils.CallBackIntentFromNotification() {
+        NotificationUtil.handleIntentFromNotification(getIntent(), new NotificationUtil.CallBackIntentFromNotification() {
             @Override
             public void handle(Bundle data, boolean showMessagePage, long infoId) {
 
@@ -76,7 +76,7 @@ public class MessageListActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        NotificationUtils.handleIntentFromNotification(intent, new NotificationUtils.CallBackIntentFromNotification() {
+        NotificationUtil.handleIntentFromNotification(intent, new NotificationUtil.CallBackIntentFromNotification() {
             @Override
             public void handle(Bundle data, boolean showMessagePage, long infoId) {
 

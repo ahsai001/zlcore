@@ -1,7 +1,6 @@
 package com.zaitunlabs.zlcore.modules.shaum_sholat;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -9,13 +8,13 @@ import android.location.Location;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
-import androidx.legacy.content.WakefulBroadcastReceiver;
+
 import android.text.TextUtils;
 
 import com.zaitunlabs.zlcore.constants.ZLCoreConstanta;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.IntegerIDUtils;
-import com.zaitunlabs.zlcore.utils.LocationUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.IntegerIDUtil;
+import com.zaitunlabs.zlcore.utils.LocationUtil;
 import com.zaitunlabs.zlcore.utils.Prefs;
 
 import java.util.Calendar;
@@ -49,7 +48,7 @@ public class ShaumSholatReminderService extends JobIntentService {
         isNeedRunning = false;
         if(dateInMillis > 0){
             Date lastupdate = new Date(dateInMillis);
-            if(CommonUtils.compareToDay(Calendar.getInstance().getTime(),lastupdate)==0){
+            if(CommonUtil.compareToDay(Calendar.getInstance().getTime(),lastupdate)==0){
                 isNeedRunning = false;
             }else{
                 isNeedRunning = true;
@@ -60,8 +59,8 @@ public class ShaumSholatReminderService extends JobIntentService {
         */
 
         if(isNeedRunning) {
-            final LocationUtils helper = new LocationUtils(this);
-            helper.setUpdateLocationCallback(new LocationUtils.LocationHelperCallback() {
+            final LocationUtil helper = new LocationUtil(this);
+            helper.setUpdateLocationCallback(new LocationUtil.LocationHelperCallback() {
                 @Override
                 public void currentLocationUpdate(Location newLocation) {
                     //set new schedule
@@ -200,7 +199,7 @@ public class ShaumSholatReminderService extends JobIntentService {
         AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
 
         Intent reminderIntent = new Intent(this, receiver);
-        reminderIntent.setAction(ZLCoreConstanta.ACTION_MANAGE_SHAUM_SHOLAT_REMINDER+IntegerIDUtils.getID(this));
+        reminderIntent.setAction(ZLCoreConstanta.ACTION_MANAGE_SHAUM_SHOLAT_REMINDER+ IntegerIDUtil.getID(this));
         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 212, reminderIntent, 0);
 
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time, alarmIntent);
@@ -230,7 +229,7 @@ public class ShaumSholatReminderService extends JobIntentService {
         int dayOfWeek = shaumCalendar.get(Calendar.DAY_OF_WEEK);
         if(dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.WEDNESDAY){
             shaumCalendar.add(Calendar.DAY_OF_WEEK,1);
-            dayOfShaum = CommonUtils.getDayName(shaumCalendar, null).toLowerCase();
+            dayOfShaum = CommonUtil.getDayName(shaumCalendar, null).toLowerCase();
         }
 
         if(!TextUtils.isEmpty(dayOfShaum)) {

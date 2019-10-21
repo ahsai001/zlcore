@@ -9,8 +9,8 @@ import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 
 /**
@@ -59,14 +59,14 @@ public class CanvasLayout extends RelativeLayout{
 	}
 	private void init(Context context){
 		this.context = context;
-		boolean isFullScreen = CommonUtils.isActivityFullScreen(context);
-		DebugUtils.logW("SIZE", "fullscreen : "+isFullScreen);
-		widthRatio = (double)CommonUtils.getScreenWidth(context) / 100;
-		Point navigationBar = CommonUtils.getNavigationBarSize(context);
-		heightRatio = (double)(CommonUtils.getScreenHeight(context) - navigationBar.y - (isFullScreen ? 0 : CommonUtils.getStatusBarHeight(context)))/ 100;
+		boolean isFullScreen = CommonUtil.isActivityFullScreen(context);
+		DebugUtil.logW("SIZE", "fullscreen : "+isFullScreen);
+		widthRatio = (double) CommonUtil.getScreenWidth(context) / 100;
+		Point navigationBar = CommonUtil.getNavigationBarSize(context);
+		heightRatio = (double)(CommonUtil.getScreenHeight(context) - navigationBar.y - (isFullScreen ? 0 : CommonUtil.getStatusBarHeight(context)))/ 100;
 		
-		DebugUtils.logW("SIZE layout", "widthRatio : "+widthRatio);
-		DebugUtils.logW("SIZE layout", "heightRatio : " + heightRatio);
+		DebugUtil.logW("SIZE layout", "widthRatio : "+widthRatio);
+		DebugUtil.logW("SIZE layout", "heightRatio : " + heightRatio);
 	}
 	
 	/**
@@ -85,8 +85,8 @@ public class CanvasLayout extends RelativeLayout{
 		int leftX = (int) Math.round(widthRatio * left);
 		int topY = (int) Math.round(heightRatio * top);
 
-		DebugUtils.logW("LAYOUT", "height : "+viewHeight);
-		DebugUtils.logW("LAYOUT", "leftX : "+leftX);
+		DebugUtil.logW("LAYOUT", "height : "+viewHeight);
+		DebugUtil.logW("LAYOUT", "leftX : "+leftX);
 		
 		LayoutParams params = new LayoutParams(viewWidth, viewHeight);
 		params.leftMargin = leftX;
@@ -100,7 +100,7 @@ public class CanvasLayout extends RelativeLayout{
 	}
 	
 	public CanvasSection createNewSectionWithFrame(int left, int top, int width, int height, boolean noScroll){
-		DebugUtils.logW("SIZE", "h : "+(heightRatio * 100));
+		DebugUtil.logW("SIZE", "h : "+(heightRatio * 100));
 		CanvasSection section = new CanvasSection("",this.context,left,top,width,height,(int)(widthRatio * 100),(int)(heightRatio * 100),noScroll);
 		addViewWithFrame(section, left, top, width, height);
 		return section;
@@ -191,7 +191,7 @@ public class CanvasLayout extends RelativeLayout{
 				// TODO Auto-generated method stub
 			}
         };
-		CommonUtils.setViewAnim_disappearslideupfromBottom(section,300).setAnimationListener(new Animation.AnimationListener() {
+		CommonUtil.setViewAnim_disappearslideupfromBottom(section,300).setAnimationListener(new Animation.AnimationListener() {
 			
 			@Override
 			public void onAnimationStart(Animation animation) {}

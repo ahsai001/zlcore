@@ -25,8 +25,8 @@ import com.zaitunlabs.zlcore.modules.version_history.VersionChangeHistoryActivit
 import com.zaitunlabs.zlcore.core.CanvasActivity;
 import com.zaitunlabs.zlcore.core.WebViewActivity;
 import com.zaitunlabs.zlcore.modules.version_history.VersionChangeHistoryCanvas;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.ViewUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.ViewUtil;
 import com.zaitunlabs.zlcore.views.ASImageView;
 import com.zaitunlabs.zlcore.views.ASMovableMenu;
 import com.zaitunlabs.zlcore.views.ASTextView;
@@ -79,7 +79,7 @@ public class AboutUs extends CanvasActivity {
 							getString(R.string.zlcore_warning_sorry_there_is_problem),
 							0,"tentang aplikasi", isMeid);
 				} else {
-					CommonUtils.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
+					CommonUtil.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
 				}
 			}
 		});
@@ -101,7 +101,7 @@ public class AboutUs extends CanvasActivity {
 		Text1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				CommonUtils.openBrowser(AboutUs.this, AboutUs.developerHomePage);
+				CommonUtil.openBrowser(AboutUs.this, AboutUs.developerHomePage);
 			}
 		});
 
@@ -117,7 +117,7 @@ public class AboutUs extends CanvasActivity {
 		Text3.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				CommonUtils.sendEmail(AboutUs.this,AboutUs.developerEmail,"","",getString(R.string.zlcore_aboutus_kirim_email));
+				CommonUtil.sendEmail(AboutUs.this,AboutUs.developerEmail,"","",getString(R.string.zlcore_aboutus_kirim_email));
 			}
 		});
 
@@ -125,7 +125,7 @@ public class AboutUs extends CanvasActivity {
 		//create Developer : Email : team@zaitunlabs.com
 		ASTextView  Text4 = new ASTextView(this);
 		Text4.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/about/GeosansLight.ttf"));
-		Text4.setText(String.format(getString(R.string.zlcore_aboutus_version),CommonUtils.getVersionName(this)));
+		Text4.setText(String.format(getString(R.string.zlcore_aboutus_version), CommonUtil.getVersionName(this)));
 		Text4.setTextSize(18);
 		Text4.setTextColor(AboutUs.textColorInt);
 		Text4.setGravity(Gravity.CENTER_VERTICAL);
@@ -158,7 +158,7 @@ public class AboutUs extends CanvasActivity {
 								getString(R.string.zlcore_warning_sorry_there_is_problem),
 								0,"tentang aplikasi", isMeid);
 					} else {
-						CommonUtils.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
+						CommonUtil.openBrowser(AboutUs.this, AboutUs.appLandingPageLink);
 					}
 				}
 			});
@@ -211,7 +211,7 @@ public class AboutUs extends CanvasActivity {
 		logo.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				CommonUtils.openBrowser(AboutUs.this, AboutUs.developerHomePage);
+				CommonUtil.openBrowser(AboutUs.this, AboutUs.developerHomePage);
 			}
 		});
 
@@ -233,10 +233,10 @@ public class AboutUs extends CanvasActivity {
 			leftBottomMenu.setBackgroundResource(R.drawable.menubottom_selector);
 		} else {
 			if(SDK_INT >= 16) {
-				leftBottomMenu.setBackground(ViewUtils.getSelectableItemBackgroundWithColor(this,
+				leftBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			} else {
-				leftBottomMenu.setBackgroundDrawable(ViewUtils.getSelectableItemBackgroundWithColor(this,
+				leftBottomMenu.setBackgroundDrawable(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			}
 		}
@@ -247,10 +247,10 @@ public class AboutUs extends CanvasActivity {
 			midleBottomMenu.setBackgroundResource(R.drawable.menubottom_selector);
 		} else {
             if(SDK_INT >= 16) {
-				midleBottomMenu.setBackground(ViewUtils.getSelectableItemBackgroundWithColor(this,
+				midleBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			} else {
-				midleBottomMenu.setBackgroundDrawable(ViewUtils.getSelectableItemBackgroundWithColor(this,
+				midleBottomMenu.setBackgroundDrawable(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			}
 		}
@@ -261,10 +261,10 @@ public class AboutUs extends CanvasActivity {
 			rightBottomMenu.setBackgroundResource(R.drawable.menubottom_selector);
 		} else {
 			if(SDK_INT >= 16) {
-				rightBottomMenu.setBackground(ViewUtils.getSelectableItemBackgroundWithColor(this,
+				rightBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			} else {
-				rightBottomMenu.setBackgroundDrawable(ViewUtils.getSelectableItemBackgroundWithColor(this,
+				rightBottomMenu.setBackgroundDrawable(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			}
 
@@ -277,7 +277,7 @@ public class AboutUs extends CanvasActivity {
 		leftBottomMenu.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				CommonUtils.shareContent(AboutUs.this, getString(R.string.zlcore_aboutus_share_title), getString(shareTitleRes), getString(shareBodyRes));
+				CommonUtil.shareContent(AboutUs.this, getString(R.string.zlcore_aboutus_share_title), getString(shareTitleRes), getString(shareBodyRes));
 			}
 		});
 
@@ -288,7 +288,7 @@ public class AboutUs extends CanvasActivity {
 		midleBottomMenu.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				CommonUtils.sendEmail(AboutUs.this, getString(feedbackMailToRes), getString(feedbackTitleRes), getString(feedbackBodyRes), "kirim email feedback :");
+				CommonUtil.sendEmail(AboutUs.this, getString(feedbackMailToRes), getString(feedbackTitleRes), getString(feedbackBodyRes), "kirim email feedback :");
 			}
 		});
 
@@ -301,7 +301,7 @@ public class AboutUs extends CanvasActivity {
 
 			@Override
 			public void onClick(View v) {
-				CommonUtils.openPlayStore(v.getContext(),AboutUs.this.getPackageName());
+				CommonUtil.openPlayStore(v.getContext(),AboutUs.this.getPackageName());
 			}
 		});
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.listeners.SwipeDragCallback;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -145,7 +145,7 @@ implements SwipeDragCallback.SwipeDragInterface {
     @Override
     public void onItemSwipe(RecyclerView.ViewHolder viewHolder, int direction) {
         final int position = viewHolder.getAdapterPosition();
-        CommonUtils.showDialog2Option(viewHolder.itemView.getContext(),
+        CommonUtil.showDialog2Option(viewHolder.itemView.getContext(),
                 viewHolder.itemView.getContext().getString(R.string.zlcore_base_recyclerview_adapter_delete_confirmation),
                 viewHolder.itemView.getContext().getString(R.string.zlcore_base_recyclerview_adapter_delete_confirmation_message),
                 viewHolder.itemView.getContext().getString(R.string.zlcore_general_wording_delete), new Runnable() {

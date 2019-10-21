@@ -9,7 +9,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 
 public class ASSlidingLayer {
@@ -287,7 +287,7 @@ public class ASSlidingLayer {
 
 			@Override
 			public boolean longClickEventOccured() {
-				DebugUtils.logE("long Click", "OK");
+				DebugUtil.logE("long Click", "OK");
 				return true;
 			}
 
@@ -304,7 +304,7 @@ public class ASSlidingLayer {
 
 			@Override
 			public boolean doubleTapEventOccured() {
-				DebugUtils.logE("DoubleTap", "OK");
+				DebugUtil.logE("DoubleTap", "OK");
 				return true;
 			}
 

@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.core.CanvasActivity;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -460,16 +460,16 @@ public class ASMovableMenu {
 				for (int i = 0; i < viewList.size(); i++) {
 					menuSection.addViewInLinearLayout(viewList.get(i), marginList.get(i));
 				}
-				height = CommonUtils.getViewDimension(menuSection.linearLayout).height()+10;
+				height = CommonUtil.getViewDimension(menuSection.linearLayout).height()+10;
 			}else{
 				menuSection.setSectionWidth(menuHeight); // it's used for telling linearlayout the true width
 				for (int i = 0; i < viewList.size(); i++) {
 					menuSection.addViewWithFrame(viewList.get(i), rectList.get(i).left, rectList.get(i).top, rectList.get(i).width(), rectList.get(i).height());
 				}
 				menuSection.setSectionWidth(handleHeight);
-				height = CommonUtils.getViewDimension(menuSection.sectionLayout).height()+10;
+				height = CommonUtil.getViewDimension(menuSection.sectionLayout).height()+10;
 			}
-			height = CommonUtils.getPercentHeightFromPixel(context, height);
+			height = CommonUtil.getPercentHeightFromPixel(context, height);
 			Rect x = new Rect(Math.round((100-menuWidth)/2), Math.round((100-menuHeight)/2), Math.round((100-menuWidth)/2 + menuWidth), Math.round((100-menuHeight)/2+height+handleHeight));
 			if(height+handleHeight < menuHeight) {
 				menuSection.getShiftPositionHandler().changeStateToCustomDimension(x, openedIndexState, animation);
@@ -547,7 +547,7 @@ public class ASMovableMenu {
 	}
 	
 	public int getTextHeight(String text){
-		return getMenuSection().getPercentageRelativeToHeight((int)CommonUtils.getFontHeight(text));
+		return getMenuSection().getPercentageRelativeToHeight((int) CommonUtil.getFontHeight(text));
 	}
 	
 	public interface ASMovableMenuListener{

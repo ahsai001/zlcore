@@ -37,11 +37,11 @@ import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.api.APIResponse;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.interfaces.LoginCallbackResult;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
-import com.zaitunlabs.zlcore.utils.PermissionUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
+import com.zaitunlabs.zlcore.utils.PermissionUtil;
 import com.zaitunlabs.zlcore.utils.PrefsData;
-import com.zaitunlabs.zlcore.utils.ViewUtils;
+import com.zaitunlabs.zlcore.utils.ViewUtil;
 
 import org.json.JSONObject;
 
@@ -69,7 +69,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
     private CircleImageView iconView;
     private LinearLayout loginTypeSelectorPanel;
 
-    PermissionUtils permissionUtils;
+    PermissionUtil permissionUtil;
     boolean isOverridePreviousLogin;
 
     Class nextActivity;
@@ -183,8 +183,8 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        nextActivity = (Class)CommonUtils.getSerializableIntent(getIntent(),EXTRA_NEXT_ACTIVITY,null);
-        appType = CommonUtils.getStringIntent(getIntent(),EXTRA_APP_TYPE,null);
+        nextActivity = (Class) CommonUtil.getSerializableIntent(getIntent(),EXTRA_NEXT_ACTIVITY,null);
+        appType = CommonUtil.getStringIntent(getIntent(),EXTRA_APP_TYPE,null);
         requestCode = getCurrentRequestCode();
         appInfo = getLoginExplaination();
 
@@ -219,7 +219,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
             }
         });
 
-        loginButton.setBackground(ViewUtils.getSelectableItemBackgroundWithColor(BaseLoginActivity.this,
+        loginButton.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(BaseLoginActivity.this,
                 ContextCompat.getColor(BaseLoginActivity.this, R.color.colorPrimary)));
 
         titleView = (TextView) findViewById(R.id.login_form_title);
@@ -284,14 +284,14 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
 
     protected void setLoginButtonMatchParent(){
         LinearLayout.LayoutParams newLinearLayout = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        newLinearLayout.setMargins(0,(int)CommonUtils.getPixelFromDip(BaseLoginActivity.this, 32),0,0);
+        newLinearLayout.setMargins(0,(int) CommonUtil.getPixelFromDip(BaseLoginActivity.this, 32),0,0);
         loginButton.setLayoutParams(newLinearLayout);
     }
 
 
     public void attemptLogin() {
         if(isMeidIncluded()) {
-            permissionUtils = PermissionUtils.checkPermissionAndGo(this, 1053, new Runnable() {
+            permissionUtil = PermissionUtil.checkPermissionAndGo(this, 1053, new Runnable() {
                 @Override
                 public void run() {
                     loginProcess();
@@ -299,7 +299,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
             }, new Runnable() {
                 @Override
                 public void run() {
-                    CommonUtils.showToast(BaseLoginActivity.this, getString(R.string.zlcore_warning_please_give_permission));
+                    CommonUtil.showToast(BaseLoginActivity.this, getString(R.string.zlcore_warning_please_give_permission));
                     finish();
                 }
             }, Manifest.permission.READ_PHONE_STATE);
@@ -310,7 +310,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
     }
 
     private void loginProcess(){
-        CommonUtils.hideKeyboard(BaseLoginActivity.this, mLoginFormView);
+        CommonUtil.hideKeyboard(BaseLoginActivity.this, mLoginFormView);
 
         // Reset errors.
         mUserIDView.setError(null);
@@ -374,7 +374,7 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
             } else {
                 //do hit api
                 AndroidNetworking.post(getLoginUrl())
-                        .setOkHttpClient(HttpClientUtils.getHTTPClient(BaseLoginActivity.this, getAPIVersion(), isMeidIncluded()))
+                        .setOkHttpClient(HttpClientUtil.getHTTPClient(BaseLoginActivity.this, getAPIVersion(), isMeidIncluded()))
                         .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getUserIdFieldName())?"username":getUserIdFieldName(), username)
                         .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getPasswordFieldName())?"password":getPasswordFieldName(), cookedPassword)
                         .addUrlEncodeFormBodyParameter(TextUtils.isEmpty(getLoginTypeFieldName())?"loginType":getLoginTypeFieldName(), appType)
@@ -399,10 +399,10 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
                                         String photo = data.optString("photo", null);
                                         setSuccess(token, name, phone, email, photo);
                                         handleCustomData(data);
-                                        CommonUtils.showToast(BaseLoginActivity.this, message);
+                                        CommonUtil.showToast(BaseLoginActivity.this, message);
                                     } else {
                                         setFailed();
-                                        CommonUtils.showSnackBar(BaseLoginActivity.this, message);
+                                        CommonUtil.showSnackBar(BaseLoginActivity.this, message);
                                     }
                                 }
                             }
@@ -416,10 +416,10 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
                                     // anError.getErrorBody() - the error body from server
                                     // anError.getErrorDetail() - just an error detail
 
-                                    CommonUtils.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
+                                    CommonUtil.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
                                 } else {
                                     // error.getErrorDetail() : connectionError, parseError, requestCancelledError
-                                    CommonUtils.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
+                                    CommonUtil.showSnackBar(BaseLoginActivity.this, anError.getErrorDetail());
                                 }
                             }
                         });
@@ -470,8 +470,8 @@ public abstract class BaseLoginActivity extends BaseActivity implements LoginCal
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if(permissionUtils != null) {
-            permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(permissionUtil != null) {
+            permissionUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

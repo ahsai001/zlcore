@@ -1,6 +1,5 @@
 package com.zaitunlabs.zlcore.services;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
@@ -15,8 +14,8 @@ import com.zaitunlabs.zlcore.api.APIConstant;
 import com.zaitunlabs.zlcore.api.APIResponse;
 import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.models.GenericResponseModel;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
 import com.zaitunlabs.zlcore.utils.PrefsData;
 
 import org.json.JSONObject;
@@ -74,13 +73,13 @@ public class FCMLoginIntentService extends JobIntentService {
     }
 
     private void handleActionSendToken(Intent intent) {
-        final String appid = CommonUtils.getStringIntent(intent,PARAM_APPID, "-1");
+        final String appid = CommonUtil.getStringIntent(intent,PARAM_APPID, "-1");
 
         if(isProcessing)return;
         isProcessing = true;
 
 
-        isMeid = CommonUtils.getBooleanIntent(intent, PARAM_IS_MEID, false);
+        isMeid = CommonUtil.getBooleanIntent(intent, PARAM_IS_MEID, false);
 
         if(TextUtils.isEmpty(PrefsData.getPushyToken())){
             //it means pushy.Me not yet generate token, please waiting and retry
@@ -89,7 +88,7 @@ public class FCMLoginIntentService extends JobIntentService {
         }else {
             if (!PrefsData.getPushyTokenLoginSent() && (PrefsData.isAccountLogin())) {
                 AndroidNetworking.post(APIConstant.API_SEND_FCM_LOGIN)
-                        .setOkHttpClient(HttpClientUtils.getHTTPClient(this, APIConstant.API_VERSION, isMeid))
+                        .setOkHttpClient(HttpClientUtil.getHTTPClient(this, APIConstant.API_VERSION, isMeid))
                         .addUrlEncodeFormBodyParameter("fcmid",PrefsData.getPushyToken())
                         .addUrlEncodeFormBodyParameter("appid",appid)
                         .setPriority(Priority.HIGH)

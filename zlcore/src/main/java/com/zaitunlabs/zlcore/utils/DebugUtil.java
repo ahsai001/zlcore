@@ -6,7 +6,7 @@ import android.util.Log;
 /**
  * Created by ahmad s on 10/9/2015.
  */
-public class DebugUtils {
+public class DebugUtil {
     public static final int VERBOSE_LEVEL = 1;
     public static final int DEBUG_LEVEL = 2;
     public static final int INFO_LEVEL = 3;
@@ -16,15 +16,15 @@ public class DebugUtils {
 
     private int debuggingLevel = NO_LEVEL;
 
-    private static DebugUtils INSTANCE;
+    private static DebugUtil INSTANCE;
 
-    private DebugUtils(){
+    private DebugUtil(){
     }
 
-    private static DebugUtils getInstance(){
-        synchronized (DebugUtils.class){
+    private static DebugUtil getInstance(){
+        synchronized (DebugUtil.class){
             if(INSTANCE == null) {
-                INSTANCE = new DebugUtils();
+                INSTANCE = new DebugUtil();
             }
             return INSTANCE;
         }

@@ -84,13 +84,13 @@ public class CanvasActivity extends BaseActivity{
 	/*@Override
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
-		DebugUtils.logD("Activity", this.getClass().getSimpleName()+":onAttachedToWindow");
+		DebugUtil.logD("Activity", this.getClass().getSimpleName()+":onAttachedToWindow");
 	}
 	
 	@Override
 	public void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
-		DebugUtils.logD("Activity", this.getClass().getSimpleName()+":onDetachedFromWindow");
+		DebugUtil.logD("Activity", this.getClass().getSimpleName()+":onDetachedFromWindow");
 	}
 	*/
 	@Override
@@ -133,7 +133,7 @@ public class CanvasActivity extends BaseActivity{
 
 /*	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-		DebugUtils.logD("Activity", this.getClass().getSimpleName()+":onKeyLongPress");
+		DebugUtil.logD("Activity", this.getClass().getSimpleName()+":onKeyLongPress");
 		return super.onKeyLongPress(keyCode, event);
 	}*/
 

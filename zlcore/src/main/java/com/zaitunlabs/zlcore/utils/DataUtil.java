@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by ahsai on 6/8/2018.
  */
 
-public class DataUtils {
+public class DataUtil {
     public static String mapToString(Map<String, String> map) {
         StringBuilder stringBuilder = new StringBuilder();
 

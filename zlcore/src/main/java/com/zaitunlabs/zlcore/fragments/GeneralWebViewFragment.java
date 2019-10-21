@@ -51,16 +51,15 @@ import com.zaitunlabs.zlcore.events.GeneralWebviewEvent;
 import com.zaitunlabs.zlcore.models.BookmarkModel;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.core.BaseFragment;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.HttpClientUtils;
-import com.zaitunlabs.zlcore.utils.SwipeRefreshLayoutUtils;
-import com.zaitunlabs.zlcore.utils.ViewUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.HttpClientUtil;
+import com.zaitunlabs.zlcore.utils.SwipeRefreshLayoutUtil;
+import com.zaitunlabs.zlcore.utils.ViewUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -94,7 +93,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private String requestedUrl;
     private String currentPageTitle = "";
 
-    private SwipeRefreshLayoutUtils swipeRefreshLayoutUtils;
+    private SwipeRefreshLayoutUtil swipeRefreshLayoutUtil;
 
     private int bgColor;
 
@@ -124,12 +123,12 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     }
 
     public void setArg(Context context, int position, String url, String defaultMessage, int bgColor){
-        ArrayList<String> headerList = HttpClientUtils.getHeaderList(false, false, false, false);
+        ArrayList<String> headerList = HttpClientUtil.getHeaderList(false, false, false, false);
         setArg(context, position,url,defaultMessage,-1, false, headerList);
     }
 
     public void setArg(Context context, int position, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList){
-        HashMap<String, String> headerMap = HttpClientUtils.getHeaderMap(context, headerList);
+        HashMap<String, String> headerMap = HttpClientUtil.getHeaderMap(context, headerList);
         setArg(position,url,defaultMessage,-1, false, false, null, null, null, headerMap);
     }
 
@@ -152,9 +151,9 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isShowBookmark = CommonUtils.getBooleanFragmentArgument(getArguments(),ARG_SHOW_BOOKMARK, false);
-        isShowShare = CommonUtils.getBooleanFragmentArgument(getArguments(),ARG_SHOW_SHARE, false);
-        headerMap = (HashMap<String, String>) CommonUtils.getSerializableFragmentArgument(getArguments(), ARG_HEADER_MAP, null);
+        isShowBookmark = CommonUtil.getBooleanFragmentArgument(getArguments(),ARG_SHOW_BOOKMARK, false);
+        isShowShare = CommonUtil.getBooleanFragmentArgument(getArguments(),ARG_SHOW_SHARE, false);
+        headerMap = (HashMap<String, String>) CommonUtil.getSerializableFragmentArgument(getArguments(), ARG_HEADER_MAP, null);
         setHasOptionsMenu(true);
     }
 
@@ -184,7 +183,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         View customProgress = getCustomProgressBar();
         if(customProgress != null){
             customProgressPanel.addView(customProgress);
-            customProgressBar = ViewUtils.findViewByClassReference(customProgress,ContentLoadingProgressBar.class);
+            customProgressBar = ViewUtil.findViewByClassReference(customProgress,ContentLoadingProgressBar.class);
         }
 
         customInfoPanel = rootView.findViewById(R.id.general_webview_custom_info_panel);
@@ -194,11 +193,11 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             infoView = customInfoView.findViewById(getCustomInfoTextView());
         }
 
-        swipeRefreshLayoutUtils = SwipeRefreshLayoutUtils.init((SwipeRefreshLayout) rootView, new Runnable() {
+        swipeRefreshLayoutUtil = SwipeRefreshLayoutUtil.init((SwipeRefreshLayout) rootView, new Runnable() {
             @Override
             public void run() {
                 reloadLastValidLink();
-                swipeRefreshLayoutUtils.refreshDone();
+                swipeRefreshLayoutUtil.refreshDone();
             }
         });
         return rootView;
@@ -296,18 +295,18 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rootUrl = CommonUtils.getStringFragmentArgument(getArguments(),ARG_URL,"");
-        defaultMessage = CommonUtils.getStringFragmentArgument(getArguments(),ARG_DEFAULT_MESSAGE,null);
-        bgColor = CommonUtils.getIntFragmentArgument(getArguments(),ARG_BG_COLOR, Color.TRANSPARENT);
+        rootUrl = CommonUtil.getStringFragmentArgument(getArguments(),ARG_URL,"");
+        defaultMessage = CommonUtil.getStringFragmentArgument(getArguments(),ARG_DEFAULT_MESSAGE,null);
+        bgColor = CommonUtil.getIntFragmentArgument(getArguments(),ARG_BG_COLOR, Color.TRANSPARENT);
 
-        shareInstruction = CommonUtils.getStringFragmentArgument(getArguments(),ARG_SHARE_INSTRUCTION, null);
+        shareInstruction = CommonUtil.getStringFragmentArgument(getArguments(),ARG_SHARE_INSTRUCTION, null);
 
-        shareTitle = CommonUtils.getStringFragmentArgument(getArguments(),ARG_SHARE_TITLE, null);
+        shareTitle = CommonUtil.getStringFragmentArgument(getArguments(),ARG_SHARE_TITLE, null);
         if(TextUtils.isEmpty(shareTitle)){
             shareTitle = getString(R.string.zlcore_default_webview_share_title);
         }
 
-        shareMessage = CommonUtils.getStringFragmentArgument(getArguments(),ARG_SHARE_MESSAGE, null);
+        shareMessage = CommonUtil.getStringFragmentArgument(getArguments(),ARG_SHARE_MESSAGE, null);
         if(TextUtils.isEmpty(shareMessage)){
             shareMessage = getString(R.string.zlcore_default_webview_share_message);
         }
@@ -334,7 +333,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             }
             if(isWebPageFromUrl()) {
                 //url content
-                //rootUrl = CommonUtils.prettifyUrl(rootUrl);
+                //rootUrl = CommonUtil.prettifyUrl(rootUrl);
 
                 //headers.put("Accept-Encoding", "gzip");
                 webView.loadUrl(rootUrl, headerMap);
@@ -386,7 +385,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(final String url, final String userAgent, final String contentDisposition, final String mimeType, long contentLength) {
-                CommonUtils.showDialog3Option(webView.getContext(), getString(R.string.zlcore_generalwebview_download_confirmation_title),
+                CommonUtil.showDialog3Option(webView.getContext(), getString(R.string.zlcore_generalwebview_download_confirmation_title),
                         getString(R.string.zlcore_generalwebview_download_confirmation_message),
                         getString(R.string.zlcore_generalwebview_download_dialog_download_option), new Runnable() {
                             @Override
@@ -405,7 +404,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType));
                                 DownloadManager dm = (DownloadManager)webView.getContext().getSystemService(DOWNLOAD_SERVICE);
                                 dm.enqueue(request);
-                                CommonUtils.showToast(webView.getContext(),getString(R.string.zlcore_generalwebview_download_wording_toast_message));
+                                CommonUtil.showToast(webView.getContext(),getString(R.string.zlcore_generalwebview_download_wording_toast_message));
                             }
                         }, getString(R.string.zlcore_general_wording_cancel), new Runnable() {
                             @Override
@@ -641,7 +640,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            HttpClientUtils.handleWebviewSSLError(getActivity(),handler,error);
+            HttpClientUtil.handleWebviewSSLError(getActivity(),handler,error);
         }
 
         @Override
@@ -804,7 +803,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 mFilePathCallback.onReceiveValue(null);
             }
             mFilePathCallback = filePathCallback;
-            CommonUtils.showFilePickerOpenDocument(GeneralWebViewFragment.this,"*/*", FILE_REQUEST_CODE);
+            CommonUtil.showFilePickerOpenDocument(GeneralWebViewFragment.this,"*/*", FILE_REQUEST_CODE);
             return true;
         }
 
@@ -814,7 +813,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 mUploadMessage.onReceiveValue(null);
             }
             mUploadMessage = uploadMsg;
-            CommonUtils.showFilePickerOpenDocument(GeneralWebViewFragment.this,"*/*", FILE_REQUEST_CODE);
+            CommonUtil.showFilePickerOpenDocument(GeneralWebViewFragment.this,"*/*", FILE_REQUEST_CODE);
         }
 
         // openFileChooser for Android < 3.0
@@ -831,7 +830,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Uri fileUri = CommonUtils.handleFilePickerData(GeneralWebViewFragment.this,FILE_REQUEST_CODE,requestCode,resultCode, data);
+        Uri fileUri = CommonUtil.handleFilePickerData(GeneralWebViewFragment.this,FILE_REQUEST_CODE,requestCode,resultCode, data);
         if(fileUri != null) {
             if (mFilePathCallback != null) {
                 mFilePathCallback.onReceiveValue(new Uri[]{fileUri});
@@ -926,7 +925,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             reloadLastValidLink();
             return true;
         } else if (id == R.id.action_page_browser) {
-            CommonUtils.openBrowser(webView.getContext(),currentUrl);
+            CommonUtil.openBrowser(webView.getContext(),currentUrl);
         } else if(id == R.id.action_page_close){
             if (getActivity() != null) {
                 getActivity().finish();
@@ -947,7 +946,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             }
         } else if(id == R.id.action_page_share){
             if(!TextUtils.isEmpty(currentUrl)) {
-                CommonUtils.shareContent(webView.getContext(), shareInstruction, shareTitle, shareMessage +"\n\n"+ currentUrl);
+                CommonUtil.shareContent(webView.getContext(), shareInstruction, shareTitle, shareMessage +"\n\n"+ currentUrl);
             }
         }
 

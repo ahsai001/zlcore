@@ -12,7 +12,7 @@ import java.util.Locale;
  * Created by ahmad s on 3/8/2016.
  */
 
-public class DateStringUtils {
+public class DateStringUtil {
     public static String getDateTimeInString(String dateFormat, Date date, Locale locale){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -127,7 +127,7 @@ public class DateStringUtils {
             messageDate = sf.parse(messageDateInString);
         } catch (ParseException e) {
             //do nothing
-            DebugUtils.logD("smart-x", "exception parse date");
+            DebugUtil.logD("smart-x", "exception parse date");
         }
         return messageDate;
     }
@@ -154,7 +154,7 @@ public class DateStringUtils {
             date = sf.parse(dateString);
         } catch (ParseException e) {
             //do nothing
-            DebugUtils.logD("zlcore", "exception parse date");
+            DebugUtil.logD("zlcore", "exception parse date");
         }
         return date;
     }

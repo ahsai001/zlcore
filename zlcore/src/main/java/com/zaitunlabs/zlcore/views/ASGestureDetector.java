@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 
 public class ASGestureDetector {
@@ -84,7 +84,7 @@ public class ASGestureDetector {
 		/*
 		 * int action = event.getActionMasked(); int pointerCount =
 		 * event.getPointerCount(); int index = event.getActionIndex(); int
-		 * pointer = event.getPointerId(index); DebugUtils.logE("onTouchEvent",
+		 * pointer = event.getPointerId(index); DebugUtil.logE("onTouchEvent",
 		 * getSectionName
 		 * ()+"count:"+pointerCount+"---index:"+index+"---pointer:"
 		 * +pointer+" View:"+v,isLogged);
@@ -108,7 +108,7 @@ public class ASGestureDetector {
 			touchDownAbsoluteX = event.getRawX();
 			touchDownAbsoluteY = event.getRawY();
 
-			DebugUtils.logE("DETECTOR", "down x : "+Math.abs(event.getRawX()) + " for "+this.viewName);
+			DebugUtil.logE("DETECTOR", "down x : "+Math.abs(event.getRawX()) + " for "+this.viewName);
 			
 			isMoving = false;
 
@@ -158,18 +158,18 @@ public class ASGestureDetector {
 			float deltaDownRawX = xRawMove - touchDownAbsoluteX;
 			float deltaDownRawY = yRawMove - touchDownAbsoluteY;
 			
-			DebugUtils.logE("DETECTOR", "move a x : " + Math.abs(event.getRawX()) + " for " + this.viewName);
-			//CommonUtils.LogV("DETECTOR", "yRawMove=" + yRawMove + "-" + "touchDownAbsoluteY=" + touchDownAbsoluteY + "-" + "deltaRawY=" + deltaDownRawY);
+			DebugUtil.logE("DETECTOR", "move a x : " + Math.abs(event.getRawX()) + " for " + this.viewName);
+			//CommonUtil.LogV("DETECTOR", "yRawMove=" + yRawMove + "-" + "touchDownAbsoluteY=" + touchDownAbsoluteY + "-" + "deltaRawY=" + deltaDownRawY);
 			float move_threshold = 0;
 
 			// ViewConfiguration vc = ViewConfiguration.get(getContext());
 			// int mSlop = vc.getScaledTouchSlop();
 			// int mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
 			// int mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
-			// CommonUtils.LogV("", "mSlop " + mSlop +" ",isLogged);
-			// CommonUtils.LogV("", "mMinFlingVelocity " + mMinFlingVelocity
+			// CommonUtil.LogV("", "mSlop " + mSlop +" ",isLogged);
+			// CommonUtil.LogV("", "mMinFlingVelocity " + mMinFlingVelocity
 			// +" ",isLogged);
-			// CommonUtils.LogV("", "mMaxFlingVelocity " + mMaxFlingVelocity
+			// CommonUtil.LogV("", "mMaxFlingVelocity " + mMaxFlingVelocity
 			// +" ",isLogged);
 
 			if (isMoving == false && gestureListener != null && ( gestureListener.isClickEnabled() || gestureListener.isLongClickEnabled())) {
@@ -191,7 +191,7 @@ public class ASGestureDetector {
 
 			if (Math.abs(deltaRawX) > move_threshold || Math.abs(deltaRawY) > move_threshold) {
 				// Movement detected !!!!!!!!!
-				DebugUtils.logE("DETECTOR", "move x : "+Math.abs(event.getRawX()) + " for "+this.viewName);
+				DebugUtil.logE("DETECTOR", "move x : "+Math.abs(event.getRawX()) + " for "+this.viewName);
 				isMoving = true;
 
 				// cancel longclick sending message
@@ -202,11 +202,11 @@ public class ASGestureDetector {
 				 * //swipe left right or swipe up down ==> experiment if((ySpeed
 				 * == 0 && xSpeed > 0) || (ySpeed > 0 && xSpeed > 0 && xSpeed >
 				 * ySpeed && (xSpeed / ySpeed) > SPEED_MOVE_THRESHOLD)){
-				 * deltaRawY = 0; CommonUtils.LogV("","kanan kiri aktif"); }
+				 * deltaRawY = 0; CommonUtil.LogV("","kanan kiri aktif"); }
 				 * if((ySpeed > 0 && xSpeed == 0) || (ySpeed > 0 && xSpeed > 0
 				 * && ySpeed > xSpeed && (ySpeed / xSpeed) >
 				 * SPEED_MOVE_THRESHOLD)){ deltaRawX = 0;
-				 * CommonUtils.LogV("","atas bawah aktif"); }
+				 * CommonUtil.LogV("","atas bawah aktif"); }
 				 */
 
 				touchDownX = xMove;
@@ -223,8 +223,8 @@ public class ASGestureDetector {
 					double degree = 0;
 					int swypeType = SWIPE_NONE;
 					
-					//DebugUtils.logE("DETECTOR", "deltaDownRaw x : "+Math.abs(deltaDownRawX));
-					//DebugUtils.logE("DETECTOR", "deltaDownRaw y : "+Math.abs(deltaDownRawY));
+					//DebugUtil.logE("DETECTOR", "deltaDownRaw x : "+Math.abs(deltaDownRawX));
+					//DebugUtil.logE("DETECTOR", "deltaDownRaw y : "+Math.abs(deltaDownRawY));
 					
 					if(gestureListener.isSwipeEnabled() && (Math.abs(deltaDownRawX) > SWIPE_SENSITIVITY_THRESHOLD || Math.abs(deltaDownRawY) > SWIPE_SENSITIVITY_THRESHOLD)){
 
@@ -235,9 +235,9 @@ public class ASGestureDetector {
 						}
 
 
-						//CommonUtils.LogV("ahmad", "deegre:"+degree);
-						//CommonUtils.LogV("ahmad", "deltaRawY:"+deltaRawY);
-						//CommonUtils.LogV("ahmad", "deltaRawX:"+deltaRawX);
+						//CommonUtil.LogV("ahmad", "deegre:"+degree);
+						//CommonUtil.LogV("ahmad", "deltaRawY:"+deltaRawY);
+						//CommonUtil.LogV("ahmad", "deltaRawX:"+deltaRawX);
 						if(degree > 45){
 							//swipe up-down
 							if(deltaDownRawY > 0){
@@ -264,8 +264,8 @@ public class ASGestureDetector {
 					}
 
 					globalSwipeType = swypeType;
-					//CommonUtils.LogV("ahmad", "swypeType:"+swypeType);
-					//CommonUtils.LogV("ahmad", "globalSwipeType:"+globalSwipeType);
+					//CommonUtil.LogV("ahmad", "swypeType:"+swypeType);
+					//CommonUtil.LogV("ahmad", "globalSwipeType:"+globalSwipeType);
 
 					boolean returnValue = false;
 					if ((xMove > view.getWidth() || xMove < 0)

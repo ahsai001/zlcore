@@ -31,7 +31,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -53,7 +52,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
@@ -68,7 +66,6 @@ import androidx.appcompat.widget.PopupMenu;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.Html;
-import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -134,7 +131,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-public class CommonUtils {
+public class CommonUtil {
 
 	public static String getPackageName(Context ctx) {
 		return ctx.getPackageName();
@@ -788,7 +785,7 @@ public class CommonUtils {
 			email.putExtra(Intent.EXTRA_TEXT, fromHtml(bodyEmailInHTML));
 			email.setType("message/rfc822");
 			try {
-				if(CommonUtils.isApplicationContext(ctx)){
+				if(CommonUtil.isApplicationContext(ctx)){
 					PendingIntent intent = PendingIntent.getActivity(ctx, 22, Intent.createChooser(email, feedbackTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 					try {
 						intent.send();
@@ -835,7 +832,7 @@ public class CommonUtils {
 			sendTitle = context.getString(R.string.zlcore_common_utils_send_email);
 		try {
 			
-			if(CommonUtils.isApplicationContext(context)){
+			if(CommonUtil.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -863,7 +860,7 @@ public class CommonUtils {
 		if(shareTitle == null)
 			shareTitle = context.getString(R.string.zlcore_common_utils_default_share_title);
 		try{
-			if(CommonUtils.isApplicationContext(context)){
+			if(CommonUtil.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(shareIntent, shareTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -896,7 +893,7 @@ public class CommonUtils {
 		if(sendTitle == null)
 			sendTitle = context.getString(R.string.zlcore_common_utils_send_email);
 		try{
-			if(CommonUtils.isApplicationContext(context)){
+			if(CommonUtil.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -963,7 +960,7 @@ public class CommonUtils {
 		i.setData(Uri.parse(link));
 
 		try{
-			if(CommonUtils.isApplicationContext(context)){
+			if(CommonUtil.isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(i, "open link with :").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -1071,29 +1068,29 @@ public class CommonUtils {
 		 switch(density)
 		 {
 		 case DisplayMetrics.DENSITY_LOW:
-			 DebugUtils.logI("DisplayMetrics", "LDPI : "+density);
+			 DebugUtil.logI("DisplayMetrics", "LDPI : "+density);
 		     break;
 		 case DisplayMetrics.DENSITY_MEDIUM:
-			 DebugUtils.logI("DisplayMetrics", "MHDPI : "+density);
+			 DebugUtil.logI("DisplayMetrics", "MHDPI : "+density);
 		     break;
 		 case DisplayMetrics.DENSITY_HIGH:
-			 DebugUtils.logI("DisplayMetrics", "HDPI : "+density);
+			 DebugUtil.logI("DisplayMetrics", "HDPI : "+density);
 		     break;
 		 case DisplayMetrics.DENSITY_XHIGH:
-			 DebugUtils.logI("DisplayMetrics", "XHDPI : "+density);
+			 DebugUtil.logI("DisplayMetrics", "XHDPI : "+density);
 		     break;
 		 case DisplayMetrics.DENSITY_XXHIGH:
-			 DebugUtils.logI("DisplayMetrics", "XXHDPI : "+density);
+			 DebugUtil.logI("DisplayMetrics", "XXHDPI : "+density);
 			 break;
 		 case DisplayMetrics.DENSITY_XXXHIGH:
-			 DebugUtils.logI("DisplayMetrics", "XXXHDPI : "+density);
+			 DebugUtil.logI("DisplayMetrics", "XXXHDPI : "+density);
 			 break;
 		 }
 		if(density < DisplayMetrics.DENSITY_LOW){
-			DebugUtils.logI("DisplayMetrics", "Very Low LDPI: "+density);
+			DebugUtil.logI("DisplayMetrics", "Very Low LDPI: "+density);
 		}
 		 if(density > DisplayMetrics.DENSITY_XXXHIGH){
-			 DebugUtils.logI("DisplayMetrics", "Very High XXXHDPI : "+density);
+			 DebugUtil.logI("DisplayMetrics", "Very High XXXHDPI : "+density);
 		 }
 
 		 return density;
@@ -1107,36 +1104,36 @@ public class CommonUtils {
 		switch(density)
 		{
 			case DisplayMetrics.DENSITY_LOW:
-				DebugUtils.logI("DisplayMetrics", "LDPI : "+density);
+				DebugUtil.logI("DisplayMetrics", "LDPI : "+density);
 				densityString = "LDPI";
 				break;
 			case DisplayMetrics.DENSITY_MEDIUM:
-				DebugUtils.logI("DisplayMetrics", "MDPI : "+density);
+				DebugUtil.logI("DisplayMetrics", "MDPI : "+density);
 				densityString = "MDPI";
 				break;
 			case DisplayMetrics.DENSITY_HIGH:
-				DebugUtils.logI("DisplayMetrics", "HDPI : "+density);
+				DebugUtil.logI("DisplayMetrics", "HDPI : "+density);
 				densityString = "HDPI";
 				break;
 			case DisplayMetrics.DENSITY_XHIGH:
-				DebugUtils.logI("DisplayMetrics", "XHDPI : "+density);
+				DebugUtil.logI("DisplayMetrics", "XHDPI : "+density);
 				densityString = "XHDPI";
 				break;
 			case DisplayMetrics.DENSITY_XXHIGH:
-				DebugUtils.logI("DisplayMetrics", "XXHDPI : "+density);
+				DebugUtil.logI("DisplayMetrics", "XXHDPI : "+density);
 				densityString = "XXHDPI";
 				break;
 			case DisplayMetrics.DENSITY_XXXHIGH:
-				DebugUtils.logI("DisplayMetrics", "XXXHDPI : "+density);
+				DebugUtil.logI("DisplayMetrics", "XXXHDPI : "+density);
 				densityString = "XXXHDPI";
 				break;
 		}
 		if(density < DisplayMetrics.DENSITY_LOW){
-			DebugUtils.logI("DisplayMetrics", "Very Low LDPI: "+density);
+			DebugUtil.logI("DisplayMetrics", "Very Low LDPI: "+density);
 			densityString = "Very Low LDPI";
 		}
 		if(density > DisplayMetrics.DENSITY_XXXHIGH){
-			DebugUtils.logI("DisplayMetrics", "Very High XXXHDPI : "+density);
+			DebugUtil.logI("DisplayMetrics", "Very High XXXHDPI : "+density);
 			densityString = "Very High XXXHDPI";
 		}
 
@@ -1146,7 +1143,7 @@ public class CommonUtils {
 	public static float getDisplayMetricsScaledDensity(Context context){
 		//untuk density 160 nilainya 1, 120 = 0.75, dll
 		 float scaleddensity= context.getResources().getDisplayMetrics().scaledDensity;
-		 DebugUtils.logI("DisplayMetrics", "scaleddensity : "+scaleddensity);
+		 DebugUtil.logI("DisplayMetrics", "scaleddensity : "+scaleddensity);
 		 return scaleddensity;
 	}
 
@@ -1154,14 +1151,14 @@ public class CommonUtils {
 	public static float getDisplayMetricsDensity(Context context){
 		//untuk density 160 nilainya 1, 120 = 0.75, dll
 		float density= context.getResources().getDisplayMetrics().density;
-		DebugUtils.logI("DisplayMetrics", "density : "+density);
+		DebugUtil.logI("DisplayMetrics", "density : "+density);
 		return density;
 	}
 
 	public static float getDisplayMetricsRealXDensity(Context context){
 		//pixel per inch
 		float xdpi= context.getResources().getDisplayMetrics().xdpi;
-		DebugUtils.logI("DisplayMetrics", "xdpi : "+xdpi);
+		DebugUtil.logI("DisplayMetrics", "xdpi : "+xdpi);
 		return xdpi;
 	}
 
@@ -1169,14 +1166,14 @@ public class CommonUtils {
 	public static float getDisplayMetricsRealYDensity(Context context){
 		//pixel per inch
 		float ydpi= context.getResources().getDisplayMetrics().ydpi;
-		DebugUtils.logI("DisplayMetrics", "ydpi : "+ydpi);
+		DebugUtil.logI("DisplayMetrics", "ydpi : "+ydpi);
 		return ydpi;
 	}
 
 	public static int getDisplayMetricsScreenHeight(Context context){
 		//pixel per inch
 		int heightPixels= context.getResources().getDisplayMetrics().heightPixels;
-		DebugUtils.logI("DisplayMetrics", "heightPixels : " + heightPixels);
+		DebugUtil.logI("DisplayMetrics", "heightPixels : " + heightPixels);
 		return heightPixels;
 	}
 
@@ -1184,7 +1181,7 @@ public class CommonUtils {
 	public static int getDisplayMetricsScreenWidth(Context context){
 		//pixel per inch
 		int widthPixels= context.getResources().getDisplayMetrics().widthPixels;
-		DebugUtils.logI("DisplayMetrics", "widthPixels : " + widthPixels);
+		DebugUtil.logI("DisplayMetrics", "widthPixels : " + widthPixels);
 		return widthPixels;
 	}
 
@@ -1730,7 +1727,7 @@ public class CommonUtils {
 	public static String getModelNumber(){
 		String model = "";
 		try {
-			model = CommonUtils.urlEncode(Build.MODEL);
+			model = CommonUtil.urlEncode(Build.MODEL);
 		} catch (UnsupportedEncodingException e) {
 			model = Build.MODEL;
 		}
@@ -1744,7 +1741,7 @@ public class CommonUtils {
 	public static String getOSVersion(){
 		String osVersion = "";
 		try {
-			osVersion = CommonUtils.urlEncode(Build.VERSION.RELEASE);
+			osVersion = CommonUtil.urlEncode(Build.VERSION.RELEASE);
 		} catch (UnsupportedEncodingException e) {
 			////e.printStackTrace();
 		}
@@ -1754,7 +1751,7 @@ public class CommonUtils {
 	public static String getUserAgent(){
 		String userAgent = "";
 		try {
-			userAgent = CommonUtils.urlEncode(System.getProperty("http.agent"));
+			userAgent = CommonUtil.urlEncode(System.getProperty("http.agent"));
 		} catch (UnsupportedEncodingException e) {
 			////e.printStackTrace();
 		}
@@ -2008,7 +2005,7 @@ public class CommonUtils {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final Calendar c = Calendar.getInstance();
-			Date defaultDate = (Date)CommonUtils.getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_DATE, null);
+			Date defaultDate = (Date) CommonUtil.getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_DATE, null);
 			if(defaultDate != null){
 				c.setTime(defaultDate);
 			}
@@ -2047,7 +2044,7 @@ public class CommonUtils {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final Calendar c = Calendar.getInstance();
-			Date defaultTime = (Date)CommonUtils.getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_TIME, null);
+			Date defaultTime = (Date) CommonUtil.getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_TIME, null);
 			if(defaultTime != null){
 				c.setTime(defaultTime);
 			}
@@ -2116,7 +2113,7 @@ public class CommonUtils {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			listenerFragmentTag = CommonUtils.getStringFragmentArgument(getArguments(), ARG_LISTENER_FRAGMENT_TAG, null);
+			listenerFragmentTag = CommonUtil.getStringFragmentArgument(getArguments(), ARG_LISTENER_FRAGMENT_TAG, null);
 			if(!TextUtils.isEmpty(listenerFragmentTag)){
 				//set new target
 				Fragment listenerFragment = getFragmentManager().findFragmentByTag(listenerFragmentTag);
@@ -2127,15 +2124,15 @@ public class CommonUtils {
 		@NonNull
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			title = CommonUtils.getStringFragmentArgument(getArguments(), ARG_TITLE, null);
-			message = CommonUtils.getStringFragmentArgument(getArguments(), ARG_MESSAGE, null);
-			strOption1 = CommonUtils.getStringFragmentArgument(getArguments(), ARG_STR_OPTION1, null);
-			strOption2 = CommonUtils.getStringFragmentArgument(getArguments(), ARG_STR_OPTION2, null);
-			strOption3 = CommonUtils.getStringFragmentArgument(getArguments(), ARG_STR_OPTION3, null);
-			dismissByOption1 = CommonUtils.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION1, true);
-			dismissByOption2 = CommonUtils.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION2, true);
-			dismissByOption3 = CommonUtils.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION3, true);
-			requestCode = CommonUtils.getIntFragmentArgument(getArguments(), ARG_REQUEST_CODE, 0);
+			title = CommonUtil.getStringFragmentArgument(getArguments(), ARG_TITLE, null);
+			message = CommonUtil.getStringFragmentArgument(getArguments(), ARG_MESSAGE, null);
+			strOption1 = CommonUtil.getStringFragmentArgument(getArguments(), ARG_STR_OPTION1, null);
+			strOption2 = CommonUtil.getStringFragmentArgument(getArguments(), ARG_STR_OPTION2, null);
+			strOption3 = CommonUtil.getStringFragmentArgument(getArguments(), ARG_STR_OPTION3, null);
+			dismissByOption1 = CommonUtil.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION1, true);
+			dismissByOption2 = CommonUtil.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION2, true);
+			dismissByOption3 = CommonUtil.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION3, true);
+			requestCode = CommonUtil.getIntFragmentArgument(getArguments(), ARG_REQUEST_CODE, 0);
 
 			androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity(),
 					com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
@@ -2566,19 +2563,19 @@ public class CommonUtils {
 
 	public static void showNotification(Context context, String title, String content, Class nextActivity,
 										HashMap<String, Object> data, int appNameResId, int iconResId, boolean autocancel, boolean isHeadsUp){
-		NotificationUtils.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId, autocancel, isHeadsUp);
 	}
 
 	public static void showNotification(Context context, String title, String content, Class nextActivity,
 										HashMap<String, Object> data, int appNameResId, int iconResId,int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-		NotificationUtils.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId,notifID,pendingIntentAction, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId,notifID,pendingIntentAction, autocancel, isHeadsUp);
 	}
 
 	public static void showNotification(Context context, String title, String content, String imageUrl,
 										int nextIntentType, Intent nextIntent,
 										int deleteIntentType, Intent deleteIntent,
 										Map<String, Object> data, int appNameResId, int iconResId, int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-		NotificationUtils.showNotification(context, title, content, imageUrl, nextIntentType, nextIntent, deleteIntentType, deleteIntent, data, appNameResId, iconResId, notifID, pendingIntentAction, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context, title, content, imageUrl, nextIntentType, nextIntent, deleteIntentType, deleteIntent, data, appNameResId, iconResId, notifID, pendingIntentAction, autocancel, isHeadsUp);
 	}
 
 	public static void showNotification(Context context, String title, String content, String imageUrl,
@@ -2588,7 +2585,7 @@ public class CommonUtils {
 										Uri soundUri,
 										int appNameResId, int iconResId, int notifID,
 										boolean autocancel, boolean isHeadsUp){
-		NotificationUtils.showNotification(context, title, content, imageUrl, nextPendingIntent, deletePendingIntent, fullScreenPendingIntent, soundUri, appNameResId, iconResId, notifID, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context, title, content, imageUrl, nextPendingIntent, deletePendingIntent, fullScreenPendingIntent, soundUri, appNameResId, iconResId, notifID, autocancel, isHeadsUp);
 	}
 
 
@@ -2825,7 +2822,7 @@ public class CommonUtils {
 		String prettyUrl = url;
 		if (!Patterns.WEB_URL.matcher(url).matches()) {
 			try {
-				prettyUrl = CommonUtils.urlEncode(url);
+				prettyUrl = CommonUtil.urlEncode(url);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -3082,7 +3079,7 @@ public class CommonUtils {
 			ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
 			value = ai.metaData.getString(name);
 		} catch (Exception e) {
-			Log.d(CommonUtils.class.getSimpleName(), "Couldn't find config value: " + name);
+			Log.d(CommonUtil.class.getSimpleName(), "Couldn't find config value: " + name);
 		}
 
 		return value;
@@ -3096,7 +3093,7 @@ public class CommonUtils {
 			ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
 			value = ai.metaData.getInt(name);
 		} catch (Exception e) {
-				Log.d(CommonUtils.class.getSimpleName(), "Couldn't find config value: " + name);
+				Log.d(CommonUtil.class.getSimpleName(), "Couldn't find config value: " + name);
 		}
 
 		return value;
@@ -3110,7 +3107,7 @@ public class CommonUtils {
 			ApplicationInfo ai = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
 			value = ai.metaData.getBoolean(name);
 		} catch (Exception e) {
-			Log.d(CommonUtils.class.getSimpleName(), "Couldn't find config value: " + name);
+			Log.d(CommonUtil.class.getSimpleName(), "Couldn't find config value: " + name);
 		}
 
 		return value;

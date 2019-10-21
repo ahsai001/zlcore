@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.utils.CommonUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
 
 /**
  * Created by ahsai on 3/15/2018.
@@ -29,7 +29,7 @@ public class ZLCoreConstanta {
     }
 
     public static String getDatabaseName(Context context) {
-        return (TextUtils.isEmpty(ZLCoreConstanta.DATABASE_NAME)? CommonUtils.getPackageName(context):ZLCoreConstanta.DATABASE_NAME)+".db";
+        return (TextUtils.isEmpty(ZLCoreConstanta.DATABASE_NAME)? CommonUtil.getPackageName(context):ZLCoreConstanta.DATABASE_NAME)+".db";
     }
 
     public static void setCrashMailTo(String crashMailTo) {

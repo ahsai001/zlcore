@@ -1,7 +1,6 @@
 package com.zaitunlabs.zlcore.utils;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.URLUtil;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -54,7 +52,7 @@ import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
  * Created by ahsai on 5/29/2018.
  */
 
-public class FormBuilderUtils implements VerticalStepperForm{
+public class FormBuilderUtil implements VerticalStepperForm{
     public static final String PAGE_TYPE_STEPPER = "stepper";
     public static final String PAGE_TYPE_SCROLL = "scroll";
     public static final String PAGE_TYPE_LINEAR = "linear";
@@ -72,18 +70,18 @@ public class FormBuilderUtils implements VerticalStepperForm{
     private ViewGroup parentView;
     private LayoutInflater layoutInflater;
     private FormViewJsonModel formViewJsonModel;
-    private FormValidationUtils formValidationUtils;
-    private int validationType = FormValidationUtils.DefaultType;
+    private FormValidationUtil formValidationUtil;
+    private int validationType = FormValidationUtil.DefaultType;
     private Bundle savedInstanceState;
 
-    public FormBuilderUtils(Activity activity, Bundle savedInstanceState) {
+    public FormBuilderUtil(Activity activity, Bundle savedInstanceState) {
         this.activity = activity;
         this.context = activity.getBaseContext();
         this.savedInstanceState = savedInstanceState;
         init();
     }
 
-    public FormBuilderUtils(Context context, Bundle savedInstanceState) {
+    public FormBuilderUtil(Context context, Bundle savedInstanceState) {
         this.context = context;
         this.savedInstanceState = savedInstanceState;
         init();
@@ -96,7 +94,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
 
     private void init(){
         layoutInflater = LayoutInflater.from(context);
-        formValidationUtils = new FormValidationUtils(context);
+        formValidationUtil = new FormValidationUtil(context);
         initDefaultWidget();
     }
 
@@ -105,7 +103,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
     }
 
 
-    public FormBuilderUtils withParentView(ViewGroup parentView){
+    public FormBuilderUtil withParentView(ViewGroup parentView){
         this.parentView = parentView;
         rootView = (ViewGroup) layoutInflater.inflate(R.layout.base_form_layout, parentView, false);
         formImageView = rootView.findViewById(R.id.form_imageview);
@@ -119,28 +117,28 @@ public class FormBuilderUtils implements VerticalStepperForm{
         return this;
     }
 
-    public FormBuilderUtils withSavedInstanceState(Bundle savedInstanceState){
+    public FormBuilderUtil withSavedInstanceState(Bundle savedInstanceState){
         this.savedInstanceState = savedInstanceState;
         return this;
     }
 
-    public FormValidationUtils getFormValidationUtils(){
-        return formValidationUtils;
+    public FormValidationUtil getFormValidationUtils(){
+        return formValidationUtil;
     }
 
 
-    public FormBuilderUtils withViewJson(String viewJson){
+    public FormBuilderUtil withViewJson(String viewJson){
         Gson gson = new Gson();
         formViewJsonModel = gson.fromJson(viewJson, FormViewJsonModel.class);
         return this;
     }
 
-    public FormBuilderUtils withViewJson(FormViewJsonModel viewJsonModel){
+    public FormBuilderUtil withViewJson(FormViewJsonModel viewJsonModel){
         formViewJsonModel = viewJsonModel;
         return this;
     }
 
-    public FormBuilderUtils withViewJsonEmpty(String pageTitle, String pageType, String logo, String formTitle, String formDesc){
+    public FormBuilderUtil withViewJsonEmpty(String pageTitle, String pageType, String logo, String formTitle, String formDesc){
         formViewJsonModel = new FormViewJsonModel();
         formViewJsonModel.setPageTitle(pageTitle);
         formViewJsonModel.setPageType(pageType);
@@ -151,7 +149,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
         return this;
     }
 
-    public FormBuilderUtils setValidationType(int validationType) {
+    public FormBuilderUtil setValidationType(int validationType) {
         //this config just for linear and scroll type, stepper ignore it
         this.validationType = validationType;
         return this;
@@ -222,7 +220,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
 
     public String getUrlQueryStringOfAll(){
         Map<String, String> resultMap = getAllValueIDMap();
-        return DataUtils.mapToString(resultMap);
+        return DataUtil.mapToString(resultMap);
     }
 
     public View getLastViewForWidget(String widgetName){
@@ -363,43 +361,43 @@ public class FormBuilderUtils implements VerticalStepperForm{
 
     public void setEnablerIfMandatoryDoneOnView(View targetView){
         //need run setValidationType(FormValidationUtils.IdleType)
-        final ViewEnablerUtils viewEnablerUtils = new ViewEnablerUtils(targetView, 0);
-        FormValidationUtils formValidationUtils = getFormValidationUtils();
+        final ViewEnablerUtil viewEnablerUtil = new ViewEnablerUtil(targetView, 0);
+        FormValidationUtil formValidationUtils = getFormValidationUtils();
         int targetReportTotal = 0;
         for (int x=0;x<formValidationUtils.getValidatorCount();x++){
-            FormValidationUtils.Validator validator = formValidationUtils.getValidator(x);
+            FormValidationUtil.Validator validator = formValidationUtils.getValidator(x);
             for (int y=0;y<validator.getRuleCount();y++){
-                if(validator.getRule(y) instanceof FormValidationUtils.NotEmptyValidatorRule){
-                    validator.setOnValidationCallback(new FormValidationUtils.OnValidationCallback() {
+                if(validator.getRule(y) instanceof FormValidationUtil.NotEmptyValidatorRule){
+                    validator.addOnValidationCallback(new FormValidationUtil.OnValidationCallback() {
                         @Override
-                        public boolean onSuccess(View view, FormValidationUtils.AbstractValidatorRule validatorRule) {
+                        public boolean onSuccess(View view, FormValidationUtil.AbstractValidatorRule validatorRule) {
                             return false;
                         }
 
                         @Override
-                        public boolean onFailed(View view, FormValidationUtils.AbstractValidatorRule validatorRule, String message) {
+                        public boolean onFailed(View view, FormValidationUtil.AbstractValidatorRule validatorRule, String message) {
                             return false;
                         }
 
                         @Override
                         public void onComplete(View view, boolean allRuleValid) {
                             if(allRuleValid){
-                                viewEnablerUtils.done();
+                                viewEnablerUtil.done(String.valueOf(view.getId()));
                             } else {
-                                viewEnablerUtils.unDone();
+                                viewEnablerUtil.unDone(String.valueOf(view.getId()));
                             }
                         }
-                    }, true);
+                    }).setAlwaysShowErrorOnView(true);
                     targetReportTotal++;
                 }
             }
         }
-        viewEnablerUtils.setTargetedDoneTotal(targetReportTotal).init();
+        viewEnablerUtil.setTargetedDoneTotal(targetReportTotal).init();
     }
 
 
     public static class WidgetBuilder {
-        FormBuilderUtils formBuilderUtils;
+        FormBuilderUtil formBuilderUtil;
         FormWidgetModel formWidgetModel;
         public WidgetBuilder(String widgetName, String id){
             formWidgetModel = new FormWidgetModel();
@@ -409,12 +407,12 @@ public class FormBuilderUtils implements VerticalStepperForm{
             formWidgetModel.setValidation(new ArrayList<FormValidationRuleModel>());
         }
 
-        private void setFormBuilderUtils(FormBuilderUtils formBuilderUtils){
-            this.formBuilderUtils = formBuilderUtils;
+        private void setFormBuilderUtil(FormBuilderUtil formBuilderUtil){
+            this.formBuilderUtil = formBuilderUtil;
         }
 
         public void addToFormBuilder(){
-            this.formBuilderUtils.formViewJsonModel.getFormList().add(formWidgetModel);
+            this.formBuilderUtil.formViewJsonModel.getFormList().add(formWidgetModel);
         }
         public WidgetBuilder setId(String id){
             formWidgetModel.setId(id);
@@ -464,7 +462,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
 
     public WidgetBuilder createWidget(String widgetName, String id){
         WidgetBuilder widgetBuilder = new WidgetBuilder(widgetName, id);
-        widgetBuilder.setFormBuilderUtils(this);
+        widgetBuilder.setFormBuilderUtil(this);
         return widgetBuilder;
     }
 
@@ -490,7 +488,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
         parentView.addView(rootView);
     }
 
-    public FormBuilderUtils render(){
+    public FormBuilderUtil render(){
         String pageTitle = formViewJsonModel.getPageTitle();
         String pageType = formViewJsonModel.getPageType();
         String logo = formViewJsonModel.getLogo();
@@ -699,12 +697,12 @@ public class FormBuilderUtils implements VerticalStepperForm{
             valueList.add(argumentsBuilderMap.get(argType).getValue(argValue));
             return true;
         } else if(argType.equalsIgnoreCase("selectableitem")){
-            Drawable drawable = ViewUtils.getSelectableItemBackgroundWithColor(context, Color.parseColor((String)argValue));
+            Drawable drawable = ViewUtil.getSelectableItemBackgroundWithColor(context, Color.parseColor((String)argValue));
             typeList.add(Drawable.class);
             valueList.add(drawable);
             return true;
         } else if(argType.equalsIgnoreCase("selectableItemBorderLess")){
-            Drawable drawable = ViewUtils.getSelectableItemBackgroundBorderLessWithColor(context, Color.parseColor((String)argValue));
+            Drawable drawable = ViewUtil.getSelectableItemBackgroundBorderLessWithColor(context, Color.parseColor((String)argValue));
             typeList.add(Drawable.class);
             valueList.add(drawable);
             return true;
@@ -807,7 +805,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
                 methodName = nativeMethodBuilderMap.get(methodName).getRealMethod(methodName);
             } else if(!methodName.startsWith(".")){
                 if(!methodName.startsWith("set")) {
-                    methodName = "set" + CommonUtils.toCamelCase(methodName);
+                    methodName = "set" + CommonUtil.toCamelCase(methodName);
                 }
             } else {
                 methodName = methodName.replace(".","");
@@ -837,7 +835,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
         if(formValidationRuleModels.size() > 0) {
             View valuableView = getValuableViewForWidget(targetView, widgetId);
             if(valuableView != null) {
-                FormValidationUtils.Validator validator = new FormValidationUtils.Validator(targetView.getContext(), valuableView);
+                FormValidationUtil.Validator validator = new FormValidationUtil.Validator(targetView.getContext(), valuableView);
                 for (FormValidationRuleModel formValidationRuleModel : formValidationRuleModels) {
                     ArrayList<FormArgumentModel> formArgumentModels = formValidationRuleModel.getRuleArgs();
 
@@ -848,24 +846,24 @@ public class FormBuilderUtils implements VerticalStepperForm{
 
                     String ruleName = formValidationRuleModel.getRuleName();
                     if (validationRuleBuilderMap.containsKey(ruleName)) {
-                        FormValidationUtils.AbstractValidatorRule validatorRule
+                        FormValidationUtil.AbstractValidatorRule validatorRule
                                 = validationRuleBuilderMap.get(ruleName).getValidationRule(targetView.getContext(), validator, typeList, valueList);
                         if(!TextUtils.isEmpty(formValidationRuleModel.getErrorMessage())) {
                             validatorRule.setErrorMessage(formValidationRuleModel.getErrorMessage());
                         }
-                        validator.addValidatorRule(validatorRule);
+                        validator.addRule(validatorRule);
                     }
                 }
 
                 if(formViewJsonModel.getPageType().equalsIgnoreCase(PAGE_TYPE_STEPPER)) {
-                    validator.setOnValidationCallback(new FormValidationUtils.OnValidationCallback() {
+                    validator.addOnValidationCallback(new FormValidationUtil.OnValidationCallback() {
                         @Override
-                        public boolean onSuccess(View view, FormValidationUtils.AbstractValidatorRule validatorRule) {
+                        public boolean onSuccess(View view, FormValidationUtil.AbstractValidatorRule validatorRule) {
                             return false;
                         }
 
                         @Override
-                        public boolean onFailed(View view, FormValidationUtils.AbstractValidatorRule validatorRule, String message) {
+                        public boolean onFailed(View view, FormValidationUtil.AbstractValidatorRule validatorRule, String message) {
                             formStepperPanel.setStepAsUncompleted(position, message);
                             return true;
                         }
@@ -877,9 +875,9 @@ public class FormBuilderUtils implements VerticalStepperForm{
                             }
                         }
                     });
-                    formValidationUtils.addValidator(validator, FormValidationUtils.IdleType);
+                    formValidationUtil.addValidator(validator);
                 } else {
-                    formValidationUtils.addValidator(validator, validationType);
+                    formValidationUtil.addValidator(validator);
                 }
             }
         }
@@ -895,11 +893,11 @@ public class FormBuilderUtils implements VerticalStepperForm{
                     method.invoke(object, valueList.toArray(new Object[valueList.size()]));
                 }
             } catch (IllegalAccessException e) {
-                DebugUtils.logD("formbuilder", widgetName+"-IllegalAccessException:"+methodName);
+                DebugUtil.logD("formbuilder", widgetName+"-IllegalAccessException:"+methodName);
             } catch (InvocationTargetException e) {
-                DebugUtils.logD("formbuilder", widgetName+"-InvocationTargetException:"+methodName);
+                DebugUtil.logD("formbuilder", widgetName+"-InvocationTargetException:"+methodName);
             } catch (NoSuchMethodException e) {
-                DebugUtils.logD("formbuilder", widgetName+"-NoSuchMethodException:"+methodName);
+                DebugUtil.logD("formbuilder", widgetName+"-NoSuchMethodException:"+methodName);
             }
         }
     }
@@ -929,7 +927,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
     @Override
     public void onStepOpening(final int stepNumber) {
         if(formViewJsonModel.getPageType().equalsIgnoreCase(PAGE_TYPE_STEPPER)) {
-            FormValidationUtils.Validator validator = formValidationUtils.getValidator(stepNumber);
+            FormValidationUtil.Validator validator = formValidationUtil.getValidator(stepNumber);
             if (validator != null) {
                 validator.validate();
             } else {
@@ -1020,7 +1018,7 @@ public class FormBuilderUtils implements VerticalStepperForm{
         validationRuleBuilderMap.put(validationRuleyName, validationRuleFactory);
     }
     public static abstract class ValidationRuleFactory {
-        public abstract FormValidationUtils.AbstractValidatorRule getValidationRule(Context context, FormValidationUtils.Validator validator, List<Class> typeList, List<Object> valueList);
+        public abstract FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList);
     }
 
 
@@ -1120,8 +1118,8 @@ public class FormBuilderUtils implements VerticalStepperForm{
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, final List<Object> data) {
                 View editTextLayout = layoutInflater.inflate(R.layout.base_form_edittext_label, parentView, false);
                 EditText editText = editTextLayout.findViewById(getViewIdForValue());
-                editText.setText(DateStringUtils.getDateTimeInString((String) data.get(1), Calendar.getInstance().getTime(), (Locale) data.get(2)));
-                ViewUtils.enableDatePicker(editText, (String) data.get(1), (Locale) data.get(2),
+                editText.setText(DateStringUtil.getDateTimeInString((String) data.get(1), Calendar.getInstance().getTime(), (Locale) data.get(2)));
+                ViewUtil.enableDatePicker(editText, (String) data.get(1), (Locale) data.get(2),
                         ((AppCompatActivity) activity).getSupportFragmentManager(),(String)data.get(0),true, null, false);
 
                 return editTextLayout;
@@ -1456,14 +1454,14 @@ public class FormBuilderUtils implements VerticalStepperForm{
         registerNewCustomMethodFactory("spinner", "setData", new CustomMethodFactory() {
             @Override
             public Object runMethod(Context context, View view, List<Object> arguments) {
-                FormCommonUtils.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
+                FormCommonUtil.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
                 return null;
             }
         });
         registerNewCustomMethodFactory("spinner2", "setData", new CustomMethodFactory() {
             @Override
             public Object runMethod(Context context, View view, List<Object> arguments) {
-                FormCommonUtils.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
+                FormCommonUtil.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
                 return null;
             }
         });
@@ -1480,34 +1478,34 @@ public class FormBuilderUtils implements VerticalStepperForm{
         //validationRuleFactory
         registerNewValidationRuleFactory("fixcount", new ValidationRuleFactory() {
             @Override
-            public FormValidationUtils.AbstractValidatorRule getValidationRule(Context context, FormValidationUtils.Validator validator, List<Class> typeList, List<Object> valueList) {
-                return new FormValidationUtils.CountValidatorRule(context, (int) valueList.get(0));
+            public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
+                return new FormValidationUtil.CountValidatorRule((int) valueList.get(0));
             }
         });
 
         registerNewValidationRuleFactory("notempty", new ValidationRuleFactory() {
             @Override
-            public FormValidationUtils.AbstractValidatorRule getValidationRule(Context context, FormValidationUtils.Validator validator, List<Class> typeList, List<Object> valueList) {
-                return new FormValidationUtils.NotEmptyValidatorRule(context);
+            public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
+                return new FormValidationUtil.NotEmptyValidatorRule();
             }
         });
 
         registerNewValidationRuleFactory("email", new ValidationRuleFactory() {
             @Override
-            public FormValidationUtils.AbstractValidatorRule getValidationRule(Context context, FormValidationUtils.Validator validator, List<Class> typeList, List<Object> valueList) {
-                return new FormValidationUtils.EmailValidatorRule(context);
+            public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
+                return new FormValidationUtil.EmailValidatorRule();
             }
         });
         registerNewValidationRuleFactory("url", new ValidationRuleFactory() {
             @Override
-            public FormValidationUtils.AbstractValidatorRule getValidationRule(Context context, FormValidationUtils.Validator validator, List<Class> typeList, List<Object> valueList) {
-                return new FormValidationUtils.URLValidatorRule(context);
+            public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
+                return new FormValidationUtil.URLValidatorRule();
             }
         });
         registerNewValidationRuleFactory("date", new ValidationRuleFactory() {
             @Override
-            public FormValidationUtils.AbstractValidatorRule getValidationRule(Context context, FormValidationUtils.Validator validator, List<Class> typeList, List<Object> valueList) {
-                return new FormValidationUtils.DateValidatorRule(context, (String)valueList.get(0), (Locale)valueList.get(1));
+            public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
+                return new FormValidationUtil.DateValidatorRule((String)valueList.get(0), (Locale)valueList.get(1));
             }
         });
     }

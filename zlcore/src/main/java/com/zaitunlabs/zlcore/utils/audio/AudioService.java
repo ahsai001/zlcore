@@ -20,8 +20,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-import com.zaitunlabs.zlcore.utils.CommonUtils;
-import com.zaitunlabs.zlcore.utils.DebugUtils;
+import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -75,13 +75,13 @@ public class AudioService extends Service {
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onConfigurationChanged");
 	}
 
 	@Override
 	public void onCreate() {
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onCreate");
 		super.onCreate();
 		if (mp == null) {
@@ -104,7 +104,7 @@ public class AudioService extends Service {
 
 	@Override
 	public void onDestroy() {
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onDestroy");
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -128,7 +128,7 @@ public class AudioService extends Service {
 
 	@Override
 	public void onLowMemory() {
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onLowMemory");
 		// TODO Auto-generated method stub
 		super.onLowMemory();
@@ -136,7 +136,7 @@ public class AudioService extends Service {
 
 	@Override
 	public void onRebind(Intent intent) {
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onRebind");
 		// TODO Auto-generated method stub
 		super.onRebind(intent);
@@ -144,7 +144,7 @@ public class AudioService extends Service {
 
 	@Override
 	public void onStart(Intent intent, int startId) {
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onStart");
 		// TODO Auto-generated method stub
 		super.onStart(intent, startId);
@@ -152,15 +152,15 @@ public class AudioService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		int action = CommonUtils.getIntIntent(intent, STRING_ACTION,
+		int action = CommonUtil.getIntIntent(intent, STRING_ACTION,
 				ACTION_NONE);
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onStartCommand");
 		switch (action) {
 		case ACTION_START:
 			isPlaying = true;
-			sources = CommonUtils.getArrayStringIntent(intent, STRING_SOURCES, null);
-			int position = CommonUtils.getIntIntent(intent, STRING_POSITION, 0);
+			sources = CommonUtil.getArrayStringIntent(intent, STRING_SOURCES, null);
+			int position = CommonUtil.getIntIntent(intent, STRING_POSITION, 0);
 			currentposplay = position;
 			playSong(sources[currentposplay]);
 			last_action = ACTION_START;
@@ -204,14 +204,14 @@ public class AudioService extends Service {
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		DebugUtils.logD("Service", this.getClass().getSimpleName()
+		DebugUtil.logD("Service", this.getClass().getSimpleName()
 				+ ":onUnbind");
 		return super.onUnbind(intent);
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		DebugUtils.logD("Service", this.getClass().getSimpleName() + ":onBind");
+		DebugUtil.logD("Service", this.getClass().getSimpleName() + ":onBind");
 		return mMessenger.getBinder();
 	}
 
@@ -260,9 +260,9 @@ public class AudioService extends Service {
 
 	private void showNotification() {
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		CharSequence text = getText(CommonUtils.getIDResource(this, "string",
+		CharSequence text = getText(CommonUtil.getIDResource(this, "string",
 				"audioplaying"));
-		Notification notification = new Notification(CommonUtils.getIDResource(
+		Notification notification = new Notification(CommonUtil.getIDResource(
 				this, "drawable", "icon"), text, System.currentTimeMillis());
 		PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0,
 				new Intent(this, StopPlayerReceiver.class), 0);
@@ -271,7 +271,7 @@ public class AudioService extends Service {
 		//notification.setLatestEventInfo(this, title, text, contentIntent);
 		notification.flags = Notification.FLAG_ONGOING_EVENT;
 		mNotificationManager.notify(
-				CommonUtils.getIDResource(this, "string", "audioplaying"),
+				CommonUtil.getIDResource(this, "string", "audioplaying"),
 				notification);
 	}
 
@@ -363,7 +363,7 @@ public class AudioService extends Service {
 		in.putExtra(AudioService.STRING_POSITION, 0);
 		in.putExtra(AudioService.STRING_SOURCES, sources);
 		ctx.startService(in);
-		DebugUtils.logD("AudioService", ctx.getClass().getSimpleName()
+		DebugUtil.logD("AudioService", ctx.getClass().getSimpleName()
 				+ ":startAudioSound");
 	}
 
@@ -372,7 +372,7 @@ public class AudioService extends Service {
 			Intent in = new Intent(ctx, AudioService.class);
 			in.putExtra(AudioService.STRING_ACTION, AudioService.ACTION_PAUSE);
 			ctx.startService(in);
-			DebugUtils.logD("AudioService", ctx.getClass().getSimpleName()
+			DebugUtil.logD("AudioService", ctx.getClass().getSimpleName()
 					+ ":pauseAudioSound");
 		}
 	}
@@ -382,7 +382,7 @@ public class AudioService extends Service {
 			Intent in = new Intent(ctx, AudioService.class);
 			in.putExtra(AudioService.STRING_ACTION, AudioService.ACTION_RESUME);
 			ctx.startService(in);
-			DebugUtils.logD("AudioService", ctx.getClass().getSimpleName()
+			DebugUtil.logD("AudioService", ctx.getClass().getSimpleName()
 					+ ":resumeAudioSound");
 		}
 	}
@@ -392,7 +392,7 @@ public class AudioService extends Service {
 		if (AudioService.isRunning()) {
 			Intent in = new Intent(ctx, AudioService.class);
 			ctx.stopService(in);
-			DebugUtils.logD("AudioService", ctx.getClass().getSimpleName()
+			DebugUtil.logD("AudioService", ctx.getClass().getSimpleName()
 					+ ":stopAudioSound stopService");
 		}
 	}
