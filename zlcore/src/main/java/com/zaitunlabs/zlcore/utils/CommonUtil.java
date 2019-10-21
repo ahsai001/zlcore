@@ -1973,6 +1973,21 @@ public class CommonUtil {
 		return popup;
 	}
 
+	public static PopupMenu showPopupMenu(Context context,
+										  List<String> listOfMenu,
+										  View anchorView,
+										  PopupMenu.OnDismissListener dismissListener,
+										  PopupMenu.OnMenuItemClickListener menuItemClickListener){
+		PopupMenu popup = new PopupMenu(context, anchorView);
+		for (String item : listOfMenu) {
+			popup.getMenu().add(item);
+		}
+		popup.setOnDismissListener(dismissListener);
+		popup.setOnMenuItemClickListener(menuItemClickListener);
+		popup.show();
+		return popup;
+	}
+
 	public static void openPlayStore(Context context, String packageFullName) {
 		try {
 			context.startActivity(new Intent(Intent.ACTION_VIEW,

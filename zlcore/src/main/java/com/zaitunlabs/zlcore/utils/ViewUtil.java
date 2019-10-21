@@ -17,13 +17,17 @@ import android.os.Build;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.KeyListener;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +41,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -558,6 +563,10 @@ public class ViewUtil {
             defaultDate = DateStringUtil.getDateFromString(dateFormat,dateStringFromEditText, locale==null?Locale.getDefault():locale);
         }
 
+        if (isHideKeyboardForThis) {
+            CommonUtil.hideKeyboard(editText.getContext(), editText);
+        }
+
         CommonUtil.showDatePicker(null, fragmentManager, tag, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -567,10 +576,6 @@ public class ViewUtil {
                 editText.setText(sfd.format(calendar.getTime()));
                 editText.setError(null);
                 editText.setTag(false);
-
-                if (isHideKeyboardForThis) {
-                    CommonUtil.hideKeyboard(editText.getContext(), editText);
-                }
 
                 if (nextEditText != null) {
                     nextEditText.requestFocus();
@@ -621,7 +626,147 @@ public class ViewUtil {
         });
 
         editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setKeyListener(new KeyListener() {
+            @Override
+            public int getInputType() {
+                return InputType.TYPE_NULL;
+            }
+
+            @Override
+            public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyOther(View view, Editable text, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public void clearMetaKeyState(View view, Editable content, int states) {
+
+            }
+        });
         editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.setEnabled(true);
+    }
+
+
+    public static void enablePopupMenu(@NonNull final EditText editText, final List<String> listOfMenu, final boolean isHideKeyboardThis, final EditText nextEditText, final boolean isShowKeyboardForNext){
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int inType = editText.getInputType(); // backup the input type
+                editText.setInputType(InputType.TYPE_NULL); // disable soft input
+                editText.onTouchEvent(event); // call native handler
+                editText.setInputType(inType); // restore input type
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    if(editText.hasFocus()){
+                        if(!((Boolean) v.getTag())) {
+                            if(isHideKeyboardThis){
+                                CommonUtil.hideKeyboard(editText.getContext(),editText);
+                            }
+                            CommonUtil.showPopupMenu(editText.getContext(), listOfMenu, editText, new PopupMenu.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss(PopupMenu menu) {
+                                            editText.setTag(false);
+                                        }
+                                    },
+                                    new PopupMenu.OnMenuItemClickListener() {
+                                        @Override
+                                        public boolean onMenuItemClick(MenuItem item) {
+                                            editText.setText(item.getTitle());
+                                            editText.setTag(false);
+
+                                            if (nextEditText != null) {
+                                                nextEditText.requestFocus();
+                                                if (isShowKeyboardForNext) {
+                                                    CommonUtil.showKeyboard(nextEditText.getContext());
+                                                }
+                                            }
+                                            return false;
+                                        }
+                                    });
+                        }
+                    }
+                }
+
+                return isHideKeyboardThis;
+            }
+        });
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    v.setTag(true);
+                    if(isHideKeyboardThis){
+                        CommonUtil.hideKeyboard(editText.getContext(),editText);
+                    }
+                    CommonUtil.showPopupMenu(editText.getContext(), listOfMenu, editText, new PopupMenu.OnDismissListener() {
+                                @Override
+                                public void onDismiss(PopupMenu menu) {
+                                    editText.setTag(false);
+                                }
+                            },
+                            new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    editText.setText(item.getTitle());
+                                    editText.setTag(false);
+
+                                    if (nextEditText != null) {
+                                        nextEditText.requestFocus();
+                                        if (isShowKeyboardForNext) {
+                                            CommonUtil.showKeyboard(nextEditText.getContext());
+                                        }
+                                    }
+                                    return false;
+                                }
+                            });
+
+                } else {
+                    v.setTag(false);
+                }
+            }
+        });
+
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setKeyListener(new KeyListener() {
+            @Override
+            public int getInputType() {
+                return InputType.TYPE_NULL;
+            }
+
+            @Override
+            public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyOther(View view, Editable text, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public void clearMetaKeyState(View view, Editable content, int states) {
+
+            }
+        });
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.setEnabled(true);
     }
 
 
@@ -636,6 +781,11 @@ public class ViewUtil {
                 if(event.getAction() == MotionEvent.ACTION_UP){
                     if(editText.hasFocus()){
                         if(!((Boolean) v.getTag())) {
+                            if(isHideKeyboardThis){
+                                CommonUtil.hideKeyboard(editText.getContext(),editText);
+                            }
+
+
                             CommonUtil.showPopupMenu(editText.getContext(), menuResID, editText, new PopupMenu.OnDismissListener() {
                                         @Override
                                         public void onDismiss(PopupMenu menu) {
@@ -657,9 +807,7 @@ public class ViewUtil {
                                             return false;
                                         }
                                     });
-                            if(isHideKeyboardThis){
-                                CommonUtil.hideKeyboard(editText.getContext(),editText);
-                            }
+
                         }
                     }
                 }
@@ -673,6 +821,9 @@ public class ViewUtil {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     v.setTag(true);
+                    if(isHideKeyboardThis){
+                        CommonUtil.hideKeyboard(editText.getContext(),editText);
+                    }
                     CommonUtil.showPopupMenu(editText.getContext(), menuResID, editText, new PopupMenu.OnDismissListener() {
                                 @Override
                                 public void onDismiss(PopupMenu menu) {
@@ -694,9 +845,7 @@ public class ViewUtil {
                                     return false;
                                 }
                             });
-                    if(isHideKeyboardThis){
-                        CommonUtil.hideKeyboard(editText.getContext(),editText);
-                    }
+
                 } else {
                     v.setTag(false);
                 }
@@ -704,7 +853,35 @@ public class ViewUtil {
         });
 
         editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setKeyListener(new KeyListener() {
+            @Override
+            public int getInputType() {
+                return InputType.TYPE_NULL;
+            }
+
+            @Override
+            public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyOther(View view, Editable text, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public void clearMetaKeyState(View view, Editable content, int states) {
+
+            }
+        });
         editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.setEnabled(true);
     }
 
 }
