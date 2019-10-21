@@ -68,15 +68,6 @@ public class FormValidationUtil {
 
     public void init(){
         for (Validator validator : mValidatorList){
-            int validationType = validator.getValidationType();
-
-            if(validationType == IdleType){
-                enableTypingValidation(validator);
-            } else if(validationType == UnfocusType){
-                enableUnfocusValidation(validator);
-            }
-
-
             if(viewEnablerUtil != null) {
                 validator.addOnValidationCallback(new OnValidationCallback() {
                     @Override
@@ -97,8 +88,15 @@ public class FormValidationUtil {
                             viewEnablerUtil.unDone(String.valueOf(view.getId()));
                         }
                     }
-                });
-                validator.setAlwaysShowErrorOnView(true);
+                }).setAlwaysShowErrorOnView(true).setValidationType(FormValidationUtil.IdleType);
+            }
+
+            int validationType = validator.getValidationType();
+
+            if(validationType == IdleType){
+                enableTypeIdleValidation(validator);
+            } else if(validationType == UnfocusType){
+                enableUnfocusValidation(validator);
             }
         }
     }
@@ -112,7 +110,7 @@ public class FormValidationUtil {
         });
     }
 
-    private void enableTypingValidation(final Validator validator){
+    private void enableTypeIdleValidation(final Validator validator){
         if(validator.mView instanceof EditText) {
             CommonUtil.performTaskWhenTypeIdle((EditText) validator.mView, new Runnable() {
                 @Override
@@ -246,8 +244,9 @@ public class FormValidationUtil {
             return this;
         }
 
-        public void setAlwaysShowErrorOnView(boolean alwaysShowErrorOnView) {
+        public Validator setAlwaysShowErrorOnView(boolean alwaysShowErrorOnView) {
             this.alwaysShowErrorOnView = alwaysShowErrorOnView;
+            return this;
         }
 
         public int getValidationType() {
