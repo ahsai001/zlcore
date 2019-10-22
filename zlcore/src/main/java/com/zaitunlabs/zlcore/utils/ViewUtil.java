@@ -567,7 +567,7 @@ public class ViewUtil {
             CommonUtil.hideKeyboard(editText.getContext(), editText);
         }
 
-        CommonUtil.showDatePicker(null, fragmentManager, tag, new DatePickerDialog.OnDateSetListener() {
+        CommonUtil.showDatePicker(fragmentManager, tag, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 SimpleDateFormat sfd = new SimpleDateFormat(dateFormat, locale == null ? Locale.getDefault() : locale);
@@ -584,9 +584,9 @@ public class ViewUtil {
                     }
                 }
             }
-        }, new DialogInterface.OnDismissListener() {
+        }, new DialogInterface.OnCancelListener() {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onCancel(DialogInterface dialog) {
                 editText.setTag(false);
             }
         }, defaultDate);

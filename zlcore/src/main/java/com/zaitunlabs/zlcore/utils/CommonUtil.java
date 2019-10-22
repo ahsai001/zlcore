@@ -1999,21 +1999,31 @@ public class CommonUtil {
 	}
 
 
-    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+	public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 		private static final String ARG_DEFAULT_DATE = "arg_default_date";
 		private DatePickerDialog.OnDateSetListener onDateSetListener;
+		private DialogInterface.OnCancelListener onCancelListener;
 
 		private void setOnDateSetListener(DatePickerDialog.OnDateSetListener onDateSetListener){
 			this.onDateSetListener = onDateSetListener;
 		}
 
-		public static DatePickerFragment newInstance(DatePickerDialog.OnDateSetListener onDateSetListener, Date defaultDate){
+		public void setOnCancelListener(DialogInterface.OnCancelListener onCancelListener) {
+			this.onCancelListener = onCancelListener;
+		}
+
+		public static DatePickerFragment newInstance(DatePickerDialog.OnDateSetListener onDateSetListener, DialogInterface.OnCancelListener onCancelListener, Date defaultDate){
 			DatePickerFragment datePickerFragment = new DatePickerFragment();
-			datePickerFragment.setOnDateSetListener(onDateSetListener);
+			datePickerFragment.updateArgumentAndListener(onDateSetListener, onCancelListener, defaultDate);
+			return datePickerFragment;
+		}
+
+		public void updateArgumentAndListener(DatePickerDialog.OnDateSetListener onDateSetListener, DialogInterface.OnCancelListener onCancelListener, Date defaultDate){
+			setOnDateSetListener(onDateSetListener);
+			setOnCancelListener(onCancelListener);
 			Bundle arguments = new Bundle();
 			arguments.putSerializable(ARG_DEFAULT_DATE, defaultDate);
-			datePickerFragment.setArguments(arguments);
-			return datePickerFragment;
+			setArguments(arguments);
 		}
 
 		@NonNull
@@ -2028,7 +2038,19 @@ public class CommonUtil {
 			int month = c.get(Calendar.MONTH);
 			int day = c.get(Calendar.DAY_OF_MONTH);
 
-			return new DatePickerDialog(getActivity(), this, year, month, day);
+			DatePickerDialog datePickerDialog =  new DatePickerDialog(getActivity(), this, year, month, day);
+			datePickerDialog.setOnCancelListener(this);
+			return datePickerDialog;
+		}
+
+		@Override
+		public void onCancel(@NonNull DialogInterface dialog) {
+			super.onCancel(dialog);
+			if(onCancelListener != null){
+				onCancelListener.onCancel(dialog);
+			}
+
+			dismiss();
 		}
 
 		@Override
@@ -2036,24 +2058,36 @@ public class CommonUtil {
 			if(onDateSetListener != null){
 				onDateSetListener.onDateSet(datePicker, i, i1, i2);
 			}
+
+			dismiss();
 		}
 	}
 
 	public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 		private static final String ARG_DEFAULT_TIME = "arg_default_time";
 		private TimePickerDialog.OnTimeSetListener onTimeSetListener;
+		private DialogInterface.OnCancelListener onCancelListener;
 
 		public void setOnTimeSetListener(TimePickerDialog.OnTimeSetListener onTimeSetListener) {
 			this.onTimeSetListener = onTimeSetListener;
 		}
 
-		public static TimePickerFragment newInstance(TimePickerDialog.OnTimeSetListener onTimeSetListener, Date defaultTime){
+		public void setOnCancelListener(DialogInterface.OnCancelListener onCancelListener) {
+			this.onCancelListener = onCancelListener;
+		}
+
+		public static TimePickerFragment newInstance(TimePickerDialog.OnTimeSetListener onTimeSetListener, DialogInterface.OnCancelListener onCancelListener, Date defaultTime){
 			TimePickerFragment timePickerFragment = new TimePickerFragment();
-			timePickerFragment.setOnTimeSetListener(onTimeSetListener);
+			timePickerFragment.updateArgumentAndListener(onTimeSetListener, onCancelListener, defaultTime);
+			return timePickerFragment;
+		}
+
+		public void updateArgumentAndListener(TimePickerDialog.OnTimeSetListener onTimeSetListener, DialogInterface.OnCancelListener onCancelListener, Date defaultTime){
+			setOnTimeSetListener(onTimeSetListener);
+			setOnCancelListener(onCancelListener);
 			Bundle arguments = new Bundle();
 			arguments.putSerializable(ARG_DEFAULT_TIME, defaultTime);
-			timePickerFragment.setArguments(arguments);
-			return timePickerFragment;
+			setArguments(arguments);
 		}
 
 		@Override
@@ -2066,8 +2100,21 @@ public class CommonUtil {
 			int hour = c.get(Calendar.HOUR_OF_DAY);
 			int minute = c.get(Calendar.MINUTE);
 
-			return new TimePickerDialog(getActivity(), this, hour, minute,
+			TimePickerDialog timePickerDialog =  new TimePickerDialog(getActivity(), this, hour, minute,
 					DateFormat.is24HourFormat(getActivity()));
+
+			timePickerDialog.setOnCancelListener(this);
+			return timePickerDialog;
+		}
+
+		@Override
+		public void onCancel(@NonNull DialogInterface dialog) {
+			super.onCancel(dialog);
+			if(onCancelListener != null){
+				onCancelListener.onCancel(dialog);
+			}
+
+			dismiss();
 		}
 
 		@Override
@@ -2075,6 +2122,8 @@ public class CommonUtil {
 			if(onTimeSetListener != null) {
 				onTimeSetListener.onTimeSet(timePicker, i, i1);
 			}
+
+			dismiss();
 		}
 	}
 
@@ -2110,6 +2159,11 @@ public class CommonUtil {
 
 		public static AlertDialogFrament newInstance(String listenerFragmentTag, int requestCode, Drawable icon, String title, String msg, String strOption1, final boolean dismissByOption1, String strOption2, final boolean dismissByOption2, String strOption3, final boolean dismissByOption3){
 			AlertDialogFrament alertDialogFrament = new AlertDialogFrament();
+			alertDialogFrament.updateArgumentAndListener(listenerFragmentTag, requestCode, icon, title, msg, strOption1, dismissByOption1, strOption2, dismissByOption2, strOption3, dismissByOption3);
+			return alertDialogFrament;
+		}
+
+		public void updateArgumentAndListener(String listenerFragmentTag, int requestCode, Drawable icon, String title, String msg, String strOption1, final boolean dismissByOption1, String strOption2, final boolean dismissByOption2, String strOption3, final boolean dismissByOption3){
 			Bundle arguments = new Bundle();
 			arguments.putString(ARG_TITLE, title);
 			arguments.putString(ARG_MESSAGE, msg);
@@ -2121,8 +2175,7 @@ public class CommonUtil {
 			arguments.putBoolean(ARG_DISMISS_OPTION3, dismissByOption3);
 			arguments.putString(ARG_LISTENER_FRAGMENT_TAG, listenerFragmentTag);
 			arguments.putInt(ARG_REQUEST_CODE, requestCode);
-			alertDialogFrament.setArguments(arguments);
-			return alertDialogFrament;
+			setArguments(arguments);
 		}
 
 		@Override
@@ -2183,7 +2236,7 @@ public class CommonUtil {
 						@Override
 						public void onClick(View view) {
 							listener.onClick(AlertDialogFrament.this.getActivity(), AlertDialogFrament.this, OPTION2, requestCode);
-							if(dismissByOption2) alertDialog.dismiss();
+							if(dismissByOption2) dismiss();
 						}
 					});
 				}
@@ -2193,7 +2246,7 @@ public class CommonUtil {
 						@Override
 						public void onClick(View view) {
 							listener.onClick(AlertDialogFrament.this.getActivity(), AlertDialogFrament.this, OPTION1, requestCode);
-							if(dismissByOption1) alertDialog.dismiss();
+							if(dismissByOption1) dismiss();
 						}
 					});
 				}
@@ -2203,7 +2256,7 @@ public class CommonUtil {
 						@Override
 						public void onClick(View view) {
 							listener.onClick(AlertDialogFrament.this.getActivity(), AlertDialogFrament.this, OPTION3, requestCode);
-							if(dismissByOption3) alertDialog.dismiss();
+							if(dismissByOption3) dismiss();
 						}
 					});
 
@@ -2217,69 +2270,59 @@ public class CommonUtil {
 		}
 	}
 
-    public static DatePickerFragment showDatePicker(Bundle savedInstanceState, FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener onDateSetListener, DialogInterface.OnDismissListener onDismissListener, Date defautlDate) {
-        return showDatePicker(savedInstanceState, false, fragmentManager, tag, onDateSetListener, onDismissListener, defautlDate);
-    }
+	public static DatePickerFragment showDatePicker(FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener onDateSetListener, DialogInterface.OnCancelListener onCancelListener, Date defautlDate){
+		DatePickerFragment datePickerFragment = null;
 
-    public static DatePickerFragment showDatePicker(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, FragmentManager fragmentManager, String tag, DatePickerDialog.OnDateSetListener onDateSetListener, DialogInterface.OnDismissListener onDismissListener, Date defautlDate){
-        DatePickerFragment datePickerFragment = null;
-        if(savedInstanceState == null || ignoreStateOrAlwaysCreateNew) {
-            datePickerFragment = DatePickerFragment.newInstance(onDateSetListener, defautlDate);
-            datePickerFragment.showNow(fragmentManager, tag);
-            datePickerFragment.getDialog().setOnDismissListener(onDismissListener);
-        } else {
-            datePickerFragment = (DatePickerFragment) fragmentManager.findFragmentByTag(tag);
-            if(datePickerFragment == null){
-                return showDatePicker(null, true, fragmentManager, tag, onDateSetListener, onDismissListener, defautlDate);
-            } else {
-                datePickerFragment.setOnDateSetListener(onDateSetListener);
-                datePickerFragment.showNow(fragmentManager, tag);
-                datePickerFragment.getDialog().setOnDismissListener(onDismissListener);
-            }
-        }
-        return datePickerFragment;
-    }
+		datePickerFragment = (DatePickerFragment) fragmentManager.findFragmentByTag(tag);
+		if(datePickerFragment == null){
+			datePickerFragment = DatePickerFragment.newInstance(onDateSetListener, onCancelListener, defautlDate);
+		} else {
+			datePickerFragment.updateArgumentAndListener(onDateSetListener, onCancelListener, defautlDate);
+		}
 
-    public static TimePickerFragment showTimePicker(Bundle savedInstanceState, FragmentManager fragmentManager, String tag, TimePickerDialog.OnTimeSetListener onTimeSetListener, DialogInterface.OnDismissListener onDismissListener, Date defaultTime) {
-        return showTimePicker(savedInstanceState, false, fragmentManager, tag, onTimeSetListener, onDismissListener, defaultTime);
-    }
+		if(datePickerFragment.isAdded() && datePickerFragment.isHidden()) {
+			fragmentManager.beginTransaction().show(datePickerFragment).commit();
+		} else if(!datePickerFragment.isAdded()) {
+			datePickerFragment.show(fragmentManager, tag);
+		}
+		return datePickerFragment;
+	}
 
-    public static TimePickerFragment showTimePicker(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, FragmentManager fragmentManager, String tag, TimePickerDialog.OnTimeSetListener onTimeSetListener, DialogInterface.OnDismissListener onDismissListener, Date defaultTime){
-        TimePickerFragment timePickerFragment = null;
-        if(savedInstanceState == null || ignoreStateOrAlwaysCreateNew) {
-            timePickerFragment = TimePickerFragment.newInstance(onTimeSetListener, defaultTime);
-            timePickerFragment.showNow(fragmentManager, tag);
-            timePickerFragment.getDialog().setOnDismissListener(onDismissListener);
-        } else {
-            timePickerFragment = (TimePickerFragment) fragmentManager.findFragmentByTag(tag);
-            if(timePickerFragment == null){
-                return showTimePicker(null, true, fragmentManager, tag, onTimeSetListener, onDismissListener, defaultTime);
-            } else {
-                timePickerFragment.setOnTimeSetListener(onTimeSetListener);
-                timePickerFragment.showNow(fragmentManager, tag);
-                timePickerFragment.getDialog().setOnDismissListener(onDismissListener);
-            }
-        }
-        return timePickerFragment;
-    }
+	public static TimePickerFragment showTimePicker(FragmentManager fragmentManager, String tag, TimePickerDialog.OnTimeSetListener onTimeSetListener, DialogInterface.OnCancelListener onCancelListener, Date defaultTime){
+		TimePickerFragment timePickerFragment = null;
 
-	public static AlertDialogFrament showDialogFragment1Option(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
+		timePickerFragment = (TimePickerFragment) fragmentManager.findFragmentByTag(tag);
+		if(timePickerFragment == null){
+			timePickerFragment = TimePickerFragment.newInstance(onTimeSetListener, onCancelListener, defaultTime);
+		} else {
+			timePickerFragment.updateArgumentAndListener(onTimeSetListener, onCancelListener, defaultTime);
+		}
+
+		if(timePickerFragment.isAdded() && timePickerFragment.isHidden()) {
+			fragmentManager.beginTransaction().show(timePickerFragment).commit();
+		} else if(!timePickerFragment.isAdded()) {
+			timePickerFragment.show(fragmentManager, tag);
+		}
+		return timePickerFragment;
+	}
+
+	public static AlertDialogFrament showDialogFragment1Option(Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
 															   String title, String msg, String strOption1) {
-		return showDialogFragment3Option(savedInstanceState,ignoreStateOrAlwaysCreateNew,activityOrFragment,tag,listenerFragmentTag,requestCode, null, title,msg,strOption1,null,null);
+		return showDialogFragment3Option(activityOrFragment,tag,listenerFragmentTag,requestCode, null, title,msg,strOption1,null,null);
 	}
 
-	public static AlertDialogFrament showDialogFragment2Option(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
+	public static AlertDialogFrament showDialogFragment2Option(Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
 															   String title, String msg, String strOption1, String strOption2) {
-		return showDialogFragment3Option(savedInstanceState,ignoreStateOrAlwaysCreateNew,activityOrFragment,tag,listenerFragmentTag,requestCode,null, title,msg,strOption1,strOption2,null);
+		return showDialogFragment3Option(activityOrFragment,tag,listenerFragmentTag,requestCode,null, title,msg,strOption1,strOption2,null);
 	}
 
 
-	public static AlertDialogFrament showDialogFragment3Option(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
+	public static AlertDialogFrament showDialogFragment3Option(Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
 															   Drawable icon,String title, String msg, String strOption1, String strOption2, String strOption3) {
-		return showDialogFragment3OptionWithIcon(savedInstanceState,ignoreStateOrAlwaysCreateNew,activityOrFragment,tag,listenerFragmentTag,requestCode, icon,title,msg,strOption1,true,strOption2,true,strOption3,true);
+		return showDialogFragment3OptionWithIcon(activityOrFragment,tag,listenerFragmentTag,requestCode, icon,title,msg,strOption1,true,strOption2,true,strOption3,true);
 	}
 
-	public static AlertDialogFrament  showDialogFragment3OptionWithIcon(Bundle savedInstanceState, boolean ignoreStateOrAlwaysCreateNew, Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
+	public static AlertDialogFrament  showDialogFragment3OptionWithIcon(Object activityOrFragment, String tag, String listenerFragmentTag, int requestCode,
 													 Drawable icon, String title, String msg, String strOption1, final boolean dismissByOption1, String strOption2, final boolean dismissByOption2, String strOption3, final boolean dismissByOption3){
 		AlertDialogFrament alertDialogFrament = null;
 		FragmentManager fragmentManager = null;
@@ -2288,14 +2331,18 @@ public class CommonUtil {
 		} else {
 			fragmentManager = ((Fragment)activityOrFragment).getFragmentManager();
 		}
-		if(savedInstanceState == null || ignoreStateOrAlwaysCreateNew) {
-			alertDialogFrament = AlertDialogFrament.newInstance(listenerFragmentTag,requestCode, icon, title, msg, strOption1, dismissByOption1, strOption2, dismissByOption2, strOption3, dismissByOption3);
-			alertDialogFrament.show(fragmentManager, tag);
+
+		alertDialogFrament = (AlertDialogFrament) fragmentManager.findFragmentByTag(tag);
+		if(alertDialogFrament == null){
+			alertDialogFrament = AlertDialogFrament.newInstance(listenerFragmentTag, requestCode, icon, title, msg, strOption1, dismissByOption1, strOption2, dismissByOption2, strOption3, dismissByOption3);
 		} else {
-			alertDialogFrament = (AlertDialogFrament) fragmentManager.findFragmentByTag(tag);
-			if(alertDialogFrament == null){
-				return showDialogFragment3OptionWithIcon(null, true, activityOrFragment, tag, listenerFragmentTag,requestCode, icon, title, msg, strOption1, dismissByOption1, strOption2, dismissByOption2, strOption3, dismissByOption3);
-			}
+			alertDialogFrament.updateArgumentAndListener(listenerFragmentTag, requestCode, icon, title, msg, strOption1, dismissByOption1, strOption2, dismissByOption2, strOption3, dismissByOption3);
+		}
+
+		if(alertDialogFrament.isAdded() && alertDialogFrament.isHidden()) {
+			fragmentManager.beginTransaction().show(alertDialogFrament).commit();
+		} else if(!alertDialogFrament.isAdded()) {
+			alertDialogFrament.show(fragmentManager, tag);
 		}
 		return alertDialogFrament;
 	}
