@@ -658,7 +658,7 @@ public class ViewUtil {
     }
 
 
-    public static void enablePopupMenu(@NonNull final EditText editText, final List<String> listOfMenu, final boolean isHideKeyboardThis, final EditText nextEditText, final boolean isShowKeyboardForNext){
+    public static void enablePopupMenu(@NonNull final EditText editText, final List<String> listOfMenu, final boolean isHideKeyboardThis, final PopupMenu.OnMenuItemClickListener popupMenuListener,final EditText nextEditText, final boolean isShowKeyboardForNext){
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -683,6 +683,10 @@ public class ViewUtil {
                                         public boolean onMenuItemClick(MenuItem item) {
                                             editText.setText(item.getTitle());
                                             editText.setTag(false);
+
+                                            if(popupMenuListener != null){
+                                                popupMenuListener.onMenuItemClick(item);
+                                            }
 
                                             if (nextEditText != null) {
                                                 nextEditText.requestFocus();
@@ -720,6 +724,10 @@ public class ViewUtil {
                                 public boolean onMenuItemClick(MenuItem item) {
                                     editText.setText(item.getTitle());
                                     editText.setTag(false);
+
+                                    if(popupMenuListener != null){
+                                        popupMenuListener.onMenuItemClick(item);
+                                    }
 
                                     if (nextEditText != null) {
                                         nextEditText.requestFocus();
