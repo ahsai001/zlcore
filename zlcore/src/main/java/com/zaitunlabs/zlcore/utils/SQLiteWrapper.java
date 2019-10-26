@@ -22,6 +22,10 @@ import java.util.Map;
 import java.util.Set;
 
 
+/**
+ * Created by ahmad s on 2019-06-30.
+ */
+
 public final class SQLiteWrapper extends SQLiteOpenHelper {
     private static final String ID = "_id";
     private static final String CREATED_AT = "_created_at";
