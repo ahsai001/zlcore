@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,9 @@ import java.util.Set;
 
 public final class SQLiteWrapper extends SQLiteOpenHelper {
     private static final String ID = "_id";
+    private static final String CREATED_AT = "_created_at";
+    private static final String UPDATED_AT = "_updated_at";
+    private static final String DELETED_AT = "_deleted_at";
     private static final String TAG = SQLiteWrapper.class.getName();
     private static final String SQLW_FOLDER = "SQLW/";
     private Map<String, Table> tableMap;
@@ -41,6 +45,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         sqLiteWrapperMap.remove(databaseName);
         sqLiteDatabaseMap.remove(databaseName);
     }
+
+
+
 
     public static abstract class Database {
 
@@ -139,15 +146,28 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("CREATE TABLE");
         stringBuilder.append(" ").append(table.getName()).append(" (");
-        stringBuilder.append(ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT");
+        stringBuilder.append(ID).append(" ").append(Field.INTEGER).append(" ").append("PRIMARY KEY")
+                .append(" ").append("AUTOINCREMENT");
 
         List<Field> fieldList = table.getFieldList();
         for (Field field : fieldList) {
             stringBuilder.append(",");
             stringBuilder.append(field.getName()).append(" ").append(field.getType());
+
+
+            //extra like default etc
             if (field.getTrueType() == boolean.class) {
                 stringBuilder.append(" DEFAULT 0");
             }
+        }
+
+        if(table.isRecordLogEnabled){
+            stringBuilder.append(",").append(CREATED_AT).append(" ").append(Field.INTEGER);
+            stringBuilder.append(",").append(UPDATED_AT).append(" ").append(Field.INTEGER);
+        }
+
+        if(table.isSoftDeleteEnabled){
+            stringBuilder.append(",").append(DELETED_AT).append(" ").append(Field.INTEGER);
         }
 
         stringBuilder.append(")");
@@ -265,6 +285,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                         contentValues.put(field.getName(), (long) dataList.get(i));
                     } else if (field.getTrueType() == boolean.class) {
                         contentValues.put(field.getName(), (boolean) dataList.get(i));
+                    } else if (field.getTrueType() == Date.class) {
+                        contentValues.put(field.getName(), ((Date) dataList.get(i)).getTime());
                     }
                     break;
                 case Field.REAL:
@@ -275,6 +297,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     }
                     break;
                 case Field.BLOB:
+                    //TODO:
                     //contentValues.put(field.getName(), (String) objectList.of(i));
                     break;
             }
@@ -283,13 +306,68 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         return contentValues;
     }
 
+
+    private List<Object> fetchRow(Cursor cursor, String tableName){
+        List<Object> dataList = new ArrayList<>();
+        List<Field> fieldList =  tableMap.get(tableName).getFieldList();
+        for (int i = 0; i < fieldList.size(); i++) {
+            Field field = fieldList.get(i);
+            switch (field.getType()) {
+                case Field.TEXT:
+                    dataList.add(cursor.getString(cursor.getColumnIndex(field.getName())));
+                    break;
+                case Field.INTEGER:
+                    if (field.getTrueType() == int.class) {
+                        dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())));
+                    } else if (field.getTrueType() == long.class) {
+                        dataList.add(cursor.getLong(cursor.getColumnIndex(field.getName())));
+                    } else if (field.getTrueType() == boolean.class) {
+                        dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())) == 1);
+                    } else if (field.getTrueType() == Date.class) {
+                        long dateLong = cursor.getLong(cursor.getColumnIndex(field.getName()));
+                        dataList.add(new Date(dateLong));
+                    }
+                    break;
+                case Field.REAL:
+                    if (field.getTrueType() == float.class) {
+                        dataList.add(cursor.getFloat(cursor.getColumnIndex(field.getName())));
+                    } else if (field.getTrueType() == double.class) {
+                        dataList.add(cursor.getDouble(cursor.getColumnIndex(field.getName())));
+                    }
+                    break;
+                case Field.BLOB:
+                    //TODO :
+                    break;
+            }
+
+        }
+        return dataList;
+    }
+
+
+    private <T extends TableClass> void fetchRecordLog(Table table, T tableClass, Cursor cursor) {
+        if(table.isRecordLogEnabled){
+            int createdAtColumnIndex = cursor.getColumnIndex(CREATED_AT);
+            if(!cursor.isNull(createdAtColumnIndex)) {
+                long createdAtLong = cursor.getLong(createdAtColumnIndex);
+                tableClass._created_at = new Date(createdAtLong);
+            }
+
+            int updatedAtColumnIndex = cursor.getColumnIndex(UPDATED_AT);
+            if(!cursor.isNull(updatedAtColumnIndex)) {
+                long updatedAtLong = cursor.getLong(updatedAtColumnIndex);
+                tableClass._updated_at = new Date(updatedAtLong);
+            }
+        }
+    }
+
     //create or insert
     private boolean save(TableClass tableClass) {
         long id = -1;
         try {
             SQLiteDatabase database = getWritableDatabase();
 
-            int version = database.getVersion();
+            //int version = database.getVersion();
 
             Table table = tableMap.get(tableClass.getTableName());
 
@@ -300,7 +378,12 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
             ContentValues contentValues = getContentValues(fieldList, dataList);
 
+            if(table.isRecordLogEnabled){
+                contentValues.put(CREATED_AT, System.currentTimeMillis());
+            }
+
             id = database.insert(tableClass.getTableName(), null, contentValues);
+
             close();
 
             if(id <= 0){
@@ -310,7 +393,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             return false;
         }
 
-        tableClass.id = id;
+        tableClass._id = id;
         return true;
     }
 
@@ -331,8 +414,13 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
             ContentValues contentValues = getContentValues(fieldList, dataList);
 
+            if(table.isRecordLogEnabled){
+                contentValues.put(UPDATED_AT, System.currentTimeMillis());
+            }
+
             affectedRows = database.update(tableClass.getTableName(), contentValues, ID+"=?",
-                    new String[]{Long.toString(tableClass.id)});
+                    new String[]{Long.toString(tableClass._id)});
+
             close();
 
             if(affectedRows <= 0){
@@ -347,12 +435,26 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
     //delete
     private boolean delete(TableClass tableClass) {
-        if(tableClass.id > 0) {
+        if(tableClass._id > 0) {
             try {
                 SQLiteDatabase database = getWritableDatabase();
-                int affectedRows = database.delete(tableClass.getTableName(), ID + "=?",
-                        new String[]{Long.toString(tableClass.id)});
+
+                Table table = tableMap.get(tableClass.getTableName());
+
+                int affectedRows;
+
+                if(table.isSoftDeleteEnabled){
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(DELETED_AT, System.currentTimeMillis());
+                    affectedRows = database.update(tableClass.getTableName(), contentValues, ID+"=?",
+                            new String[]{Long.toString(tableClass._id)});
+                } else {
+                    affectedRows = database.delete(tableClass.getTableName(), ID + "=?",
+                            new String[]{Long.toString(tableClass._id)});
+                }
+
                 close();
+
                 if(affectedRows <= 0){
                     return false;
                 }
@@ -366,39 +468,37 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
-    private List<Object> fetchRow(Cursor cursor, String tableName){
-        List<Object> dataList = new ArrayList<>();
-        List<Field> fieldList =  tableMap.get(tableName).getFieldList();
-        for (int i = 0; i < fieldList.size(); i++) {
-            Field field = fieldList.get(i);
-            switch (field.getType()) {
-                case Field.TEXT:
-                    dataList.add(cursor.getString(cursor.getColumnIndex(field.getName())));
-                    break;
-                case Field.INTEGER:
-                    if (field.getTrueType() == int.class) {
-                        dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())));
-                    } else if (field.getTrueType() == long.class) {
-                        dataList.add(cursor.getLong(cursor.getColumnIndex(field.getName())));
-                    } else if (field.getTrueType() == boolean.class) {
-                        dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())) == 1);
-                    }
-                    break;
-                case Field.REAL:
-                    if (field.getTrueType() == float.class) {
-                        dataList.add(cursor.getFloat(cursor.getColumnIndex(field.getName())));
-                    } else if (field.getTrueType() == double.class) {
-                        dataList.add(cursor.getDouble(cursor.getColumnIndex(field.getName())));
-                    }
-                    break;
-                case Field.BLOB:
-                    //
-                    break;
-            }
-
+    public <T extends TableClass> void delete(String tableName, Class<T> clazz,  String whereClause, String[] whereClauseArgs){
+        if(TextUtils.isEmpty(tableName)){
+            tableName = clazz.getSimpleName();
         }
-        return dataList;
+        try {
+            SQLiteDatabase database = getWritableDatabase();
+
+            Table table = tableMap.get(tableName);
+            if(table.isSoftDeleteEnabled){
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DELETED_AT, System.currentTimeMillis());
+                database.update(tableName, contentValues, whereClause, whereClauseArgs);
+            } else {
+                database.delete(tableName, whereClause, whereClauseArgs);
+            }
+            close();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
+
+
+    public <T extends TableClass> void deleteAll(String tableName, Class<T> clazz) {
+        if(TextUtils.isEmpty(tableName)){
+            tableName = clazz.getSimpleName();
+        }
+        delete(tableName, clazz, null, null);
+    }
+
+
+
 
     private RuntimeException getWarningWhenNoConstructorWithNoArgument(String className){
         return new RuntimeException(String.format(
@@ -411,17 +511,30 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 tableName = clazz.getSimpleName();
             }
             SQLiteDatabase database = getWritableDatabase();
+
+            Table table = tableMap.get(tableName);
+
             String sql = "SELECT * FROM "+tableName+" WHERE "+ID+"=?";
+
+            if(table.isSoftDeleteEnabled){
+                sql += " AND "+DELETED_AT+" IS NULL";
+            }
+
+
             Cursor cursor = database.rawQuery(sql, new String[]{Long.toString(id)});
             cursor.moveToFirst();
 
             List<Object> dataList = fetchRow(cursor, tableName);
 
             T tableClass = clazz.newInstance();
-            tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+            tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
             tableClass.setData(dataList);
 
+
+            fetchRecordLog(table, tableClass, cursor);
+
             cursor.close();
+
             close();
 
             return tableClass;
@@ -434,6 +547,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
+
+
     public <T extends TableClass> List<T> findAll(String tableName, Class<T> clazz) {
         try {
             if(TextUtils.isEmpty(tableName)){
@@ -441,8 +556,18 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             }
 
             SQLiteDatabase database = getWritableDatabase();
-            Cursor cursor = database.rawQuery("SELECT * FROM " + tableName, null);
+
+            Table table = tableMap.get(tableName);
+
+            String sql = "SELECT * FROM " + tableName;
+
+            if(table.isSoftDeleteEnabled){
+                sql += " WHERE "+DELETED_AT+" IS NULL";
+            }
+
+            Cursor cursor = database.rawQuery(sql, null);
             cursor.moveToFirst();
+
 
             List<T> resultList = new ArrayList<>();
 
@@ -450,8 +575,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
                 T tableClass = clazz.newInstance();
-                tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
+
+                fetchRecordLog(table, tableClass, cursor);
 
                 resultList.add(tableClass);
 
@@ -494,8 +621,18 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             }
 
             SQLiteDatabase database = getWritableDatabase();
-            Cursor cursor = database.rawQuery("SELECT * FROM " + tableName + " WHERE "+whereClause, whereClauseArgs);
+
+            Table table = tableMap.get(tableName);
+
+            String sql = "SELECT * FROM " + tableName + " WHERE ("+whereClause+")";
+
+            if(table.isSoftDeleteEnabled){
+                sql += " AND "+DELETED_AT+" IS NULL";
+            }
+
+            Cursor cursor = database.rawQuery(sql, whereClauseArgs);
             cursor.moveToFirst();
+
 
             List<T> resultList = new ArrayList<>();
 
@@ -503,8 +640,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
                 T tableClass = clazz.newInstance();
-                tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
+
+                fetchRecordLog(table, tableClass, cursor);
 
                 resultList.add(tableClass);
 
@@ -550,8 +689,20 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             }
 
             SQLiteDatabase database = getWritableDatabase();
+
+            Table table = tableMap.get(tableName);
+
+            if(table.isSoftDeleteEnabled){
+                if(TextUtils.isEmpty(selection)){
+                    selection = DELETED_AT+" IS NULL";
+                } else {
+                    selection = "("+selection+") AND "+DELETED_AT+" IS NULL";
+                }
+            }
+
             Cursor cursor = database.query(distinct, tableName, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
             cursor.moveToFirst();
+
 
             List<T> resultList = new ArrayList<>();
 
@@ -559,8 +710,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
                 T tableClass = clazz.newInstance();
-                tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
+
+                fetchRecordLog(table, tableClass, cursor);
 
                 resultList.add(tableClass);
 
@@ -588,14 +741,18 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery(selectSql, sqlArgs);
             cursor.moveToFirst();
 
+            Table table = tableMap.get(tableName);
+
             List<T> resultList = new ArrayList<>();
 
             while (!cursor.isAfterLast()) {
                 List<Object> dataList = fetchRow(cursor, tableName);
 
                 T tableClass = clazz.newInstance();
-                tableClass.id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
                 tableClass.setData(dataList);
+
+                fetchRecordLog(table, tableClass, cursor);
 
                 resultList.add(tableClass);
 
@@ -627,31 +784,16 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
-    public <T extends TableClass> void delete(String tableName, Class<T> clazz,  String whereClause, String[] whereClauseArgs){
-        if(TextUtils.isEmpty(tableName)){
-            tableName = clazz.getSimpleName();
-        }
-        try {
-            SQLiteDatabase database = getWritableDatabase();
-            database.delete(tableName, whereClause, whereClauseArgs);
-            close();
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
 
-
-    public <T extends TableClass> void deleteAll(String tableName, Class<T> clazz) {
-        if(TextUtils.isEmpty(tableName)){
-            tableName = clazz.getSimpleName();
-        }
-        delete(tableName, clazz, null, null);
-    }
 
 
 
     public static class Table{
         private String name;
+        private boolean isSoftDeleteEnabled = false;
+        private boolean isRecordLogEnabled = false;
+
+
         private List<Field> fieldList = new ArrayList<>();
 
         public Table(String name) {
@@ -712,6 +854,22 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         public Table addBooleanField(String name){
             Field field = new Field(name, Field.INTEGER, boolean.class);
             fieldList.add(field);
+            return this;
+        }
+
+        public Table addDateField(String name){
+            Field field = new Field(name, Field.INTEGER, Date.class);
+            fieldList.add(field);
+            return this;
+        }
+
+        public Table enableRecordLog() {
+            isRecordLogEnabled = true;
+            return this;
+        }
+
+        public Table enableSoftDelete() {
+            isSoftDeleteEnabled = true;
             return this;
         }
     }
@@ -782,7 +940,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     public static class TableClass {
-        public long id;
+        public long _id;
+        public Date _created_at;
+        public Date _updated_at;
 
         protected String getTableName(){
             return this.getClass().getSimpleName();
