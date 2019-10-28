@@ -1,9 +1,12 @@
-package com.zaitunlabs.zlcore.views;
+package com.zaitunlabs.zlcore.utils;
 
 import android.view.View;
+import android.widget.TextView;
+
+import java.util.Locale;
 
 public class NavigationHandler {
-	private int counts = 0;
+	private int count = 0;
 	private int index = 0;
 
 	private View nextView = null;
@@ -14,7 +17,7 @@ public class NavigationHandler {
 	private View.OnClickListener nextListener = null;
 	private View.OnClickListener prevListener = null;
 	
-	private NavigationStateListener outputListener = null;
+	private NavigationStateListener stateListener = null;
 	
 
 	public View getOutputView() {
@@ -47,14 +50,14 @@ public class NavigationHandler {
 	public void showNavigationViewWithState(){
 		if(prevView != null){
 			if(index <= 0){
-				prevView.setVisibility(View.GONE);
+				prevView.setVisibility(View.INVISIBLE);
 			}else{
 				prevView.setVisibility(View.VISIBLE);
 			}
 		}
 		if(nextView != null){
-			if(index >= counts - 1){
-				nextView.setVisibility(View.GONE);
+			if(index >= count - 1){
+				nextView.setVisibility(View.INVISIBLE);
 			}else{
 				nextView.setVisibility(View.VISIBLE);
 			}
@@ -62,8 +65,8 @@ public class NavigationHandler {
 	}
 	
 	public void hideNavigationView(){
-		if(this.nextView != null)this.nextView.setVisibility(View.GONE);
-		if(this.prevView != null)this.prevView.setVisibility(View.GONE);
+		if(this.nextView != null)this.nextView.setVisibility(View.INVISIBLE);
+		if(this.prevView != null)this.prevView.setVisibility(View.INVISIBLE);
 	}
 
 	public void setPrevView(View prevView) {
@@ -72,12 +75,12 @@ public class NavigationHandler {
 		this.prevView.setOnClickListener(prevListener);
 	}
 	
-	public NavigationStateListener getOtputListener() {
-		return outputListener;
+	public NavigationStateListener getStateListener() {
+		return stateListener;
 	}
 
-	public void setOutputListener(NavigationStateListener outputListener) {
-		this.outputListener = outputListener;
+	public void setStateListener(NavigationStateListener stateListener) {
+		this.stateListener = stateListener;
 	}
 	
 	public int getIndex() {
@@ -86,32 +89,41 @@ public class NavigationHandler {
 
 	public void setIndex(int index) {
 		this.index = index;
+		updateOutputView();
 		showNavigationViewWithState();
-		if(outputListener != null)outputListener.navigationStateIndex(outputView, prevView, index, counts);
+		if(stateListener != null) stateListener.navigationStateIndex(outputView, index, count);
+	}
+
+	private void updateOutputView() {
+		if(outputView!=null){
+			if(outputView instanceof TextView){
+				((TextView)outputView).setText(String.format(Locale.getDefault(),"%d/%d", index + 1, count));
+			}
+		}
 	}
 
 	public NavigationHandler() {
-		init();
+		configure();
 	}
 	
 	public NavigationHandler(int counts) {
-		this.counts = counts;
-		init();
+		this.count = counts;
+		configure();
 	}
 	
-	public int getCounts() {
-		return counts;
+	public int getCount() {
+		return count;
 	}
 	
-	public void setCounts(int counts) {
-		this.counts = counts;
+	public void setCount(int count) {
+		this.count = count;
 	}
 	
-	private void init(){
+	private void configure(){
 		nextListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(index < counts - 1){
+				if(index < count - 1){
 					index++;
 					setIndex(index);
 				}
@@ -134,7 +146,7 @@ public class NavigationHandler {
 	}
 
 	public void next(){
-		if(index < counts - 1){
+		if(index < count - 1){
 			index++;
 			setIndex(index);
 		}
@@ -145,6 +157,14 @@ public class NavigationHandler {
 			index--;
 			setIndex(index);
 		}
+	}
+
+	public void init(){
+		setIndex(0);
+	}
+
+	public interface NavigationStateListener {
+		boolean navigationStateIndex(View outputView, int index, int counts);
 	}
 	
 }

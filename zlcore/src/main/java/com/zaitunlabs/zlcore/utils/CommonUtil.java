@@ -78,6 +78,7 @@ import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
@@ -1979,8 +1980,8 @@ public class CommonUtil {
 										  PopupMenu.OnDismissListener dismissListener,
 										  PopupMenu.OnMenuItemClickListener menuItemClickListener){
 		PopupMenu popup = new PopupMenu(context, anchorView);
-		for (String item : listOfMenu) {
-			popup.getMenu().add(item);
+		for(int i=0; i < listOfMenu.size(); i++){
+			popup.getMenu().add(Menu.NONE, Menu.NONE, i, listOfMenu.get(i));
 		}
 		popup.setOnDismissListener(dismissListener);
 		popup.setOnMenuItemClickListener(menuItemClickListener);

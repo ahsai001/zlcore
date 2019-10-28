@@ -13,10 +13,10 @@ import java.util.Locale;
  */
 
 public class DateStringUtil {
-    public static String getDateTimeInString(String dateFormat, Date date, Locale locale){
+    public static String convertDateToString(String toFormat, Date date, Locale locale){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, (locale == null?Locale.getDefault():locale));
+        SimpleDateFormat sdf = new SimpleDateFormat(toFormat, (locale == null?Locale.getDefault():locale));
         return sdf.format(date);
     }
 
@@ -146,8 +146,8 @@ public class DateStringUtil {
         return result;
     }
 
-    public static Date getDateFromString(String format, String dateString, Locale locale){
-        SimpleDateFormat sf = new SimpleDateFormat(format, (locale == null?Locale.getDefault():locale));
+    public static Date getDateFromString(String fromFormat, String dateString, Locale locale){
+        SimpleDateFormat sf = new SimpleDateFormat(fromFormat, (locale == null?Locale.getDefault():locale));
         sf.setLenient(true);
         Date date = null;
         try {
@@ -157,5 +157,10 @@ public class DateStringUtil {
             DebugUtil.logD("zlcore", "exception parse date");
         }
         return date;
+    }
+
+    public static String convertDate(String fromFormat, String toFormat, String dateString, Locale locale){
+        Date date = getDateFromString(fromFormat,dateString, locale);
+        return convertDateToString(toFormat, date, locale);
     }
 }
