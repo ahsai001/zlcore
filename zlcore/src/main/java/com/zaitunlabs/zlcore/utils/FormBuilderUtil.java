@@ -1118,7 +1118,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, final List<Object> data) {
                 View editTextLayout = layoutInflater.inflate(R.layout.base_form_edittext_label, parentView, false);
                 EditText editText = editTextLayout.findViewById(getViewIdForValue());
-                editText.setText(DateStringUtil.getDateTimeInString((String) data.get(1), Calendar.getInstance().getTime(), (Locale) data.get(2)));
+                editText.setText(DateStringUtil.convertDateToString((String) data.get(1), Calendar.getInstance().getTime(), (Locale) data.get(2)));
                 ViewUtil.enableDatePicker(editText, (String) data.get(1), (Locale) data.get(2),
                         ((AppCompatActivity) activity).getSupportFragmentManager(),(String)data.get(0),true, null, false);
 
