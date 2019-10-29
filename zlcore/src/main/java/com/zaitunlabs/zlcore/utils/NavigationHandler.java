@@ -159,6 +159,13 @@ public class NavigationHandler {
 		}
 	}
 
+	public boolean isFirst(){
+		return index == 0;
+	}
+	public boolean isLast(){
+		return index == count -1;
+	}
+
 	public void init(){
 		setIndex(0);
 	}
