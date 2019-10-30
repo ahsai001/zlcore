@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.Set;
 
 
 /**
- * Created by ahmad s on 2019-06-30.
+ * Created by ahsai.
  */
 
 public final class SQLiteWrapper extends SQLiteOpenHelper {
@@ -34,6 +35,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private static final String TAG = SQLiteWrapper.class.getName();
     private static final String SQLW_FOLDER = "SQLW/";
     private Map<String, Table> tableMap;
+    private List<Index> indexList;
     private AssetManager assetManager;
 
     private static Map<String, Database> sqLiteDatabaseMap = new HashMap<>();
@@ -111,32 +113,48 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private void deInit(){
     }
 
-    private SQLiteWrapper(Context context, String databaseName, int databaseVersion, Map<String, Table> tableMap){
+    private SQLiteWrapper(Context context, String databaseName, int databaseVersion, Map<String, Table> tableMap, List<Index> indexList){
         super(context, databaseName, null, databaseVersion);
         this.assetManager = context.getAssets();
         this.tableMap = tableMap;
+        this.indexList = indexList;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        if(tableMap == null){
-            return;
+        List<String> sqlScriptList = new ArrayList<>();
+
+        List<Index> tableIndexList = new ArrayList<>();
+
+        if(tableMap != null){
+            Set<String> keySet = tableMap.keySet();
+            for (String key : keySet) {
+                Table table = tableMap.get(key);
+                if(table != null) {
+                    String createTableScript = getCreateTableScript(table);
+                    sqlScriptList.add(createTableScript);
+
+                    tableIndexList.addAll(table.getIndexList());
+                }
+            }
         }
 
-        List<String> createTableScriptList = new ArrayList<>();
-        Set<String> keySet = tableMap.keySet();
-        for (String key : keySet) {
-            Table table = tableMap.get(key);
-            if(table != null) {
-                String createTableScript = getCreateTableScript(table);
-                createTableScriptList.add(createTableScript);
+        if(indexList != null){
+            for (Index index : indexList){
+                String createIndexScript = getCreateIndexScript(index);
+                sqlScriptList.add(createIndexScript);
             }
+        }
+
+        for (Index index : tableIndexList){
+            String createIndexScript = getCreateIndexScript(index);
+            sqlScriptList.add(createIndexScript);
         }
 
         db.beginTransaction();
         try{
-            for (String createTableScript : createTableScriptList){
-                db.execSQL(createTableScript);
+            for (String sqlScript : sqlScriptList){
+                db.execSQL(sqlScript);
             }
             db.setTransactionSuccessful();
         } finally {
@@ -144,12 +162,23 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
+    private String getCreateIndexScript(Index index) {
+        if(index == null) return null;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("CREATE INDEX ").append("idx_").append(index.getTableName()).append("_")
+                .append(TextUtils.join("_",index.getColumnList()));
+        stringBuilder.append(" ON ").append(index.getTableName()).append(" (")
+                .append(TextUtils.join(", ",index.getColumnList())).append(")");
+
+        return stringBuilder.toString();
+    }
+
 
     private String getCreateTableScript(Table table){
         if(table == null) return null;
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("CREATE TABLE");
-        stringBuilder.append(" ").append(table.getName()).append(" (");
+        stringBuilder.append("CREATE TABLE ").append(table.getName()).append(" (");
         stringBuilder.append(ID).append(" ").append(Field.INTEGER).append(" ").append("PRIMARY KEY")
                 .append(" ").append("AUTOINCREMENT");
 
@@ -158,6 +187,13 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             stringBuilder.append(",");
             stringBuilder.append(field.getName()).append(" ").append(field.getType());
 
+            if(field.isNotNull()){
+                stringBuilder.append(" NOT NULL");
+            }
+
+            if(field.isUnique()){
+                stringBuilder.append(" UNIQUE");
+            }
 
             //extra like default etc
             if (field.getTrueType() == boolean.class) {
@@ -172,6 +208,25 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
         if(table.isSoftDeleteEnabled){
             stringBuilder.append(",").append(DELETED_AT).append(" ").append(Field.INTEGER);
+        }
+
+        List<Unique> uniqueList = table.getUniqueList();
+        for (Unique unique : uniqueList){
+            stringBuilder.append(",UNIQUE(").append(TextUtils.join(",", unique.getColumnList())).append(")");
+        }
+
+        List<Check> checkList = table.getCheckList();
+        for (Check check : checkList){
+            stringBuilder.append(",CHECK(").append(check.getConditionalLogic()).append(")");
+        }
+
+        List<ForeignKey> foreignKeyList = table.getForeignKeyList();
+        for (ForeignKey foreignKey : foreignKeyList){
+            stringBuilder.append(",FOREIGN KEY (").append(foreignKey.getChildColumn()).append(") ")
+                    .append("REFERENCES ").append(foreignKey.getParentTableName()).append(" ")
+                    .append("(").append(foreignKey.getParentColumnName()).append(") ")
+                    .append("ON UPDATE ").append(foreignKey.getOnUpdateAction()).append(" ")
+                    .append("ON DELETE ").append(foreignKey.getOnDeleteAction());
         }
 
         stringBuilder.append(")");
@@ -603,7 +658,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
     public <T extends TableClass> T findFirst(String tableName, Class<T> clazz) {
-        List<T> resultList = findAll(tableName, clazz);
+        List<T> resultList = selectQuery(false,tableName,clazz,null,null,null,
+                null,null,ID+" ASC","1");
         if(resultList != null && resultList.size() > 0){
             return resultList.get(0);
         }
@@ -611,7 +667,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
     public <T extends TableClass> T findLast(String tableName, Class<T> clazz) {
-        List<T> resultList = findAll(tableName, clazz);
+        List<T> resultList = selectQuery(false,tableName,clazz,null,null,null,
+                null,null,ID+" DESC","1");
         if(resultList != null && resultList.size() > 0){
             return resultList.get(resultList.size()-1);
         }
@@ -668,7 +725,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
     public <T extends TableClass> T findFirstWithCriteria(String tableName, Class<T> clazz, String whereClause, String[] whereClauseArgs) {
-        List<T> resultList = findAllWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
+        List<T> resultList = selectQuery(false,tableName,clazz,null,whereClause,whereClauseArgs,
+                null,null,ID+" ASC","1");
         if(resultList != null && resultList.size() > 0){
             return resultList.get(0);
         }
@@ -676,7 +734,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
     public <T extends TableClass> T findLastWithCriteria(String tableName, Class<T> clazz, String whereClause, String[] whereClauseArgs) {
-        List<T> resultList = findAllWithCriteria(tableName, clazz, whereClause, whereClauseArgs);
+        List<T> resultList = selectQuery(false,tableName,clazz,null,whereClause,whereClauseArgs,
+                null,null,ID+" DESC","1");
         if(resultList != null && resultList.size() > 0){
             return resultList.get(resultList.size()-1);
         }
@@ -737,7 +796,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-    public <T extends TableClass> List<T> rawQuery(Class<T> clazz, String selectSql, String[] sqlArgs) {
+    public <T extends TableClass> List<T> rawSelectQuery(Class<T> clazz, String selectSql, String[] sqlArgs) {
         try {
             String tableName = substringBetween(" from "," ", selectSql.replace("FROM","from")+" ");
 
@@ -799,6 +858,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
         private List<Field> fieldList = new ArrayList<>();
+        private List<Index> indexList = new ArrayList<>();
+        private List<Unique> uniqueList = new ArrayList<>();
+        private List<ForeignKey> foreignKeyList = new ArrayList<>();
+        private List<Check> checkList = new ArrayList<>();
 
         public Table(String name) {
             this.name = name;
@@ -825,47 +888,106 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             return this;
         }
 
-        public Table addIntField(String name){
+        private void setNullState(Field field, boolean isNotNull){
+            if(isNotNull){
+                field.setNotNull();
+            } else {
+                field.setNullable();
+            }
+        }
+
+        public Table addIntField(String name, boolean isNotNull, boolean isUnique){
             Field field = new Field(name, Field.INTEGER, int.class);
+            setNullState(field, isNotNull);
+            field.setUnique(isUnique);
+            fieldList.add(field);
+            return this;
+        }
+
+        public Table addIntField(String name){
+            addIntField(name, false, false);
+            return this;
+        }
+
+        public Table addLongField(String name, boolean isNotNull, boolean isUnique){
+            Field field = new Field(name, Field.INTEGER, long.class);
+            setNullState(field, isNotNull);
+            field.setUnique(isUnique);
             fieldList.add(field);
             return this;
         }
 
         public Table addLongField(String name){
-            Field field = new Field(name, Field.INTEGER, long.class);
+            addLongField(name, false, false);
+            return this;
+        }
+
+        public Table addStringField(String name, boolean isNotNull, boolean isUnique){
+            Field field = new Field(name, Field.TEXT, String.class);
+            setNullState(field, isNotNull);
+            field.setUnique(isUnique);
             fieldList.add(field);
             return this;
         }
 
         public Table addStringField(String name){
-            Field field = new Field(name, Field.TEXT, String.class);
+            addStringField(name, false, false);
+            return this;
+        }
+
+
+        public Table addFloatField(String name, boolean isNotNull, boolean isUnique){
+            Field field = new Field(name, Field.REAL, float.class);
+            setNullState(field, isNotNull);
+            field.setUnique(isUnique);
             fieldList.add(field);
             return this;
         }
 
         public Table addFloatField(String name){
-            Field field = new Field(name, Field.REAL, float.class);
+            addFloatField(name, false, false);
+            return this;
+        }
+
+        public Table addDoubleField(String name, boolean isNotNull, boolean isUnique){
+            Field field = new Field(name, Field.REAL, double.class);
+            setNullState(field, isNotNull);
+            field.setUnique(isUnique);
             fieldList.add(field);
             return this;
         }
 
         public Table addDoubleField(String name){
-            Field field = new Field(name, Field.REAL, double.class);
+            addDoubleField(name, false, false);
+            return this;
+        }
+
+        public Table addBooleanField(String name, boolean isNotNull, boolean isUnique){
+            Field field = new Field(name, Field.INTEGER, boolean.class);
+            setNullState(field, isNotNull);
+            field.setUnique(isUnique);
             fieldList.add(field);
             return this;
         }
 
         public Table addBooleanField(String name){
-            Field field = new Field(name, Field.INTEGER, boolean.class);
+            addBooleanField(name, false, false);
+            return this;
+        }
+
+        public Table addDateField(String name, boolean isNotNull, boolean isUnique){
+            Field field = new Field(name, Field.INTEGER, Date.class);
+            setNullState(field, isNotNull);
+            field.setUnique(isUnique);
             fieldList.add(field);
             return this;
         }
 
         public Table addDateField(String name){
-            Field field = new Field(name, Field.INTEGER, Date.class);
-            fieldList.add(field);
+            addDateField(name, false, false);
             return this;
         }
+
 
         public Table enableRecordLog() {
             isRecordLogEnabled = true;
@@ -876,6 +998,133 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             isSoftDeleteEnabled = true;
             return this;
         }
+
+        public Table addIndex(String... columns) {
+            indexList.add(new Index(name,null,columns));
+            return this;
+        }
+
+        public Table addUnique(String... columns) {
+            uniqueList.add(new Unique(columns));
+            return this;
+        }
+
+        public Table addCheck(String conditionalLogic) {
+            checkList.add(new Check(conditionalLogic));
+            return this;
+        }
+
+
+        public Table addForeignKey(String childColumn, String parentTableName, String parentColumnName, String onUpdateAction, String onDeleteAction){
+            foreignKeyList.add(new ForeignKey(childColumn, parentTableName, parentColumnName, onUpdateAction, onDeleteAction));
+            return this;
+        }
+
+        public List<Index> getIndexList() {
+            return indexList;
+        }
+
+        public List<Unique> getUniqueList() {
+            return uniqueList;
+        }
+
+        public List<Check> getCheckList() {
+            return checkList;
+        }
+
+        public List<ForeignKey> getForeignKeyList() {
+            return foreignKeyList;
+        }
+    }
+
+    public static class Index{
+        private String tableName;
+        private List<String> columnList = new ArrayList<>();
+        public Index(String tableName, Class clazz, String... columns){
+            if(TextUtils.isEmpty(tableName)){
+                tableName = clazz.getSimpleName();
+            }
+            this.tableName = tableName;
+            columnList.addAll(Arrays.asList(columns));
+        }
+
+        public String getTableName() {
+            return tableName;
+        }
+
+        public List<String> getColumnList() {
+            return columnList;
+        }
+    }
+
+
+    public static class Unique{
+        private List<String> columnList = new ArrayList<>();
+        public Unique(String... columns){
+            columnList.addAll(Arrays.asList(columns));
+        }
+        public List<String> getColumnList() {
+            return columnList;
+        }
+    }
+
+
+    public static class Check{
+        private String conditionalLogic;
+        public Check(String conditionalLogic){
+            this.conditionalLogic = conditionalLogic;
+        }
+
+        public String getConditionalLogic() {
+            return conditionalLogic;
+        }
+    }
+
+    public static class ForeignKey{
+        public static final String SET_NULL = "SET NULL";
+        public static final String SET_DEFAULT = "SET DEFAULT";
+        public static final String RESTRICT = "RESTRICT";
+        public static final String NO_ACTION = "NO ACTION";
+        public static final String CASCADE = "CASCADE";
+
+        private String childColumn;
+        private String parentTableName;
+        private String parentColumnName;
+        private String onUpdateAction;
+        private String onDeleteAction;
+
+        public ForeignKey(String childColumn, String parentTableName, String parentColumnName, String onUpdateAction, String onDeleteAction){
+            this.childColumn = childColumn;
+            this.parentTableName = parentTableName;
+            this.parentColumnName = parentColumnName;
+            this.onUpdateAction = onUpdateAction;
+            this.onDeleteAction = onDeleteAction;
+        }
+
+        public String getChildColumn() {
+            return childColumn;
+        }
+
+        public String getParentTableName() {
+            return parentTableName;
+        }
+
+        public String getParentColumnName() {
+            return parentColumnName;
+        }
+
+        public String getOnUpdateAction() {
+            return onUpdateAction;
+        }
+
+        public String getOnDeleteAction() {
+            return onDeleteAction;
+        }
+    }
+
+
+    public void addIndex(Index index){
+        indexList.add(index);
     }
 
 
@@ -888,6 +1137,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         private String name;
         private String type;
         private Class trueType;
+        private boolean isNotNull = false;
+        private boolean isUnique = false;
 
         public Field(String name, String type, Class trueType) {
             this.name = name;
@@ -918,6 +1169,26 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         public void setTrueType(Class trueType) {
             this.trueType = trueType;
         }
+
+        public boolean isNotNull() {
+            return isNotNull;
+        }
+
+        public void setNotNull(){
+            isNotNull = true;
+        }
+
+        public void setNullable(){
+            isNotNull = false;
+        }
+
+        public boolean isUnique() {
+            return isUnique;
+        }
+
+        public void setUnique(boolean unique) {
+            isUnique = unique;
+        }
     }
 
 
@@ -926,6 +1197,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         private String databaseName;
         private int databaseVersion;
         private Map<String, Table> tableMap = new HashMap<>();
+        private List<Index> indexList = new ArrayList<>();
 
         public Builder setDatabaseName(String databaseName) {
             this.databaseName = databaseName;
@@ -938,7 +1210,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
 
         public SQLiteWrapper create(Context context) {
-            return new SQLiteWrapper(context, databaseName, databaseVersion, tableMap);
+            return new SQLiteWrapper(context, databaseName, databaseVersion, tableMap, indexList);
         }
     }
 
@@ -997,7 +1269,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             return SQLiteWrapper.of(getDatabaseName()).delete(this);
         }
 
-        public static TableClass findById(String databaseName, String tableName, Class clazz, long id){
+        public static <T extends TableClass> T findById(String databaseName, String tableName, Class<T> clazz, long id){
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
@@ -1031,9 +1303,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     selection, selectionArgs, groupBy, having, orderBy, limit);
         }
 
-        public static <T extends TableClass> List<T> rawQuery(String databaseName,
+        public static <T extends TableClass> List<T> rawSelectQuery(String databaseName,
                                                                     Class<T> clazz, String selectSql, String[] sqlArgs){
-            return SQLiteWrapper.of(databaseName).rawQuery(clazz, selectSql, sqlArgs);
+            return SQLiteWrapper.of(databaseName).rawSelectQuery(clazz, selectSql, sqlArgs);
         }
 
         public static void execSQL(String databaseName, String sql, String[] sqlArgs){
