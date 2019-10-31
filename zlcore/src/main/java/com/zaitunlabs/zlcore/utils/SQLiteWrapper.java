@@ -333,26 +333,29 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
         for (int i = 0; i < fieldList.size(); i++) {
             Field field = fieldList.get(i);
+
+            Object data = dataList.get(i);
+
             switch (field.getType()) {
                 case Field.TEXT:
-                    contentValues.put(field.getName(), (String) dataList.get(i));
+                    contentValues.put(field.getName(), (String) data);
                     break;
                 case Field.INTEGER:
-                    if (field.getTrueType() == int.class) {
-                        contentValues.put(field.getName(), (int) dataList.get(i));
-                    } else if (field.getTrueType() == long.class) {
-                        contentValues.put(field.getName(), (long) dataList.get(i));
-                    } else if (field.getTrueType() == boolean.class) {
-                        contentValues.put(field.getName(), (boolean) dataList.get(i));
+                    if (field.getTrueType() == int.class || field.getTrueType() == Integer.class) {
+                        contentValues.put(field.getName(), (Integer) data);
+                    } else if (field.getTrueType() == long.class || field.getTrueType() == Long.class) {
+                        contentValues.put(field.getName(), (Long) data);
+                    } else if (field.getTrueType() == boolean.class || field.getTrueType() == Boolean.class) {
+                        contentValues.put(field.getName(), (Boolean) data);
                     } else if (field.getTrueType() == Date.class) {
-                        contentValues.put(field.getName(), ((Date) dataList.get(i)).getTime());
+                        contentValues.put(field.getName(), ((Date) data).getTime());
                     }
                     break;
                 case Field.REAL:
-                    if (field.getTrueType() == float.class) {
-                        contentValues.put(field.getName(), (float) dataList.get(i));
-                    } else if (field.getTrueType() == double.class) {
-                        contentValues.put(field.getName(), (double) dataList.get(i));
+                    if (field.getTrueType() == float.class || field.getTrueType() == Float.class) {
+                        contentValues.put(field.getName(), (Float) data);
+                    } else if (field.getTrueType() == double.class || field.getTrueType() == Double.class) {
+                        contentValues.put(field.getName(), (Double) data);
                     }
                     break;
                 case Field.BLOB:
@@ -371,27 +374,32 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         List<Field> fieldList =  tableMap.get(tableName).getFieldList();
         for (int i = 0; i < fieldList.size(); i++) {
             Field field = fieldList.get(i);
+            int cursorIndex = cursor.getColumnIndex(field.getName());
             switch (field.getType()) {
                 case Field.TEXT:
-                    dataList.add(cursor.getString(cursor.getColumnIndex(field.getName())));
+                    dataList.add(cursor.isNull(cursorIndex)?null:cursor.getString(cursorIndex));
                     break;
                 case Field.INTEGER:
-                    if (field.getTrueType() == int.class) {
-                        dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())));
-                    } else if (field.getTrueType() == long.class) {
-                        dataList.add(cursor.getLong(cursor.getColumnIndex(field.getName())));
-                    } else if (field.getTrueType() == boolean.class) {
-                        dataList.add(cursor.getInt(cursor.getColumnIndex(field.getName())) == 1);
+                    if (field.getTrueType() == int.class || field.getTrueType() == Integer.class) {
+                        dataList.add(cursor.isNull(cursorIndex)?null:cursor.getInt(cursorIndex));
+                    } else if (field.getTrueType() == long.class || field.getTrueType() == Long.class) {
+                        dataList.add(cursor.isNull(cursorIndex)?null:cursor.getLong(cursorIndex));
+                    } else if (field.getTrueType() == boolean.class || field.getTrueType() == Boolean.class) {
+                        dataList.add(cursor.isNull(cursorIndex)?null:(cursor.getInt(cursorIndex) == 1));
                     } else if (field.getTrueType() == Date.class) {
-                        long dateLong = cursor.getLong(cursor.getColumnIndex(field.getName()));
-                        dataList.add(new Date(dateLong));
+                        if(cursor.isNull(cursorIndex)){
+                            dataList.add(null);
+                        } else {
+                            long dateLong = cursor.getLong(cursorIndex);
+                            dataList.add(new Date(dateLong));
+                        }
                     }
                     break;
                 case Field.REAL:
-                    if (field.getTrueType() == float.class) {
-                        dataList.add(cursor.getFloat(cursor.getColumnIndex(field.getName())));
-                    } else if (field.getTrueType() == double.class) {
-                        dataList.add(cursor.getDouble(cursor.getColumnIndex(field.getName())));
+                    if (field.getTrueType() == float.class || field.getTrueType() == Float.class) {
+                        dataList.add(cursor.isNull(cursorIndex)?null:cursor.getFloat(cursorIndex));
+                    } else if (field.getTrueType() == double.class || field.getTrueType() == Double.class) {
+                        dataList.add(cursor.isNull(cursorIndex)?null:cursor.getDouble(cursorIndex));
                     }
                     break;
                 case Field.BLOB:
@@ -424,7 +432,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private boolean save(TableClass tableClass) {
         long id = -1;
         try {
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase();
 
             //int version = database.getVersion();
 
@@ -443,7 +451,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
             id = database.insert(tableClass.getTableName(), null, contentValues);
 
-            close();
+            closeDatabase();
 
             if(id <= 0){
                 return false;
@@ -462,7 +470,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private boolean update(TableClass tableClass) {
         long affectedRows = -1;
         try {
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase();
 
             Table table = tableMap.get(tableClass.getTableName());
 
@@ -480,7 +488,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             affectedRows = database.update(tableClass.getTableName(), contentValues, ID+"=?",
                     new String[]{Long.toString(tableClass._id)});
 
-            close();
+            closeDatabase();
 
             if(affectedRows <= 0){
                 return false;
@@ -496,7 +504,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private boolean delete(TableClass tableClass) {
         if(tableClass._id > 0) {
             try {
-                SQLiteDatabase database = getWritableDatabase();
+                SQLiteDatabase database = getDatabase();
 
                 Table table = tableMap.get(tableClass.getTableName());
 
@@ -512,7 +520,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                             new String[]{Long.toString(tableClass._id)});
                 }
 
-                close();
+                closeDatabase();
 
                 if(affectedRows <= 0){
                     return false;
@@ -532,7 +540,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             tableName = clazz.getSimpleName();
         }
         try {
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase();
 
             Table table = tableMap.get(tableName);
             if(table.isSoftDeleteEnabled){
@@ -542,7 +550,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             } else {
                 database.delete(tableName, whereClause, whereClauseArgs);
             }
-            close();
+            closeDatabase();
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -579,7 +587,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 sql += " AND "+DELETED_AT+" IS NULL";
             }
 
-
             Cursor cursor = database.rawQuery(sql, new String[]{Long.toString(id)});
             cursor.moveToFirst();
 
@@ -588,7 +595,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             T tableClass = clazz.newInstance();
             tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
             tableClass.setData(dataList);
-
 
             fetchRecordLog(table, tableClass, cursor);
 
@@ -626,7 +632,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
             Cursor cursor = database.rawQuery(sql, null);
             cursor.moveToFirst();
-
 
             List<T> resultList = new ArrayList<>();
 
@@ -838,16 +843,47 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
     public void execSQL(String sql, String[] sqlArgs) {
         try {
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase();
             database.execSQL(sql, sqlArgs);
-            close();
+            closeDatabase();
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
 
 
+    private SQLiteDatabase getDatabase(){
+        if(batchDatabase == null){
+            return getWritableDatabase();
+        }
 
+        return batchDatabase;
+    }
+
+    private void closeDatabase(){
+        if (batchDatabase == null) {
+            close();
+        }
+    }
+
+    private SQLiteDatabase batchDatabase;
+    public synchronized void runQueryInBatch(BatchProcess batchProcess){
+        batchDatabase = getWritableDatabase();
+        batchDatabase.beginTransaction();
+        try{
+            batchProcess.onProcess(this);
+            batchDatabase.setTransactionSuccessful();
+        } finally {
+            batchDatabase.endTransaction();
+            close();
+            batchDatabase = null;
+        }
+    }
+
+
+    public interface BatchProcess{
+        void onProcess(SQLiteWrapper sqLiteWrapper);
+    }
 
 
 
