@@ -42,17 +42,27 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private static Map<String, SQLiteWrapper> sqLiteWrapperMap = new HashMap<>();
 
     public static void addDatabase(Database database){
+        //invoke this inside Application.onCreate
         if(!sqLiteDatabaseMap.containsKey(database.getDatabaseName())) {
             sqLiteDatabaseMap.put(database.getDatabaseName(), database);
         }
     }
 
-    public static void removeDatabase(String databaseName){
-        sqLiteWrapperMap.remove(databaseName);
-        sqLiteDatabaseMap.remove(databaseName);
+    public static void removeAllDatabase(){
+        //invoke this inside Application.onTerminate
+        for (String databaseName : sqLiteWrapperMap.keySet()){
+            SQLiteWrapper sqLiteWrapper = sqLiteWrapperMap.get(databaseName);
+            sqLiteWrapper.release();
+            sqLiteWrapperMap.remove(databaseName);
+        }
+
+        for (String databaseName : sqLiteDatabaseMap.keySet()){
+            sqLiteDatabaseMap.remove(databaseName);
+        }
+
+        sqLiteWrapperMap = null;
+        sqLiteDatabaseMap = null;
     }
-
-
 
 
     public static abstract class Database {
@@ -109,8 +119,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private void init(){
     }
 
-
-    private void deInit(){
+    private void release(){
+        close();
+        tableMap = null;
+        indexList = null;
     }
 
     private SQLiteWrapper(Context context, String databaseName, int databaseVersion, Map<String, Table> tableMap, List<Index> indexList){
@@ -234,6 +246,13 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         return stringBuilder.toString();
     }
 
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
@@ -323,9 +342,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-    private void release(){
-        tableMap = null;
-    }
 
 
     private ContentValues getContentValues(List<Field> fieldList, List<Object> dataList){
@@ -432,7 +448,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private boolean save(TableClass tableClass) {
         long id = -1;
         try {
-            SQLiteDatabase database = getDatabase();
+            SQLiteDatabase database = getDatabase(false);
 
             //int version = database.getVersion();
 
@@ -470,7 +486,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private boolean update(TableClass tableClass) {
         long affectedRows = -1;
         try {
-            SQLiteDatabase database = getDatabase();
+            SQLiteDatabase database = getDatabase(false);
 
             Table table = tableMap.get(tableClass.getTableName());
 
@@ -504,7 +520,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private boolean delete(TableClass tableClass) {
         if(tableClass._id > 0) {
             try {
-                SQLiteDatabase database = getDatabase();
+                SQLiteDatabase database = getDatabase(false);
 
                 Table table = tableMap.get(tableClass.getTableName());
 
@@ -540,7 +556,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             tableName = clazz.getSimpleName();
         }
         try {
-            SQLiteDatabase database = getDatabase();
+            SQLiteDatabase database = getDatabase(false);
 
             Table table = tableMap.get(tableName);
             if(table.isSoftDeleteEnabled){
@@ -577,7 +593,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             if(TextUtils.isEmpty(tableName)){
                 tableName = clazz.getSimpleName();
             }
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase(true);
 
             Table table = tableMap.get(tableName);
 
@@ -588,19 +604,24 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             }
 
             Cursor cursor = database.rawQuery(sql, new String[]{Long.toString(id)});
-            cursor.moveToFirst();
 
-            List<Object> dataList = fetchRow(cursor, tableName);
+            T tableClass = null;
 
-            T tableClass = clazz.newInstance();
-            tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-            tableClass.setData(dataList);
+            if(cursor != null) {
+                cursor.moveToFirst();
 
-            fetchRecordLog(table, tableClass, cursor);
+                List<Object> dataList = fetchRow(cursor, tableName);
 
-            cursor.close();
+                tableClass = clazz.newInstance();
+                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
+                tableClass.setData(dataList);
 
-            close();
+                fetchRecordLog(table, tableClass, cursor);
+
+                closeCursor(cursor);
+            }
+
+            closeDatabase();
 
             return tableClass;
         } catch (SQLException e){
@@ -620,7 +641,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 tableName = clazz.getSimpleName();
             }
 
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase(true);
 
             Table table = tableMap.get(tableName);
 
@@ -631,26 +652,29 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             }
 
             Cursor cursor = database.rawQuery(sql, null);
-            cursor.moveToFirst();
 
             List<T> resultList = new ArrayList<>();
 
-            while (!cursor.isAfterLast()) {
-                List<Object> dataList = fetchRow(cursor, tableName);
+            if(cursor != null) {
+                cursor.moveToFirst();
 
-                T tableClass = clazz.newInstance();
-                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                tableClass.setData(dataList);
+                while (!cursor.isAfterLast()) {
+                    List<Object> dataList = fetchRow(cursor, tableName);
 
-                fetchRecordLog(table, tableClass, cursor);
+                    T tableClass = clazz.newInstance();
+                    tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
+                    tableClass.setData(dataList);
 
-                resultList.add(tableClass);
+                    fetchRecordLog(table, tableClass, cursor);
 
-                cursor.moveToNext();
+                    resultList.add(tableClass);
+
+                    cursor.moveToNext();
+                }
+
+                closeCursor(cursor);
             }
-
-            cursor.close();
-            close();
+            closeDatabase();
 
             return resultList;
         } catch (SQLException e){
@@ -686,7 +710,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 tableName = clazz.getSimpleName();
             }
 
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase(true);
 
             Table table = tableMap.get(tableName);
 
@@ -697,27 +721,27 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             }
 
             Cursor cursor = database.rawQuery(sql, whereClauseArgs);
-            cursor.moveToFirst();
-
 
             List<T> resultList = new ArrayList<>();
 
-            while (!cursor.isAfterLast()) {
-                List<Object> dataList = fetchRow(cursor, tableName);
+            if(cursor != null) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    List<Object> dataList = fetchRow(cursor, tableName);
 
-                T tableClass = clazz.newInstance();
-                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                tableClass.setData(dataList);
+                    T tableClass = clazz.newInstance();
+                    tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
+                    tableClass.setData(dataList);
 
-                fetchRecordLog(table, tableClass, cursor);
+                    fetchRecordLog(table, tableClass, cursor);
 
-                resultList.add(tableClass);
+                    resultList.add(tableClass);
 
-                cursor.moveToNext();
+                    cursor.moveToNext();
+                }
+                closeCursor(cursor);
             }
-
-            cursor.close();
-            close();
+            closeDatabase();
 
             return resultList;
         } catch (SQLException e){
@@ -756,7 +780,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 tableName = clazz.getSimpleName();
             }
 
-            SQLiteDatabase database = getWritableDatabase();
+            SQLiteDatabase database = getDatabase(true);
 
             Table table = tableMap.get(tableName);
 
@@ -769,27 +793,28 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             }
 
             Cursor cursor = database.query(distinct, tableName, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-            cursor.moveToFirst();
-
 
             List<T> resultList = new ArrayList<>();
 
-            while (!cursor.isAfterLast()) {
-                List<Object> dataList = fetchRow(cursor, tableName);
+            if(cursor != null) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    List<Object> dataList = fetchRow(cursor, tableName);
 
-                T tableClass = clazz.newInstance();
-                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                tableClass.setData(dataList);
+                    T tableClass = clazz.newInstance();
+                    tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
+                    tableClass.setData(dataList);
 
-                fetchRecordLog(table, tableClass, cursor);
+                    fetchRecordLog(table, tableClass, cursor);
 
-                resultList.add(tableClass);
+                    resultList.add(tableClass);
 
-                cursor.moveToNext();
+                    cursor.moveToNext();
+                }
+
+                closeCursor(cursor);
             }
-
-            cursor.close();
-            close();
+            closeDatabase();
 
             return resultList;
         } catch (SQLException e){
@@ -801,34 +826,39 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
+
     public <T extends TableClass> List<T> rawSelectQuery(Class<T> clazz, String selectSql, String[] sqlArgs) {
         try {
             String tableName = substringBetween(" from "," ", selectSql.replace("FROM","from")+" ");
 
-            SQLiteDatabase database = getWritableDatabase();
-            Cursor cursor = database.rawQuery(selectSql, sqlArgs);
-            cursor.moveToFirst();
+            SQLiteDatabase database = getDatabase(true);
 
-            Table table = tableMap.get(tableName);
+            Cursor cursor = database.rawQuery(selectSql, sqlArgs);
 
             List<T> resultList = new ArrayList<>();
 
-            while (!cursor.isAfterLast()) {
-                List<Object> dataList = fetchRow(cursor, tableName);
+            if(cursor != null) {
+                cursor.moveToFirst();
 
-                T tableClass = clazz.newInstance();
-                tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                tableClass.setData(dataList);
+                Table table = tableMap.get(tableName);
 
-                fetchRecordLog(table, tableClass, cursor);
+                while (!cursor.isAfterLast()) {
+                    List<Object> dataList = fetchRow(cursor, tableName);
 
-                resultList.add(tableClass);
+                    T tableClass = clazz.newInstance();
+                    tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
+                    tableClass.setData(dataList);
 
-                cursor.moveToNext();
+                    fetchRecordLog(table, tableClass, cursor);
+
+                    resultList.add(tableClass);
+
+                    cursor.moveToNext();
+                }
+
+                closeCursor(cursor);
             }
-
-            cursor.close();
-            close();
+            closeDatabase();
 
             return resultList;
         } catch (SQLException e){
@@ -843,7 +873,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
     public void execSQL(String sql, String[] sqlArgs) {
         try {
-            SQLiteDatabase database = getDatabase();
+            SQLiteDatabase database = getDatabase(false);
             database.execSQL(sql, sqlArgs);
             closeDatabase();
         } catch (SQLException e){
@@ -851,32 +881,35 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
     }
 
-
-    private SQLiteDatabase getDatabase(){
-        if(batchDatabase == null){
+    private SQLiteDatabase getDatabase(boolean isReadOnly){
+        if(isReadOnly){
+            return getReadableDatabase();
+        } else {
             return getWritableDatabase();
         }
-
-        return batchDatabase;
     }
 
     private void closeDatabase(){
-        if (batchDatabase == null) {
-            close();
+        //close(); //no need to call this, this will
+        // make "java.lang.IllegalStateException:
+        // Cannot perform this operation because the connection pool has been closed."
+        // when access in multiple thread
+    }
+
+    private void closeCursor(Cursor cursor){
+        if(cursor != null && !cursor.isClosed()){
+            cursor.close();
         }
     }
 
-    private SQLiteDatabase batchDatabase;
-    public synchronized void runQueryInBatch(BatchProcess batchProcess){
-        batchDatabase = getWritableDatabase();
-        batchDatabase.beginTransaction();
+    private synchronized void runQueryInBatch(BatchProcess batchProcess){
+        SQLiteDatabase database = getDatabase(false);
+        database.beginTransaction();
         try{
             batchProcess.onProcess(this);
-            batchDatabase.setTransactionSuccessful();
+            database.setTransactionSuccessful();
         } finally {
-            batchDatabase.endTransaction();
-            close();
-            batchDatabase = null;
+            database.endTransaction();
         }
     }
 

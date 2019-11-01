@@ -7,12 +7,15 @@ import java.util.List;
  * Created by ahsai on 7/28/2018.
  */
 
-public abstract class ReachLostUtil {
+public class ReachLostUtil {
     protected int targetedDoneTotal = 0;
     protected Runnable actionWhenReachTarget;
     protected Runnable actionWhenLostTarget;
     protected List<String> listOfKey;
-    public abstract void init();
+
+    public void init(){
+        listOfKey.clear();
+    }
 
 
     public ReachLostUtil(){

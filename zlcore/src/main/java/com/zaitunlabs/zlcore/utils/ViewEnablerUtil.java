@@ -40,6 +40,7 @@ public class ViewEnablerUtil extends ReachLostUtil {
 
     @Override
     public void init() {
+        super.init();
         if(targetedDoneTotal > 0){
             if(ViewEnablerUtil.this.targetViewRef != null) {
                 View targetView = ViewEnablerUtil.this.targetViewRef.get();
