@@ -36,26 +36,31 @@ public class DebugUtil {
 
     public static void logV(String tag, String message){
         if(getInstance().debuggingLevel <= VERBOSE_LEVEL) {
+            if(message == null)return;
             Log.v(tag, message);
         }
     }
     public static void logD(String tag, String message){
         if(getInstance().debuggingLevel <= DEBUG_LEVEL) {
+            if(message == null)return;
             Log.d(tag, message);
         }
     }
     public static void logI(String tag, String message){
         if(getInstance().debuggingLevel <= INFO_LEVEL) {
+            if(message == null)return;
             Log.i(tag, message);
         }
     }
     public static void logW(String tag, String message){
         if(getInstance().debuggingLevel <= WARNING_LEVEL) {
+            if(message == null)return;
             Log.w(tag, message);
         }
     }
     public static void logE(String tag, String message){
         if(getInstance().debuggingLevel <= ERROR_LEVEL) {
+            if(message == null)return;
             Log.e(tag, message);
         }
     }

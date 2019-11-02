@@ -352,6 +352,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
             Object data = dataList.get(i);
 
+            if(data == null)continue;
+
             switch (field.getType()) {
                 case Field.TEXT:
                     contentValues.put(field.getName(), (String) data);
@@ -1288,6 +1290,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         public long _id;
         public Date _created_at;
         public Date _updated_at;
+
+        public TableClass(){
+
+        }
 
         protected String getTableName(){
             return this.getClass().getSimpleName();
