@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -870,6 +871,18 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         } catch (IllegalAccessException e){
             return null;
         }
+    }
+
+
+    public <T extends TableClass> long count(String tableName, Class<T> clazz, String selection,
+                                            String[] selectionArgs){
+        if(TextUtils.isEmpty(tableName)){
+            tableName = clazz.getSimpleName();
+        }
+        SQLiteDatabase database = getDatabase(true);
+        long count = DatabaseUtils.queryNumEntries(database, tableName, selection, selectionArgs);
+        closeDatabase();
+        return count;
     }
 
 

@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class NavigationHandler {
 	private int count = 0;
-	private int index = 0;
+	private int index = -1;
 
 	private View nextView = null;
 	private View prevView = null;
@@ -88,10 +88,14 @@ public class NavigationHandler {
 	}
 
 	public void setIndex(int index) {
-		this.index = index;
-		updateOutputView();
-		showNavigationViewWithState();
-		if(stateListener != null) stateListener.navigationStateIndex(outputView, index, count);
+		if(count > 0) {
+			if(index >= 0 && index < count) {
+				this.index = index;
+				updateOutputView();
+				showNavigationViewWithState();
+				if (stateListener != null) stateListener.navigationStateIndex(outputView, index, count);
+			}
+		}
 	}
 
 	private void updateOutputView() {
