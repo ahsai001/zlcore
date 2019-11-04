@@ -10,11 +10,11 @@
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="match_parent">
-            <WebView
+            <com.zaitunlabs.zlcore.views.CustomWebView
                 android:id="@+id/general_webview_main_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            </WebView>
+            </com.zaitunlabs.zlcore.views.CustomWebView>
         </FrameLayout>
 
         <androidx.core.widget.ContentLoadingProgressBar
