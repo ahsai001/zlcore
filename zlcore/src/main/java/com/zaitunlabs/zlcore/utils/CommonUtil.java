@@ -3313,4 +3313,26 @@ public class CommonUtil {
 		baos.close();
 		return temp;
 	}
+
+	private static boolean isDevModeEnabled = false;
+	public void switchMode(Context context){
+		isDevModeEnabled = !isDevModeEnabled;
+		CommonUtil.showToast(context, isDevModeEnabled?"Dev Mode Enabled":"Dev Mode Disabled");
+	}
+
+	public static void showToast(Context context, String userMessage, String devMessage){
+		CommonUtil.showToast(context, isDevModeEnabled?devMessage:userMessage);
+	}
+
+	public static void showSnackBar(Context context, String userMessage, String devMessage){
+		CommonUtil.showSnackBar(context, isDevModeEnabled?devMessage:userMessage);
+	}
+
+	public static void showInfo(Context context, String title, String userMessage, String devMessage){
+		CommonUtil.showInfo(context, title, isDevModeEnabled?devMessage:userMessage);
+	}
+
+	public static void showGlobalInfo(Context context, String title, String userMessage, String devMessage){
+		CommonUtil.showGlobalInfo(context, title, isDevModeEnabled?devMessage:userMessage);
+	}
 }
