@@ -29,11 +29,14 @@ import java.util.ArrayList;
  */
 public class WebViewActivity extends BaseActivity {
     private WebViewFragment newFragment;
+    private String baseUrl;
     private String url;
     private String title;
     private int bgColor;
     private String defaultMessage;
     private String pageTag;
+
+    public static final String PARAM_BASE_URL = "param_base_url";
     public static final String PARAM_URL = "param_url";
     public static final String PARAM_TITLE = "param_title";
     public static final String PARAM_BG_COLOR = "param_bg_color";
@@ -45,6 +48,8 @@ public class WebViewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_layout_webview);
 
+
+        baseUrl = CommonUtil.getStringIntent(getIntent(),PARAM_BASE_URL,null);
         url = CommonUtil.getStringIntent(getIntent(),PARAM_URL,null);
         title = CommonUtil.getStringIntent(getIntent(),PARAM_TITLE,null);
         bgColor = CommonUtil.getIntIntent(getIntent(),PARAM_BG_COLOR,-1);
@@ -73,9 +78,9 @@ public class WebViewActivity extends BaseActivity {
         boolean isMeid = CommonUtil.getBooleanIntent(getIntent(), PARAM_IS_MEID, false);
         if(isMeid){
             ArrayList<String> headerList = HttpClientUtil.getHeaderList(true, true, true, true);
-            newFragment.setArg(this,1, url, defaultMessage, bgColor, false, headerList);
+            newFragment.setArg(this,1, baseUrl, url, defaultMessage, bgColor, false, headerList);
         } else {
-            newFragment.setArg(this,1, url, defaultMessage, bgColor);
+            newFragment.setArg(this,1, baseUrl, url, defaultMessage, bgColor);
         }
         transaction.replace(R.id.webview_main_fragment, newFragment, usedTag);
         transaction.commit();
@@ -187,7 +192,12 @@ public class WebViewActivity extends BaseActivity {
     }
 
     public static void start(Context context, String urlOrHtmlContent, String title, String defaultMessage, int bgColor,String pageTag, boolean isMeid){
+        start(context, "", urlOrHtmlContent, title, defaultMessage, bgColor, pageTag, isMeid);
+    }
+
+    public static void start(Context context, String baseUrl, String urlOrHtmlContent, String title, String defaultMessage, int bgColor,String pageTag, boolean isMeid){
         Intent webviewIntent = new Intent(context, WebViewActivity.class);
+        webviewIntent.putExtra(PARAM_BASE_URL, baseUrl);
         webviewIntent.putExtra(PARAM_URL, urlOrHtmlContent);
         webviewIntent.putExtra(PARAM_TITLE, title);
         webviewIntent.putExtra(PARAM_BG_COLOR, bgColor);

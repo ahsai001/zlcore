@@ -37,6 +37,7 @@ import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
+import android.webkit.WebHistoryItem;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -52,6 +53,7 @@ import com.zaitunlabs.zlcore.models.BookmarkModel;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtil;
+import com.zaitunlabs.zlcore.utils.DebugUtil;
 import com.zaitunlabs.zlcore.utils.HttpClientUtil;
 import com.zaitunlabs.zlcore.utils.SwipeRefreshLayoutUtil;
 import com.zaitunlabs.zlcore.utils.ViewUtil;
@@ -71,6 +73,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     public static String FRAGMENT_TAG = "general_webview_fragment_tag";
 
     private static final String ARG_POSITION = "position";
+    private static final String ARG_BASE_URL = "base_url";
     private static final String ARG_URL = "url";
     private static final String ARG_BG_COLOR = "bg_color";
     private static final String ARG_SHOW_BOOKMARK = "show_bookmark";
@@ -97,6 +100,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
     private int bgColor;
 
+    private String baseUrl;
     private String defaultMessage = null;
     private String shareInstruction;
     private String shareTitle;
@@ -106,6 +110,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private boolean isShowBookmark = false;
     private boolean isShowShare = false;
     private boolean isSuccess = true;
+    private boolean isInternal = true;
     private WebView webView;
     protected abstract View getCustomProgressBar();
     protected abstract View getCustomInfoView();
@@ -118,24 +123,25 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
     private ViewTreeObserver.OnScrollChangedListener onScrollChangedListener;
 
-    public void setArg(Context context, int position, String url, String defaultMessage){
-        setArg(context, position,url,defaultMessage,-1);
+    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage){
+        setArg(context, position,baseUrl, url,defaultMessage,-1);
     }
 
-    public void setArg(Context context, int position, String url, String defaultMessage, int bgColor){
+    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage, int bgColor){
         ArrayList<String> headerList = HttpClientUtil.getHeaderList(false, false, false, false);
-        setArg(context, position,url,defaultMessage,-1, false, headerList);
+        setArg(context, position,baseUrl, url,defaultMessage,-1, false, headerList);
     }
 
-    public void setArg(Context context, int position, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList){
+    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList){
         HashMap<String, String> headerMap = HttpClientUtil.getHeaderMap(context, headerList);
-        setArg(position,url,defaultMessage,-1, false, false, null, null, null, headerMap);
+        setArg(position,baseUrl, url,defaultMessage,-1, false, false, null, null, null, headerMap);
     }
 
-    public void setArg(int position, String url, String defaultMessage, int bgColor, boolean showBookmark,
+    public void setArg(int position, String baseUrl, String url, String defaultMessage, int bgColor, boolean showBookmark,
                        boolean showShare, String shareInstruction, String shareTitle, String shareMessage, HashMap<String, String> headerMap){
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
+        b.putString(ARG_BASE_URL,baseUrl);
         b.putString(ARG_URL,url);
         b.putInt(ARG_BG_COLOR,bgColor);
         b.putString(ARG_DEFAULT_MESSAGE,defaultMessage);
@@ -295,6 +301,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        baseUrl = CommonUtil.getStringFragmentArgument(getArguments(),ARG_BASE_URL,"");
         rootUrl = CommonUtil.getStringFragmentArgument(getArguments(),ARG_URL,"");
         defaultMessage = CommonUtil.getStringFragmentArgument(getArguments(),ARG_DEFAULT_MESSAGE,null);
         bgColor = CommonUtil.getIntFragmentArgument(getArguments(),ARG_BG_COLOR, Color.TRANSPARENT);
@@ -375,8 +382,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
 
         //enable multiwindows
-        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        webView.getSettings().setSupportMultipleWindows(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
+        webView.getSettings().setSupportMultipleWindows(false);
 
         //enable file chooser
         webView.getSettings().setAllowFileAccess(true);
@@ -501,7 +508,11 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         if (webView != null) {
             WebBackForwardList history = webView.copyBackForwardList();
 
-            if (!history.getItemAtIndex(history.getCurrentIndex()).getUrl().equals("about:blank")) {
+            WebHistoryItem item = history.getItemAtIndex(history.getCurrentIndex());
+
+            if(item == null) return false;
+
+            if (!item.getUrl().equals("about:blank")) {
                 webView.reload();
             } else {
                 int index = -1;
@@ -592,13 +603,21 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private class SmartWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            isInternal = true;
             String rootUrlHost = Uri.parse(rootUrl).getHost();
+            if(TextUtils.isEmpty(rootUrlHost) && !TextUtils.isEmpty(baseUrl)){
+                rootUrlHost = Uri.parse(baseUrl).getHost();
+            }
             String requestUrlHost = Uri.parse(url).getHost();
-            if (!TextUtils.isEmpty(requestUrlHost) && requestUrlHost.endsWith(rootUrlHost)) {
+
+            DebugUtil.logI(GeneralWebViewFragment.FRAGMENT_TAG, url);
+
+            if (!TextUtils.isEmpty(requestUrlHost) && !TextUtils.isEmpty(rootUrlHost) && requestUrlHost.endsWith(rootUrlHost)) {
                 // This is my web site, so do not override; let my WebView load the page
                 return false;
             }
 
+            isInternal = false;
             // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             view.getContext().startActivity(intent);
@@ -608,21 +627,29 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            isInternal = true;
             String rootUrlHost = Uri.parse(rootUrl).getHost();
+            if(TextUtils.isEmpty(rootUrlHost) && !TextUtils.isEmpty(baseUrl)){
+                rootUrlHost = Uri.parse(baseUrl).getHost();
+            }
             String requestUrlHost = Uri.parse(request.getUrl().toString()).getHost();
-            if (!TextUtils.isEmpty(requestUrlHost) && requestUrlHost.endsWith(rootUrlHost)) {
+
+            DebugUtil.logI(GeneralWebViewFragment.FRAGMENT_TAG, request.getUrl().toString());
+
+            if (!TextUtils.isEmpty(requestUrlHost) && !TextUtils.isEmpty(rootUrlHost) && requestUrlHost.endsWith(rootUrlHost)) {
                 // This is my web site, so do not override; let my WebView load the page
                 return false;
             }
 
+            isInternal = false;
             // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getUrl().toString()));
-            view.getContext().startActivity(intent);
+            CommonUtil.openBrowser(view.getContext(), request.getUrl().toString());
             return true;
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            isInternal = true;
             isSuccess = true; //reset value isSuccess
             if(progressBar != null) {
                 progressBar.setIndeterminate(true);
@@ -730,17 +757,19 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private class SmartWebChromeClient extends WebChromeClient {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-            if(isSuccess) {
-                currentUrl = view.getUrl();
-                if (progressBar != null) {
-                    progressBar.setIndeterminate(false);
-                }
-                if (customProgressBar != null) {
-                    customProgressBar.setIndeterminate(false);
-                }
-                showProgressBar(newProgress);
-                if(getActivity() != null) {
-                    getActivity().invalidateOptionsMenu();
+            if(isInternal) {
+                if (isSuccess) {
+                    currentUrl = view.getUrl();
+                    if (progressBar != null) {
+                        progressBar.setIndeterminate(false);
+                    }
+                    if (customProgressBar != null) {
+                        customProgressBar.setIndeterminate(false);
+                    }
+                    showProgressBar(newProgress);
+                    if (getActivity() != null) {
+                        getActivity().invalidateOptionsMenu();
+                    }
                 }
             }
         }
