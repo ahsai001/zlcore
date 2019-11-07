@@ -497,16 +497,15 @@ public class NotificationUtil {
         //place this in onCreate and onNewIntent
         Bundle extraData = CommonUtil.getBundleIntent(intent, EXTRA_DATA, null);
         final long extraInfoId = CommonUtil.getLongIntent(intent, EXTRA_INFO_ID, -1);
-        if(extraData != null) {
-            callBackIntentFromNotification.handle(extraData, extraInfoId > -1, extraInfoId);
-            if(extraInfoId > -1) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        InfoUtil.scrollInfoList(extraInfoId);
-                    }
-                }, 200);
-            }
+        boolean isShowMessagePage = extraInfoId > -1;
+        callBackIntentFromNotification.handle(extraData, isShowMessagePage, extraInfoId);
+        if(isShowMessagePage) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    InfoUtil.scrollInfoList(extraInfoId);
+                }
+            }, 200);
         }
     }
 }
