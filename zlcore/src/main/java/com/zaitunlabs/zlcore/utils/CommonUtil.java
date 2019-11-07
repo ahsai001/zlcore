@@ -283,7 +283,11 @@ public class CommonUtil {
 					}
 				});
 		alert = builder.create();
-		alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			alert.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+		} else {
+			alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+		}
 		alert.setCanceledOnTouchOutside(false);
 		alert.setTitle(title);
 		alert.show();

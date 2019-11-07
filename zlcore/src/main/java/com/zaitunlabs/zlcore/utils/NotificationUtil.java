@@ -79,6 +79,7 @@ public class NotificationUtil {
             String title = (String) data.get("title");
             String body = (String) data.get("body");
             String photo = (String) data.get("photo"); //photo url
+            String autocancel = (String) data.get("autocancel"); //yes or no
 
             String action = (String) data.get("action"); //url or full path class
             String isHeadsUp = (String) data.get("headsup"); //yes or no
@@ -198,7 +199,7 @@ public class NotificationUtil {
                 notif = getNotification(context,title, body, photo,
                         nextIntentComponentType,nextIntent,
                         INTENT_COMPONENT_TYPE_SERVICE,null,
-                        null, appNameResId, iconResId, null, false,
+                        null, appNameResId, iconResId, null, !TextUtils.isEmpty(autocancel) && autocancel.toLowerCase().equals("yes"),
                         !TextUtils.isEmpty(isHeadsUp) && isHeadsUp.toLowerCase().equals("yes"));
             }
         }
