@@ -26,6 +26,7 @@
 
             <ImageView
                 android:id="@+id/info_image_row"
+                android:layout_marginTop="10dp"
                 style="@style/infoImageRowTextView"
                 android:layout_below="@id/info_title_row"
                 android:layout_width="match_parent"
@@ -34,6 +35,7 @@
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/info_body_row"
+                android:layout_marginTop="10dp"
                 android:layout_below="@id/info_image_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
