@@ -153,11 +153,11 @@ public class StoreModel extends SQLiteWrapper.TableClass {
 
             //load other table
             List<StoreDataModel> storeDataModelList = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findAllWithCriteria(null, StoreDataModel.class,
-                    "store_model_id="+storeModel._id, null);
+                    "store_model_id=?", new String[]{Long.toString(storeModel._id)});
             storeModel.setData(storeDataModelList);
 
             StorePagingModel storePagingModel = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findFirstWithCriteria(null, StorePagingModel.class,
-                    "store_model_id="+storeModel._id, null);
+                    "store_model_id=?", new String[]{Long.toString(storeModel._id)});
             storeModel.setPaging(storePagingModel);
         }
 

@@ -153,11 +153,11 @@ public class AppListModel extends SQLiteWrapper.TableClass {
 
             //load other table
             List<AppListDataModel> appListDataModelList = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findAllWithCriteria(null, AppListDataModel.class,
-                    "applist_model_id="+appListModel._id, null);
+                    "applist_model_id=?", new String[]{Long.toString(appListModel._id)});
             appListModel.setData(appListDataModelList);
 
             AppListPagingModel appListPagingModel = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findFirstWithCriteria(null, AppListPagingModel.class,
-                    "applist_model_id="+appListModel._id, null);
+                    "applist_model_id=?", new String[]{Long.toString(appListModel._id)});
             appListModel.setPaging(appListPagingModel);
         }
 

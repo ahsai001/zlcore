@@ -146,13 +146,14 @@ public class BaseApplication extends Application {
 						.addStringField("image")
 						.addStringField("title")
 						.addStringField("desc")
-						.addStringField("unique")
+						.addStringField("uniq")
 						.addStringField("url")
 						.addLongField("store_model_id")
 						.enableRecordLog()
 						.addForeignKey("store_model_id",
 								null, StoreModel.class, SQLiteWrapper.ID,
-								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE));
+								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE)
+						.addIndex("store_model_id"));
 
 
 				//AppList
@@ -167,15 +168,16 @@ public class BaseApplication extends Application {
 						.addIntField("next")
 						.addLongField("applist_model_id")
 						.enableRecordLog()
-						.addForeignKey("applist_model_idapplist_model_idapplist_model_id",
+						.addForeignKey("applist_model_id",
 								null, AppListModel.class,SQLiteWrapper.ID,
-								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE));
+								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE)
+						.addIndex("applist_model_id"));
 
 				sqLiteWrapper.addTable(new SQLiteWrapper.Table(AppListDataModel.class)
 						.addStringField("image")
 						.addStringField("title")
 						.addStringField("desc")
-						.addStringField("unique")
+						.addStringField("uniq")
 						.addStringField("url")
 						.addLongField("applist_model_id")
 						.enableRecordLog()
