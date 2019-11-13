@@ -86,7 +86,7 @@ public class FCMLoginIntentService extends JobIntentService {
             isProcessing = false;
             FCMLoginIntentService.startSending(this, appid, isMeid, 2*1000);
         }else {
-            if (!PrefsData.getPushyTokenLoginSent() && (PrefsData.isAccountLogin())) {
+            if (!PrefsData.getPushyTokenLoginSent() && (PrefsData.isAccountLoggedIn())) {
                 AndroidNetworking.post(APIConstant.API_SEND_FCM_LOGIN)
                         .setOkHttpClient(HttpClientUtil.getHTTPClient(this, APIConstant.API_VERSION, isMeid))
                         .addUrlEncodeFormBodyParameter("fcmid",PrefsData.getPushyToken())

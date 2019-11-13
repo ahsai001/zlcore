@@ -30,9 +30,9 @@ import com.google.gson.GsonBuilder;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.adapters.StoreAdapter;
 import com.zaitunlabs.zlcore.api.APIConstant;
-import com.zaitunlabs.zlcore.models.StoreDataModel;
-import com.zaitunlabs.zlcore.models.StoreModel;
-import com.zaitunlabs.zlcore.models.StorePagingModel;
+import com.zaitunlabs.zlcore.tables.StoreDataModel;
+import com.zaitunlabs.zlcore.tables.StoreModel;
+import com.zaitunlabs.zlcore.tables.StorePagingModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewLoadMoreListener;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewTouchListener;
@@ -222,14 +222,18 @@ public class StoreActivityFragment extends BaseFragment {
                             StoreActivityFragment.this.storeModel = responseListModel;
 
                         } else {
-                            //save new paging
                             StorePagingModel newStorePagingModel = responseListModel.getPaging();
-                            newStorePagingModel.saveWithTimeStamp();
 
                             StorePagingModel oldStorePagingModel = StoreActivityFragment.this.storeModel.getPaging();
                             StoreActivityFragment.this.storeModel.setPaging(newStorePagingModel);
+                            //StoreActivityFragment.this.storeModel.update();
+
                             StoreActivityFragment.this.storeModel.addNewDataListToCache(responseListModel.getData());
-                            StoreActivityFragment.this.storeModel.save();
+
+                            //save new paging
+                            newStorePagingModel.storeModel = StoreActivityFragment.this.storeModel;
+                            newStorePagingModel.save();
+
                             //delete old paging
                             oldStorePagingModel.delete();
 

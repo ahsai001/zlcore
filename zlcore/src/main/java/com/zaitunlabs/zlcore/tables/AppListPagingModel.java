@@ -1,44 +1,37 @@
-package com.zaitunlabs.zlcore.models;
+package com.zaitunlabs.zlcore.tables;
 
-import android.provider.BaseColumns;
-
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.zaitunlabs.zlcore.core.BaseApplication;
+import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Created by ahsai on 3/18/2018.
  */
 
-@Table(name = "StorePaging", id = BaseColumns._ID)
-public class StorePagingModel extends Model implements Serializable {
+public class AppListPagingModel extends SQLiteWrapper.TableClass {
 
-    @Column(name = "countperpage")
     @SerializedName("countperpage")
     @Expose
     private int countperpage;
 
-    @Column(name = "prev")
     @SerializedName("prev")
     @Expose
     private int prev;
 
-    @Column(name = "next")
     @SerializedName("next")
     @Expose
     private int next;
+
+    public AppListModel appListModel;
 
     /**
      * No args constructor for use in serialization
      *
      */
-    public StorePagingModel() {
+    public AppListPagingModel() {
         super();
     }
 
@@ -48,7 +41,7 @@ public class StorePagingModel extends Model implements Serializable {
      * @param next
      * @param prev
      */
-    public StorePagingModel(int countperpage, int prev, int next) {
+    public AppListPagingModel(int countperpage, int prev, int next) {
         super();
         this.countperpage = countperpage;
         this.prev = prev;
@@ -63,7 +56,7 @@ public class StorePagingModel extends Model implements Serializable {
         this.countperpage = countperpage;
     }
 
-    public StorePagingModel withCountperpage(int countperpage) {
+    public AppListPagingModel withCountperpage(int countperpage) {
         this.countperpage = countperpage;
         return this;
     }
@@ -76,7 +69,7 @@ public class StorePagingModel extends Model implements Serializable {
         this.prev = prev;
     }
 
-    public StorePagingModel withPrev(int prev) {
+    public AppListPagingModel withPrev(int prev) {
         this.prev = prev;
         return this;
     }
@@ -89,26 +82,38 @@ public class StorePagingModel extends Model implements Serializable {
         this.next = next;
     }
 
-    public StorePagingModel withNext(int next) {
+    public AppListPagingModel withNext(int next) {
         this.next = next;
         return this;
     }
 
-
-    @Column(name = "timestamp", index = true)
-    public Date timestamp;
-
-    public void saveWithTimeStamp(){
-        timestamp = Calendar.getInstance().getTime();
-        save();
-    }
-
     @Override
     public String toString() {
-        return "StorePagingModel{" +
+        return "AppListPagingModel{" +
                 "countperpage=" + countperpage +
                 ", prev=" + prev +
                 ", next=" + next +
                 '}';
+    }
+
+    @Override
+    protected String getDatabaseName() {
+        return BaseApplication.DATABASE_NAME;
+    }
+
+    @Override
+    protected void getObjectData(List<Object> dataList) {
+        dataList.add(countperpage);
+        dataList.add(prev);
+        dataList.add(next);
+        dataList.add(appListModel);
+    }
+
+    @Override
+    protected void setObjectData(List<Object> dataList) {
+        countperpage = (int) dataList.get(0);
+        prev = (int) dataList.get(1);
+        next = (int) dataList.get(2);
+        appListModel = (AppListModel) dataList.get(3);
     }
 }

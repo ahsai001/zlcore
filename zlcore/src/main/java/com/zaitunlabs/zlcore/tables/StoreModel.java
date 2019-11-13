@@ -1,45 +1,36 @@
-package com.zaitunlabs.zlcore.models;
+package com.zaitunlabs.zlcore.tables;
 
-import android.provider.BaseColumns;
-
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.zaitunlabs.zlcore.api.APIConstant;
+import com.zaitunlabs.zlcore.core.BaseApplication;
+import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 
-import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by ahsai on 3/18/2018.
  */
 
-@Table(name = "Store", id = BaseColumns._ID)
-public class StoreModel extends Model implements Serializable {
-
-    @Column(name = "status", index = true)
+public class StoreModel extends SQLiteWrapper.TableClass {
     @SerializedName("status")
     @Expose
     private int status;
 
-    @Column(name = "message")
     @SerializedName("message")
     @Expose
     private String message;
 
-    @Column(name = "paging")
+
+
+
+
+
+
     @SerializedName("paging")
     @Expose
     private StorePagingModel paging;
-
-
-
 
     @SerializedName("data")
     @Expose
@@ -120,13 +111,61 @@ public class StoreModel extends Model implements Serializable {
         return this;
     }
 
-    @Column(name = "timestamp", index = true)
-    public Date timestamp;
 
-    public void saveWithTimeStamp(){
-        timestamp = Calendar.getInstance().getTime();
+    public void cache(boolean deletePrev){
+        if(deletePrev){
+            deleteCache();
+        }
         save();
+        getPaging().storeModel = this;
+        getPaging().save();
+        List<StoreDataModel> storeDataModelList = getData();
+        for (StoreDataModel storeDataModel: storeDataModelList){
+            storeDataModel.storeModel = this;
+            storeDataModel.save();
+        }
     }
+
+    public void addNewDataListToCache(List<StoreDataModel> newStoreDataModelList){
+        for (StoreDataModel storeDataModel: newStoreDataModelList){
+            storeDataModel.storeModel = this;
+            storeDataModel.save();
+        }
+    }
+
+    private static void deleteCache(){
+        SQLiteWrapper.of(BaseApplication.DATABASE_NAME).deleteAll(null, StoreModel.class);
+
+        /*new Delete().from(StoreDataModel.class).execute();
+        new Delete().from(StoreModel.class).execute();
+        new Delete().from(StorePagingModel.class).execute();*/
+    }
+
+    public static StoreModel getLastCache(){
+        int CACHED_TIME = APIConstant.CACHED_TIME;
+        StoreModel storeModel = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findFirst(null, StoreModel.class);
+        if(storeModel != null) {
+            int timelapseHour = (int) ((Calendar.getInstance().getTimeInMillis() - storeModel._created_at.getTime()) / 1000) / 3600;
+            if (timelapseHour > CACHED_TIME) {
+                deleteCache();
+                return null;
+            }
+
+            //load other table
+            List<StoreDataModel> storeDataModelList = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findAllWithCriteria(null, StoreDataModel.class,
+                    "store_model_id="+storeModel._id, null);
+            storeModel.setData(storeDataModelList);
+
+            StorePagingModel storePagingModel = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findFirstWithCriteria(null, StorePagingModel.class,
+                    "store_model_id="+storeModel._id, null);
+            storeModel.setPaging(storePagingModel);
+        }
+
+        return storeModel;
+    }
+
+
+
 
     @Override
     public String toString() {
@@ -139,53 +178,22 @@ public class StoreModel extends Model implements Serializable {
     }
 
 
-    public void cache(boolean deletePrev){
-        if(deletePrev){
-            deleteCache();
-        }
-        getPaging().saveWithTimeStamp();
-        saveWithTimeStamp();
-        List<StoreDataModel> storeDataModelList = getData();
-        for (StoreDataModel storeDataModel: storeDataModelList){
-            storeDataModel.storeModel = this;
-            storeDataModel.saveWithTimeStamp();
-        }
+
+    @Override
+    protected String getDatabaseName() {
+        return BaseApplication.DATABASE_NAME;
     }
 
-    public void addNewDataListToCache(List<StoreDataModel> newStoreDataModelList){
-        for (StoreDataModel storeDataModel: newStoreDataModelList){
-            storeDataModel.storeModel = this;
-            storeDataModel.saveWithTimeStamp();
-        }
+    @Override
+    protected void getObjectData(List<Object> dataList) {
+        dataList.add(status);
+        dataList.add(message);
     }
 
-    private static void deleteCache(){
-        new Delete().from(StoreDataModel.class).execute();
-        new Delete().from(StoreModel.class).execute();
-        new Delete().from(StorePagingModel.class).execute();
-    }
 
-    public static StoreModel getLastCache(){
-        int CACHED_TIME = APIConstant.CACHED_TIME;
-        StoreModel storeModel = new Select()
-                .from(StoreModel.class).executeSingle();
-        if(storeModel != null) {
-            int timelapseHour = (int) ((Calendar.getInstance().getTimeInMillis() - storeModel.timestamp.getTime()) / 1000) / 3600;
-            if (timelapseHour > CACHED_TIME) {
-                deleteCache();
-                return null;
-            }
-
-            //load other table
-            List<StoreDataModel> storeDataModelList = new Select()
-                    .from(StoreDataModel.class).execute();
-            storeModel.setData(storeDataModelList);
-
-            StorePagingModel storePagingModel = new Select()
-                    .from(StorePagingModel.class).executeSingle();
-            storeModel.setPaging(storePagingModel);
-        }
-
-        return storeModel;
+    @Override
+    protected void setObjectData(List<Object> dataList) {
+        status = (int) dataList.get(0);
+        message = (String) dataList.get(1);
     }
 }

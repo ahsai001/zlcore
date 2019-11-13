@@ -5,18 +5,24 @@ import android.content.Context;
 
 import androidx.multidex.MultiDex;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.Configuration;
-import com.activeandroid.Model;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.constants.ZLCoreConstanta;
 import com.zaitunlabs.zlcore.events.ReInitializeDatabaseEvent;
+import com.zaitunlabs.zlcore.tables.AppListDataModel;
+import com.zaitunlabs.zlcore.tables.AppListModel;
+import com.zaitunlabs.zlcore.tables.AppListPagingModel;
+import com.zaitunlabs.zlcore.tables.BookmarkModel;
+import com.zaitunlabs.zlcore.tables.InformationModel;
+import com.zaitunlabs.zlcore.tables.StoreDataModel;
+import com.zaitunlabs.zlcore.tables.StoreModel;
+import com.zaitunlabs.zlcore.tables.StorePagingModel;
 import com.zaitunlabs.zlcore.utils.ApplicationWacther;
 import com.zaitunlabs.zlcore.utils.CommonUtil;
 import com.zaitunlabs.zlcore.utils.DebugUtil;
 import com.zaitunlabs.zlcore.utils.EventsUtil;
-import com.zaitunlabs.zlcore.utils.Hawk;
+import com.zaitunlabs.zlcore.utils.Lookup;
 import com.zaitunlabs.zlcore.utils.PlayServiceUtil;
+import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 import com.zaitunlabs.zlcore.utils.audio.BackSoundService;
 
 import org.acra.ACRA;
@@ -30,7 +36,7 @@ import org.acra.sender.ReportSenderFactory;
 import org.greenrobot.eventbus.Subscribe;
 
 public class BaseApplication extends Application {
-	Configuration.Builder dbBuilder = null;
+	public static final String DATABASE_NAME = "zlcore.db";
 	@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
@@ -76,39 +82,115 @@ public class BaseApplication extends Application {
 
 		dbInitialize();
 
-		Hawk.init(this);
+		Lookup.init(this, true);
 
 		EventsUtil.register(this);
 	}
 
 	private void dbInitialize(){
-		getDBBuilder();
-		Configuration dbConfiguration = dbBuilder.setDatabaseName(ZLCoreConstanta.getDatabaseName(this))
-				.setDatabaseVersion(ZLCoreConstanta.getDatabaseVersion())
-				.create();
-		ActiveAndroid.initialize(dbConfiguration);
+		SQLiteWrapper.addDatabase(new SQLiteWrapper.Database() {
+			@Override
+			public Context getContext() {
+				return BaseApplication.this;
+			}
+
+			@Override
+			public String getDatabaseName() {
+				return BaseApplication.DATABASE_NAME;
+			}
+
+			@Override
+			public int getDatabaseVersion() {
+				return 1;
+			}
+
+			@Override
+			public void configure(SQLiteWrapper sqLiteWrapper) {
+				//infomation
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(InformationModel.class)
+						.addStringField("title")
+						.addStringField("body")
+						.addBooleanField("read")
+						.addIntField("type")
+						.addStringField("photoUrl")
+						.addStringField("infoUrl")
+						.enableRecordLog()
+						.addIndex("read"));
+
+				//Bookmark
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(BookmarkModel.class)
+						.addStringField("title")
+						.addStringField("desc")
+						.addStringField("link")
+						.enableRecordLog()
+						.addIndex("link"));
+
+
+				//Store
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(StoreModel.class)
+						.addIntField("status")
+						.addStringField("message")
+						.enableRecordLog());
+
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(StorePagingModel.class)
+						.addIntField("countperpage")
+						.addIntField("prev")
+						.addIntField("next")
+						.addLongField("store_model_id")
+						.enableRecordLog()
+						.addForeignKey("store_model_id",
+								null, StoreModel.class,SQLiteWrapper.ID,
+								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE));
+
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(StoreDataModel.class)
+						.addStringField("image")
+						.addStringField("title")
+						.addStringField("desc")
+						.addStringField("unique")
+						.addStringField("url")
+						.addLongField("store_model_id")
+						.enableRecordLog()
+						.addForeignKey("store_model_id",
+								null, StoreModel.class, SQLiteWrapper.ID,
+								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE));
+
+
+				//AppList
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(AppListModel.class)
+						.addIntField("status")
+						.addStringField("message")
+						.enableRecordLog());
+
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(AppListPagingModel.class)
+						.addIntField("countperpage")
+						.addIntField("prev")
+						.addIntField("next")
+						.addLongField("applist_model_id")
+						.enableRecordLog()
+						.addForeignKey("applist_model_idapplist_model_idapplist_model_id",
+								null, AppListModel.class,SQLiteWrapper.ID,
+								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE));
+
+				sqLiteWrapper.addTable(new SQLiteWrapper.Table(AppListDataModel.class)
+						.addStringField("image")
+						.addStringField("title")
+						.addStringField("desc")
+						.addStringField("unique")
+						.addStringField("url")
+						.addLongField("applist_model_id")
+						.enableRecordLog()
+						.addForeignKey("applist_model_id",
+								null, AppListModel.class, SQLiteWrapper.ID,
+								SQLiteWrapper.ForeignKey.CASCADE, SQLiteWrapper.ForeignKey.CASCADE));
+
+			}
+		});
 	}
 
 	@Subscribe
 	public void onEvent(ReInitializeDatabaseEvent event){
-		ActiveAndroid.dispose();
+		SQLiteWrapper.removeAllDatabase();
 		dbInitialize();
-	}
-
-	protected void addDBModelClasses(Class<? extends Model>... modelClasses){
-		getDBBuilder();
-		dbBuilder.addModelClasses(modelClasses);
-	}
-
-	private void getDBBuilder(){
-		if(dbBuilder == null){
-			dbBuilder = new Configuration.Builder(this);
-		}
-	}
-
-	protected void addDBModelClass(Class<? extends Model> modelClass){
-		getDBBuilder();
-		dbBuilder.addModelClass(modelClass);
 	}
 
 	@Override
@@ -129,8 +211,9 @@ public class BaseApplication extends Application {
 		}
 		ApplicationWacther.getInstance(this).unregisterAppWatcherListener(this);
 
-		ActiveAndroid.dispose();
 		EventsUtil.unregister(this);
+
+		SQLiteWrapper.removeAllDatabase();
 		super.onTerminate();
 	}
 

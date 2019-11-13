@@ -49,7 +49,7 @@ import android.widget.TextView;
 
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.events.GeneralWebviewEvent;
-import com.zaitunlabs.zlcore.models.BookmarkModel;
+import com.zaitunlabs.zlcore.tables.BookmarkModel;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtil;

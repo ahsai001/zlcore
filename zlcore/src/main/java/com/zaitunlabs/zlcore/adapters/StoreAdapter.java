@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.models.StoreDataModel;
+import com.zaitunlabs.zlcore.tables.StoreDataModel;
 
 import java.util.List;
 

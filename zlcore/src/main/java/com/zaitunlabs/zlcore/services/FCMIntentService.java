@@ -87,7 +87,7 @@ public class FCMIntentService extends JobIntentService {
             isProcessing = false;
             FCMIntentService.startSending(this, appid, needLogin, isMeid, 2*1000);
         }else {
-            if (!PrefsData.getPushyTokenSent() && (PrefsData.isAccountLogin() || !needLogin)) {
+            if (!PrefsData.getPushyTokenSent() && (PrefsData.isAccountLoggedIn() || !needLogin)) {
 
                 AndroidNetworking.post(APIConstant.API_SEND_FCM)
                         .setOkHttpClient(HttpClientUtil.getHTTPClient(this, APIConstant.API_VERSION, isMeid))

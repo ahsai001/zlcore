@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.models.InformationModel;
+import com.zaitunlabs.zlcore.tables.InformationModel;
 import com.zaitunlabs.zlcore.utils.DateStringUtil;
 import com.squareup.picasso.Picasso;
 
@@ -74,7 +74,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         holder.bodyView.setText(body, collapseStatus, 0);
 
         //time
-        holder.timeView.setText(DateStringUtil.getDateTimeInString(info.timestamp, null));
+        holder.timeView.setText(DateStringUtil.getDateTimeInString(info._created_at, null));
 
 
         //image

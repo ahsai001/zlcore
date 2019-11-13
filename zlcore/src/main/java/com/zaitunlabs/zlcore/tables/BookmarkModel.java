@@ -1,31 +1,17 @@
-package com.zaitunlabs.zlcore.models;
+package com.zaitunlabs.zlcore.tables;
 
-import android.provider.BaseColumns;
+import com.zaitunlabs.zlcore.core.BaseApplication;
+import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.activeandroid.query.Select;
-
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by ahsai on 3/18/2018.
  */
 
-@Table(name = "Bookmarks", id = BaseColumns._ID)
-public class BookmarkModel extends Model implements Serializable {
-
-    @Column(name = "title")
+public class BookmarkModel extends SQLiteWrapper.TableClass {
     private String title;
-
-    @Column(name = "desc")
     private String desc;
-
-    @Column(name = "link")
     private String link;
 
 
@@ -39,13 +25,26 @@ public class BookmarkModel extends Model implements Serializable {
         this.link = link;
     }
 
-    @Column(name = "timestamp", index = true)
-    public Date timestamp;
 
-    public void saveWithTimeStamp(){
-        timestamp = Calendar.getInstance().getTime();
-        save();
+    @Override
+    protected String getDatabaseName() {
+        return BaseApplication.DATABASE_NAME;
     }
+
+    @Override
+    protected void getObjectData(List<Object> dataList) {
+        dataList.add(title);
+        dataList.add(desc);
+        dataList.add(link);
+    }
+
+    @Override
+    protected void setObjectData(List<Object> dataList) {
+        title = (String) dataList.get(0);
+        desc = (String) dataList.get(1);
+        link = (String) dataList.get(2);
+    }
+
 
     public String getTitle() {
         return title;
@@ -73,18 +72,19 @@ public class BookmarkModel extends Model implements Serializable {
 
 
     public boolean hasSaved(){
-        return new Select().from(BookmarkModel.class).where("link = '"+link+"'").count() > 0;
+        return SQLiteWrapper.of(BaseApplication.DATABASE_NAME).count(null, BookmarkModel.class,"link = '"+link+"'", null) > 0;
     }
 
     public static BookmarkModel findBookmark(String link){
-        return new Select().from(BookmarkModel.class).where("link = '"+link+"'").executeSingle();
+        return SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findFirstWithCriteria(null,BookmarkModel.class,
+                "link = '"+link+"'", null);
     }
 
     public static boolean bookmark(String title, String desc, String link){
         BookmarkModel existingModel = findBookmark(link);
         if(existingModel == null){
             BookmarkModel newBoomark = new BookmarkModel(title,desc,link);
-            newBoomark.saveWithTimeStamp();
+            newBoomark.save();
             return true;
         }
         return false;
@@ -101,7 +101,7 @@ public class BookmarkModel extends Model implements Serializable {
 
 
     public static List<BookmarkModel> getAllBookmarkList(){
-        return new Select().from(BookmarkModel.class).execute();
+        return SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findAll(null, BookmarkModel.class);
     }
 
     @Override

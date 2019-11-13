@@ -23,15 +23,15 @@ public class PrefsData {
 
 
    public static String getName(){
-      return Hawk.get(NAME,"");
+      return Lookup.getS(NAME,"");
    }
 
-   public static boolean isAccountLogin(){
-      return Hawk.get(ISLOGIN,false) && !TextUtils.isEmpty(getSecret()) && !TextUtils.isEmpty(getToken());
+   public static boolean isAccountLoggedIn(){
+      return isLoggedIn() && !TextUtils.isEmpty(getToken());
    }
 
-   public static  boolean isLogin(){
-      return Hawk.get(ISLOGIN,false);
+   public static  boolean isLoggedIn(){
+      return Lookup.getS(ISLOGIN,false);
    }
 
    public static void setLogout(){
@@ -47,136 +47,136 @@ public class PrefsData {
    }
 
    public static String getPhoto(){
-      return Hawk.get(PHOTO, null);
+      return Lookup.getS(PHOTO, null);
    }
 
    public static String getPhoto(String defaultValue){
-      return Hawk.get(PHOTO, defaultValue);
+      return Lookup.getS(PHOTO, defaultValue);
    }
 
    public static String getName(String defaultValue){
-      return Hawk.get(NAME, defaultValue);
+      return Lookup.getS(NAME, defaultValue);
    }
 
    public static String getUserID(){
-      return Hawk.get(USERID,"");
+      return Lookup.getS(USERID,"");
    }
 
    public static String getUserID(String defaultValue){
-      return Hawk.get(USERID, defaultValue);
+      return Lookup.getS(USERID, defaultValue);
    }
 
    public static String getEmail(){
-      return Hawk.get(EMAIL,"");
+      return Lookup.getS(EMAIL,"");
    }
 
    public static String getEmail(String defaultValue){
-      return Hawk.get(EMAIL, defaultValue);
+      return Lookup.getS(EMAIL, defaultValue);
    }
 
    public static String getPhone(){
-      return Hawk.get(PHONE,"");
+      return Lookup.getS(PHONE,"");
    }
 
    public static String getPhone(String defaultValue){
-      return Hawk.get(PHONE, defaultValue);
+      return Lookup.getS(PHONE, defaultValue);
    }
 
    public static String getToken(){
-      return Hawk.get(TOKEN,"");
+      return Lookup.getS(TOKEN,"");
    }
    public static String getToken(String defaultValue){
-      return Hawk.get(TOKEN, defaultValue);
+      return Lookup.getS(TOKEN, defaultValue);
    }
 
 
    public static String getSecret(){
-      return Hawk.get(SECRET,"");
+      return Lookup.getS(SECRET,"");
    }
    public static String getSecret(String defaultValue){
-      return Hawk.get(SECRET, defaultValue);
+      return Lookup.getS(SECRET, defaultValue);
    }
 
    public static String getPushyToken(){
-      return Hawk.get(PUSHY_TOKEN,"");
+      return Lookup.getS(PUSHY_TOKEN,"");
    }
 
    public static boolean getPushyTokenSent(){
-      return Hawk.get(PUSHY_TOKEN_SENT,true);
+      return Lookup.getS(PUSHY_TOKEN_SENT,true);
    }
 
    public static boolean getPushyTokenLoginSent(){
-      return Hawk.get(PUSHY_TOKEN_LOGIN_SENT,true);
+      return Lookup.getS(PUSHY_TOKEN_LOGIN_SENT,true);
    }
 
    public static void setName(String value){
-      Hawk.put(NAME,value);
+      Lookup.setS(NAME,value);
    }
 
    public static void setUserID(String value){
-      Hawk.put(USERID,value);
+      Lookup.setS(USERID,value);
    }
 
    public static void setEmail(String value){
-      Hawk.put(EMAIL,value);
+      Lookup.setS(EMAIL,value);
    }
    public static void setPhone(String value){
-      Hawk.put(PHONE,value);
+      Lookup.setS(PHONE,value);
    }
 
    public static void setSecret(String value){
-      Hawk.put(SECRET,value);
+      Lookup.setS(SECRET,value);
    }
 
    public static void setToken(String value){
-      Hawk.put(TOKEN,value);
+      Lookup.setS(TOKEN,value);
    }
 
    public static void setLogin(boolean value){
-      Hawk.put(ISLOGIN,value);
+      Lookup.setS(ISLOGIN,value);
    }
 
 
    public static String getLoginType() {
-      return Hawk.get(LOGINTYPE,"");
+      return Lookup.getS(LOGINTYPE,"");
    }
 
    public static void setLoginType(String loginType) {
-      Hawk.put(LOGINTYPE,loginType);
+      Lookup.setS(LOGINTYPE,loginType);
    }
 
 
 
    public static void setPhoto(String value){
-      Hawk.put(PHOTO,value);
+      Lookup.setS(PHOTO,value);
    }
 
    public static void setPushyToken(String value){
-      Hawk.put(PUSHY_TOKEN,value);
+      Lookup.setS(PUSHY_TOKEN,value);
    }
    public static void setPushyTokenSent(boolean value){
-      Hawk.put(PUSHY_TOKEN_SENT,value);
+      Lookup.setS(PUSHY_TOKEN_SENT,value);
    }
 
 
    public static void setPushyTokenLoginSent(boolean value){
-      Hawk.put(PUSHY_TOKEN_LOGIN_SENT,value);
+      Lookup.setS(PUSHY_TOKEN_LOGIN_SENT,value);
    }
 
 
    public static void clearAllData(){
-      Hawk.remove(NAME);
-      Hawk.remove(USERID);
-      Hawk.remove(EMAIL);
-      Hawk.remove(PHONE);
-      Hawk.remove(PHOTO);
-      Hawk.remove(SECRET);
-      Hawk.remove(TOKEN);
-      Hawk.remove(ISLOGIN);
-      Hawk.remove(LOGINTYPE);
-      Hawk.remove(PUSHY_TOKEN);
-      Hawk.remove(PUSHY_TOKEN_SENT);
-      Hawk.remove(PUSHY_TOKEN_LOGIN_SENT);
+      Lookup.removeS(NAME);
+      Lookup.removeS(USERID);
+      Lookup.removeS(EMAIL);
+      Lookup.removeS(PHONE);
+      Lookup.removeS(PHOTO);
+      Lookup.removeS(SECRET);
+      Lookup.removeS(TOKEN);
+      Lookup.removeS(ISLOGIN);
+      Lookup.removeS(LOGINTYPE);
+      Lookup.removeS(PUSHY_TOKEN);
+      Lookup.removeS(PUSHY_TOKEN_SENT);
+      Lookup.removeS(PUSHY_TOKEN_LOGIN_SENT);
    }
 
 

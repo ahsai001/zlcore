@@ -23,7 +23,7 @@ import android.webkit.URLUtil;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.adapters.InfoAdapter;
 import com.zaitunlabs.zlcore.core.WebViewActivity;
-import com.zaitunlabs.zlcore.models.InformationModel;
+import com.zaitunlabs.zlcore.tables.InformationModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.events.InfoPositionEvent;
 import com.zaitunlabs.zlcore.events.UpdateInfoListEvent;
@@ -158,7 +158,7 @@ public class InfoFragment extends BaseFragment {
                                     htmlContent = CommonUtil.decodeBase64(htmlContent);
                                 }
                                 WebViewActivity.start(view.getContext(),htmlContent,info.getTitle(), "",
-                                        ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info.getId(), isMeid);
+                                        ContextCompat.getColor(view.getContext(),android.R.color.white),info.getTitle()+info._id, isMeid);
                             } else if(info.getInfoUrl().startsWith("activity://")){
                                 Uri uri = Uri.parse(info.getInfoUrl());
                                 if(uri != null) {
@@ -244,7 +244,7 @@ public class InfoFragment extends BaseFragment {
         long infoId = event.getInfoId();
         if(infoId > -1){
             for(int i=0; i<infoList.size(); i++){
-                if(infoId == infoList.get(i).getId()){
+                if(infoId == infoList.get(i)._id){
                     recyclerView.smoothScrollToPosition(i);
                     break;
                 }

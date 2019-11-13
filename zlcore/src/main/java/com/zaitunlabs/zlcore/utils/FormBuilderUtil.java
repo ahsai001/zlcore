@@ -1431,7 +1431,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
         });
 
 
-        registerNewPropertyViewSelectorFactory("spinner", "setData", new PropertyViewSelectorFactory() {
+        registerNewPropertyViewSelectorFactory("spinner", "setObjectData", new PropertyViewSelectorFactory() {
             @Override
             public List<Integer> getViewIds() {
                 List<Integer> widgetIds = new ArrayList<>();
@@ -1440,7 +1440,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
-        registerNewPropertyViewSelectorFactory("spinner2", "setData", new PropertyViewSelectorFactory() {
+        registerNewPropertyViewSelectorFactory("spinner2", "setObjectData", new PropertyViewSelectorFactory() {
             @Override
             public List<Integer> getViewIds() {
                 List<Integer> widgetIds = new ArrayList<>();
@@ -1451,14 +1451,14 @@ public class FormBuilderUtil implements VerticalStepperForm{
 
 
         //Custom Method Factory
-        registerNewCustomMethodFactory("spinner", "setData", new CustomMethodFactory() {
+        registerNewCustomMethodFactory("spinner", "setObjectData", new CustomMethodFactory() {
             @Override
             public Object runMethod(Context context, View view, List<Object> arguments) {
                 FormCommonUtil.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
                 return null;
             }
         });
-        registerNewCustomMethodFactory("spinner2", "setData", new CustomMethodFactory() {
+        registerNewCustomMethodFactory("spinner2", "setObjectData", new CustomMethodFactory() {
             @Override
             public Object runMethod(Context context, View view, List<Object> arguments) {
                 FormCommonUtil.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);

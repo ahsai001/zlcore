@@ -1,45 +1,36 @@
-package com.zaitunlabs.zlcore.models;
+package com.zaitunlabs.zlcore.tables;
 
-import android.provider.BaseColumns;
-
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.zaitunlabs.zlcore.api.APIConstant;
+import com.zaitunlabs.zlcore.core.BaseApplication;
+import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 
-import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by ahsai on 3/18/2018.
  */
 
-@Table(name = "AppList", id = BaseColumns._ID)
-public class AppListModel extends Model implements Serializable {
-
-    @Column(name = "status", index = true)
+public class AppListModel extends SQLiteWrapper.TableClass {
     @SerializedName("status")
     @Expose
     private int status;
 
-    @Column(name = "message")
     @SerializedName("message")
     @Expose
     private String message;
 
-    @Column(name = "paging")
+
+
+
+
+
+
     @SerializedName("paging")
     @Expose
     private AppListPagingModel paging;
-
-
-
 
     @SerializedName("data")
     @Expose
@@ -120,13 +111,61 @@ public class AppListModel extends Model implements Serializable {
         return this;
     }
 
-    @Column(name = "timestamp", index = true)
-    public Date timestamp;
 
-    public void saveWithTimeStamp(){
-        timestamp = Calendar.getInstance().getTime();
+    public void cache(boolean deletePrev){
+        if(deletePrev){
+            deleteCache();
+        }
         save();
+        getPaging().appListModel = this;
+        getPaging().save();
+        List<AppListDataModel> appListDataModelList = getData();
+        for (AppListDataModel appListDataModel: appListDataModelList){
+            appListDataModel.appListModel = this;
+            appListDataModel.save();
+        }
     }
+
+    public void addNewDataListToCache(List<AppListDataModel> newAppListDataModelList){
+        for (AppListDataModel appListDataModel: newAppListDataModelList){
+            appListDataModel.appListModel = this;
+            appListDataModel.save();
+        }
+    }
+
+    private static void deleteCache(){
+        SQLiteWrapper.of(BaseApplication.DATABASE_NAME).deleteAll(null, AppListModel.class);
+
+        /*new Delete().from(AppListDataModel.class).execute();
+        new Delete().from(AppListModel.class).execute();
+        new Delete().from(AppListPagingModel.class).execute();*/
+    }
+
+    public static AppListModel getLastCache(){
+        int CACHED_TIME = APIConstant.CACHED_TIME;
+        AppListModel appListModel = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findFirst(null, AppListModel.class);
+        if(appListModel != null) {
+            int timelapseHour = (int) ((Calendar.getInstance().getTimeInMillis() - appListModel._created_at.getTime()) / 1000) / 3600;
+            if (timelapseHour > CACHED_TIME) {
+                deleteCache();
+                return null;
+            }
+
+            //load other table
+            List<AppListDataModel> appListDataModelList = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findAllWithCriteria(null, AppListDataModel.class,
+                    "applist_model_id="+appListModel._id, null);
+            appListModel.setData(appListDataModelList);
+
+            AppListPagingModel appListPagingModel = SQLiteWrapper.of(BaseApplication.DATABASE_NAME).findFirstWithCriteria(null, AppListPagingModel.class,
+                    "applist_model_id="+appListModel._id, null);
+            appListModel.setPaging(appListPagingModel);
+        }
+
+        return appListModel;
+    }
+
+
+
 
     @Override
     public String toString() {
@@ -139,53 +178,22 @@ public class AppListModel extends Model implements Serializable {
     }
 
 
-    public void cache(boolean deletePrev){
-        if(deletePrev){
-            deleteCache();
-        }
-        getPaging().saveWithTimeStamp();
-        saveWithTimeStamp();
-        List<AppListDataModel> appListDataModelList = getData();
-        for (AppListDataModel appListDataModel: appListDataModelList){
-            appListDataModel.appListModel = this;
-            appListDataModel.saveWithTimeStamp();
-        }
+
+    @Override
+    protected String getDatabaseName() {
+        return BaseApplication.DATABASE_NAME;
     }
 
-    public void addNewDataListToCache(List<AppListDataModel> newAppListDataModelList){
-        for (AppListDataModel appListDataModel: newAppListDataModelList){
-            appListDataModel.appListModel = this;
-            appListDataModel.saveWithTimeStamp();
-        }
+    @Override
+    protected void getObjectData(List<Object> dataList) {
+        dataList.add(status);
+        dataList.add(message);
     }
 
-    private static void deleteCache(){
-        new Delete().from(AppListDataModel.class).execute();
-        new Delete().from(AppListModel.class).execute();
-        new Delete().from(AppListPagingModel.class).execute();
-    }
 
-    public static AppListModel getLastCache(){
-        int CACHED_TIME = APIConstant.CACHED_TIME;
-        AppListModel appListModel = new Select()
-                .from(AppListModel.class).executeSingle();
-        if(appListModel != null) {
-            int timelapseHour = (int) ((Calendar.getInstance().getTimeInMillis() - appListModel.timestamp.getTime()) / 1000) / 3600;
-            if (timelapseHour > CACHED_TIME) {
-                deleteCache();
-                return null;
-            }
-
-            //load other table
-            List<AppListDataModel> appListDataModelList = new Select()
-                    .from(AppListDataModel.class).execute();
-            appListModel.setData(appListDataModelList);
-
-            AppListPagingModel appListPagingModel = new Select()
-                    .from(AppListPagingModel.class).executeSingle();
-            appListModel.setPaging(appListPagingModel);
-        }
-
-        return appListModel;
+    @Override
+    protected void setObjectData(List<Object> dataList) {
+        status = (int) dataList.get(0);
+        message = (String) dataList.get(1);
     }
 }

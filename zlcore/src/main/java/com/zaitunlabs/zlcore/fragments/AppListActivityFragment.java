@@ -25,9 +25,9 @@ import com.google.gson.GsonBuilder;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.adapters.AppListAdapter;
 import com.zaitunlabs.zlcore.api.APIConstant;
-import com.zaitunlabs.zlcore.models.AppListDataModel;
-import com.zaitunlabs.zlcore.models.AppListModel;
-import com.zaitunlabs.zlcore.models.AppListPagingModel;
+import com.zaitunlabs.zlcore.tables.AppListDataModel;
+import com.zaitunlabs.zlcore.tables.AppListModel;
+import com.zaitunlabs.zlcore.tables.AppListPagingModel;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewLoadMoreListener;
 import com.zaitunlabs.zlcore.listeners.RecyclerViewTouchListener;
@@ -215,14 +215,18 @@ public class AppListActivityFragment extends BaseFragment {
                             AppListActivityFragment.this.appListModel = responseListModel;
 
                         } else {
-                            //save new paging
                             AppListPagingModel newAppListPagingModel = responseListModel.getPaging();
-                            newAppListPagingModel.saveWithTimeStamp();
 
                             AppListPagingModel oldAppListPagingModel = AppListActivityFragment.this.appListModel.getPaging();
                             AppListActivityFragment.this.appListModel.setPaging(newAppListPagingModel);
                             AppListActivityFragment.this.appListModel.addNewDataListToCache(responseListModel.getData());
-                            AppListActivityFragment.this.appListModel.save();
+                            //AppListActivityFragment.this.appListModel.update();
+
+
+                            //save new paging
+                            newAppListPagingModel.appListModel = AppListActivityFragment.this.appListModel;
+                            newAppListPagingModel.save();
+
                             //delete old paging
                             oldAppListPagingModel.delete();
 

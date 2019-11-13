@@ -1,55 +1,43 @@
-package com.zaitunlabs.zlcore.models;
+package com.zaitunlabs.zlcore.tables;
 
-import android.provider.BaseColumns;
-
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.zaitunlabs.zlcore.core.BaseApplication;
+import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Created by ahsai on 3/18/2018.
  */
 
-@Table(name = "StoreData", id = BaseColumns._ID)
-public class StoreDataModel extends Model implements Serializable {
+public class StoreDataModel extends SQLiteWrapper.TableClass {
 
-    @Column(name = "image")
     @SerializedName("image")
     @Expose
     private String image;
 
-    @Column(name = "title")
     @SerializedName("title")
     @Expose
     private String title;
 
 
-    @Column(name = "desc")
     @SerializedName("desc")
     @Expose
     private String desc;
 
 
 
-    @Column(name = "unik")
     @SerializedName("unique")
     @Expose
     private String unique;
 
 
-    @Column(name = "url")
     @SerializedName("url")
     @Expose
     private String url;
 
 
-    @Column(name = "storeModel")
     public StoreModel storeModel;
 
     /**
@@ -142,14 +130,6 @@ public class StoreDataModel extends Model implements Serializable {
         return this;
     }
 
-    @Column(name = "timestamp", index = true)
-    public Date timestamp;
-
-    public void saveWithTimeStamp(){
-        timestamp = Calendar.getInstance().getTime();
-        save();
-    }
-
     @Override
     public String toString() {
         return "StoreDataModel{" +
@@ -159,5 +139,32 @@ public class StoreDataModel extends Model implements Serializable {
                 ", unique='" + unique + '\'' +
                 ", url='" + url + '\'' +
                 '}';
+    }
+
+
+    @Override
+    protected String getDatabaseName() {
+        return BaseApplication.DATABASE_NAME;
+    }
+
+
+    @Override
+    protected void getObjectData(List<Object> dataList) {
+        dataList.add(image);
+        dataList.add(title);
+        dataList.add(desc);
+        dataList.add(unique);
+        dataList.add(url);
+        dataList.add(storeModel);
+    }
+
+    @Override
+    protected void setObjectData(List<Object> dataList) {
+        image = (String) dataList.get(0);
+        title = (String) dataList.get(1);
+        desc = (String) dataList.get(2);
+        unique = (String) dataList.get(3);
+        url = (String) dataList.get(4);
+        storeModel = (StoreModel) dataList.get(5);
     }
 }

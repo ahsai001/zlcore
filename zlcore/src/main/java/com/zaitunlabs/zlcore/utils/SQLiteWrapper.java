@@ -29,12 +29,12 @@ import java.util.Set;
  */
 
 public final class SQLiteWrapper extends SQLiteOpenHelper {
-    private static final String ID = "_id";
-    private static final String CREATED_AT = "_created_at";
-    private static final String UPDATED_AT = "_updated_at";
-    private static final String DELETED_AT = "_deleted_at";
+    public static final String ID = "_id";
+    public static final String CREATED_AT = "_created_at";
+    public static final String UPDATED_AT = "_updated_at";
+    public static final String DELETED_AT = "_deleted_at";
     private static final String TAG = SQLiteWrapper.class.getName();
-    private static final String SQLW_FOLDER = "SQLW/";
+    public static final String SQLW_FOLDER = "SQLW/";
     private Map<String, Table> tableMap;
     private List<Index> indexList;
     private AssetManager assetManager;
@@ -67,28 +67,23 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     public static abstract class Database {
-
-        public Database(){
-        }
-
-        public abstract Context getAppContext();
+        public Database(){}
+        public abstract Context getContext();
         public abstract String getDatabaseName();
         public abstract int getDatabaseVersion();
-        public abstract boolean isWrapperCached();
         public abstract void configure(SQLiteWrapper sqLiteWrapper);
         private SQLiteWrapper getSQLiteWrapper(){
             if(sqLiteWrapperMap.containsKey(getDatabaseName())){
                 return sqLiteWrapperMap.get(getDatabaseName());
             } else {
+                if(getContext() == null) throw new RuntimeException("Please set getContext method with return context");
                 SQLiteWrapper sqLiteWrapper = new SQLiteWrapper.Builder()
                         .setDatabaseName(getDatabaseName())
                         .setDatabaseVersion(getDatabaseVersion())
-                        .create(getAppContext());
+                        .create(getContext().getApplicationContext());
                 configure(sqLiteWrapper);
                 sqLiteWrapper.init();
-                if(isWrapperCached()){
-                    sqLiteWrapperMap.put(getDatabaseName(),sqLiteWrapper);
-                }
+                sqLiteWrapperMap.put(getDatabaseName(),sqLiteWrapper);
                 return sqLiteWrapper;
             }
         }
@@ -235,7 +230,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
         List<ForeignKey> foreignKeyList = table.getForeignKeyList();
         for (ForeignKey foreignKey : foreignKeyList){
-            stringBuilder.append(",FOREIGN KEY (").append(foreignKey.getChildColumn()).append(") ")
+            stringBuilder.append(",FOREIGN KEY (").append(foreignKey.getChildColumnName()).append(") ")
                     .append("REFERENCES ").append(foreignKey.getParentTableName()).append(" ")
                     .append("(").append(foreignKey.getParentColumnName()).append(") ")
                     .append("ON UPDATE ").append(foreignKey.getOnUpdateAction()).append(" ")
@@ -345,8 +340,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
 
-    private ContentValues getContentValues(List<Field> fieldList, List<Object> dataList){
+    private ContentValues getContentValues(Table table, List<Object> dataList){
         ContentValues contentValues = new ContentValues();
+        List<Field> fieldList = table.getFieldList();
+        //List<ForeignKey> foreignKeyList = table.getForeignKeyList();
 
         for (int i = 0; i < fieldList.size(); i++) {
             Field field = fieldList.get(i);
@@ -363,7 +360,11 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     if (field.getTrueType() == int.class || field.getTrueType() == Integer.class) {
                         contentValues.put(field.getName(), (Integer) data);
                     } else if (field.getTrueType() == long.class || field.getTrueType() == Long.class) {
-                        contentValues.put(field.getName(), (Long) data);
+                        if(data instanceof TableClass){
+                            contentValues.put(field.getName(), ((TableClass)data)._id);
+                        } else {
+                            contentValues.put(field.getName(), (Long) data);
+                        }
                     } else if (field.getTrueType() == boolean.class || field.getTrueType() == Boolean.class) {
                         contentValues.put(field.getName(), (Boolean) data);
                     } else if (field.getTrueType() == Date.class) {
@@ -390,7 +391,15 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
     private List<Object> fetchRow(Cursor cursor, String tableName){
         List<Object> dataList = new ArrayList<>();
-        List<Field> fieldList =  tableMap.get(tableName).getFieldList();
+        Table table = tableMap.get(tableName);
+        List<Field> fieldList =  table.getFieldList();
+
+        List<ForeignKey> foreignKeyList = table.getForeignKeyList();
+        List<String> childColumnNameList = new ArrayList<>();
+        for (ForeignKey foreignKey : foreignKeyList){
+            childColumnNameList.add(foreignKey.getChildColumnName());
+        }
+
         for (int i = 0; i < fieldList.size(); i++) {
             Field field = fieldList.get(i);
             int cursorIndex = cursor.getColumnIndex(field.getName());
@@ -402,7 +411,20 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                     if (field.getTrueType() == int.class || field.getTrueType() == Integer.class) {
                         dataList.add(cursor.isNull(cursorIndex)?null:cursor.getInt(cursorIndex));
                     } else if (field.getTrueType() == long.class || field.getTrueType() == Long.class) {
-                        dataList.add(cursor.isNull(cursorIndex)?null:cursor.getLong(cursorIndex));
+                        if(cursor.isNull(cursorIndex)){
+                            dataList.add(null);
+                        } else {
+                            if (childColumnNameList.contains(field.getName())) {
+                                int foreignIndex = childColumnNameList.indexOf(field.getName());
+                                ForeignKey foreignKey = foreignKeyList.get(foreignIndex);
+
+                                dataList.add(findFirstWithCriteria(foreignKey.getParentTableName(), foreignKey.getParentTableClass(),
+                                        foreignKey.getParentColumnName() + "=?", new String[]{Long.toString(cursor.getLong(cursorIndex))}));
+
+                            } else {
+                                dataList.add(cursor.getLong(cursorIndex));
+                            }
+                        }
                     } else if (field.getTrueType() == boolean.class || field.getTrueType() == Boolean.class) {
                         dataList.add(cursor.isNull(cursorIndex)?null:(cursor.getInt(cursorIndex) == 1));
                     } else if (field.getTrueType() == Date.class) {
@@ -453,16 +475,12 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         try {
             SQLiteDatabase database = getDatabase(false);
 
-            //int version = database.getVersion();
-
             Table table = tableMap.get(tableClass.getTableName());
 
             List<Object> dataList = new ArrayList<>();
-            tableClass.getData(dataList);
+            tableClass.getObjectData(dataList);
 
-            List<Field> fieldList = table.getFieldList();
-
-            ContentValues contentValues = getContentValues(fieldList, dataList);
+            ContentValues contentValues = getContentValues(table, dataList);
 
             if(table.isRecordLogEnabled){
                 contentValues.put(CREATED_AT, System.currentTimeMillis());
@@ -494,11 +512,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             Table table = tableMap.get(tableClass.getTableName());
 
             List<Object>  dataList = new ArrayList<>();
-            tableClass.getData(dataList);
+            tableClass.getObjectData(dataList);
 
-            List<Field> fieldList = table.getFieldList();
-
-            ContentValues contentValues = getContentValues(fieldList, dataList);
+            ContentValues contentValues = getContentValues(table, dataList);
 
             if(table.isRecordLogEnabled){
                 contentValues.put(UPDATED_AT, System.currentTimeMillis());
@@ -617,7 +633,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
                 tableClass = clazz.newInstance();
                 tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                tableClass.setData(dataList);
+                tableClass.setObjectData(dataList);
 
                 fetchRecordLog(table, tableClass, cursor);
 
@@ -666,7 +682,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
                     T tableClass = clazz.newInstance();
                     tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                    tableClass.setData(dataList);
+                    tableClass.setObjectData(dataList);
 
                     fetchRecordLog(table, tableClass, cursor);
 
@@ -734,7 +750,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
                     T tableClass = clazz.newInstance();
                     tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                    tableClass.setData(dataList);
+                    tableClass.setObjectData(dataList);
 
                     fetchRecordLog(table, tableClass, cursor);
 
@@ -806,7 +822,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
                     T tableClass = clazz.newInstance();
                     tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                    tableClass.setData(dataList);
+                    tableClass.setObjectData(dataList);
 
                     fetchRecordLog(table, tableClass, cursor);
 
@@ -850,7 +866,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
                     T tableClass = clazz.newInstance();
                     tableClass._id = cursor.getLong(cursor.getColumnIndex(ID));
-                    tableClass.setData(dataList);
+                    tableClass.setObjectData(dataList);
 
                     fetchRecordLog(table, tableClass, cursor);
 
@@ -1099,8 +1115,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
 
 
-        public Table addForeignKey(String childColumn, String parentTableName, String parentColumnName, String onUpdateAction, String onDeleteAction){
-            foreignKeyList.add(new ForeignKey(childColumn, parentTableName, parentColumnName, onUpdateAction, onDeleteAction));
+        public Table addForeignKey(String childColumnName, String parentTableName, Class parentTableClass, String parentColumnName, String onUpdateAction, String onDeleteAction){
+            foreignKeyList.add(new ForeignKey(childColumnName, parentTableName, parentTableClass, parentColumnName, onUpdateAction, onDeleteAction));
             return this;
         }
 
@@ -1171,22 +1187,29 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         public static final String NO_ACTION = "NO ACTION";
         public static final String CASCADE = "CASCADE";
 
-        private String childColumn;
+        private String childColumnName;
         private String parentTableName;
+        private Class parentTableClass;
         private String parentColumnName;
         private String onUpdateAction;
         private String onDeleteAction;
 
-        public ForeignKey(String childColumn, String parentTableName, String parentColumnName, String onUpdateAction, String onDeleteAction){
-            this.childColumn = childColumn;
+        public ForeignKey(String childColumnName, String parentTableName, Class parentTableClass, String parentColumnName, String onUpdateAction, String onDeleteAction) {
+            this.childColumnName = childColumnName;
             this.parentTableName = parentTableName;
+            this.parentTableClass = parentTableClass;
+
+            if(TextUtils.isEmpty(parentTableName)){
+                this.parentTableName = parentTableClass.getSimpleName();
+            }
+
             this.parentColumnName = parentColumnName;
             this.onUpdateAction = onUpdateAction;
             this.onDeleteAction = onDeleteAction;
         }
 
-        public String getChildColumn() {
-            return childColumn;
+        public String getChildColumnName() {
+            return childColumnName;
         }
 
         public String getParentTableName() {
@@ -1195,6 +1218,10 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
         public String getParentColumnName() {
             return parentColumnName;
+        }
+
+        public Class getParentTableClass() {
+            return parentTableClass;
         }
 
         public String getOnUpdateAction() {
@@ -1300,12 +1327,11 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
 
 
     public static class TableClass {
-        public long _id;
-        public Date _created_at;
-        public Date _updated_at;
+        public Long _id = null;
+        public Date _created_at = null;
+        public Date _updated_at = null;
 
         public TableClass(){
-
         }
 
         protected String getTableName(){
@@ -1316,8 +1342,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             return null;
         }
 
-        protected void setData(List<Object> dataList){}
-        protected void getData(List<Object> dataList){}
+        protected void setObjectData(List<Object> dataList){}
+        protected void getObjectData(List<Object> dataList){}
 
         public boolean saveIn(String databaseName){
              return SQLiteWrapper.of(databaseName).save(this);
@@ -1637,8 +1663,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     private static void enableLookupDatabase(final Context context){
         addDatabase(new Database() {
             @Override
-            public Context getAppContext() {
-                return context.getApplicationContext();
+            public Context getContext() {
+                return context;
             }
 
             @Override
@@ -1649,11 +1675,6 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
             @Override
             public int getDatabaseVersion() {
                 return 1;
-            }
-
-            @Override
-            public boolean isWrapperCached() {
-                return true;
             }
 
             @Override
@@ -1751,7 +1772,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
 
         @Override
-        protected void getData(List<Object> dataList) {
+        protected void getObjectData(List<Object> dataList) {
             dataList.add(key);
             dataList.add(string);
             dataList.add(aBoolean);
@@ -1762,7 +1783,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         }
 
         @Override
-        protected void setData(List<Object> dataList) {
+        protected void setObjectData(List<Object> dataList) {
             key = (String) dataList.get(0);
             string = (String) dataList.get(1);
             aBoolean = (boolean) dataList.get(2);

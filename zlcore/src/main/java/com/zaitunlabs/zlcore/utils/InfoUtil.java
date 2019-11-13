@@ -1,6 +1,6 @@
 package com.zaitunlabs.zlcore.utils;
 
-import com.zaitunlabs.zlcore.models.InformationModel;
+import com.zaitunlabs.zlcore.tables.InformationModel;
 import com.zaitunlabs.zlcore.events.InfoCounterEvent;
 import com.zaitunlabs.zlcore.events.InfoPositionEvent;
 import com.zaitunlabs.zlcore.events.UpdateInfoListEvent;
@@ -16,15 +16,15 @@ public class InfoUtil {
         InformationModel newInfo = new InformationModel(title, body, photoUrl, infoUrl, type);
 
         //save to DB
-        newInfo.saveWithTimeStamp();
+        newInfo.save();
 
         //broadcast to any listener
         notifyAddingInfo(newInfo);
 
         notifyInfoCounter();
-        scrollInfoList(newInfo.getId());
+        scrollInfoList(newInfo._id);
 
-        return newInfo.getId();
+        return newInfo._id;
     }
 
     public static void notifyAddingInfo(InformationModel newInfo){

@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.zaitunlabs.zlcore.R;
-import com.zaitunlabs.zlcore.models.InformationModel;
+import com.zaitunlabs.zlcore.tables.InformationModel;
 import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.utils.CommonUtil;
 import com.zaitunlabs.zlcore.utils.DateStringUtil;
@@ -101,7 +101,7 @@ public class InfoPopup extends BaseActivity {
             @Override
             public void onClick(View view) {
                 InformationModel info = infoList.get(infoPosition);
-                goAction(InfoPopup.this,action,extraData,info.getId());
+                goAction(InfoPopup.this,action,extraData,info._id);
             }
         });
 
@@ -266,14 +266,14 @@ public class InfoPopup extends BaseActivity {
     public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         @Override
         public Fragment getItem(int position) {
             InformationModel info = infoList.get(position);
             String body = info.getBody();
-            return InfoPopupFragment.newInstance(position,info.getTitle(),body,info.getPhotoUrl(),info.getInfoUrl(),info.timestamp, action,1, info.getId());
+            return InfoPopupFragment.newInstance(position,info.getTitle(),body,info.getPhotoUrl(),info.getInfoUrl(),info._created_at, action,1, info._id);
         }
 
 
