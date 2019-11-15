@@ -619,8 +619,9 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
             isInternal = false;
             // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            view.getContext().startActivity(intent);
+            if(!handleCustomLink(view, url)){
+                CommonUtil.openBrowser(view.getContext(), url);
+            }
             return true;
         }
 
@@ -643,7 +644,9 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
             isInternal = false;
             // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-            CommonUtil.openBrowser(view.getContext(), request.getUrl().toString());
+            if(!handleCustomLink(view, request)){
+                CommonUtil.openBrowser(view.getContext(), request.getUrl().toString());
+            }
             return true;
         }
 
@@ -748,6 +751,9 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             return false;
         }
     }
+
+    protected abstract boolean handleCustomLink(WebView view, WebResourceRequest request);
+    protected abstract boolean handleCustomLink(WebView view, String url);
 
     private final int FILE_REQUEST_CODE = 1044;
 

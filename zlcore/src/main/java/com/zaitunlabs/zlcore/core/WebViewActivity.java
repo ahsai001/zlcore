@@ -3,8 +3,11 @@ package com.zaitunlabs.zlcore.core;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.MailTo;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
@@ -13,9 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 
 import com.zaitunlabs.zlcore.R;
+import com.zaitunlabs.zlcore.constants.ZLCoreConstanta;
 import com.zaitunlabs.zlcore.fragments.GeneralWebViewFragment;
 import com.zaitunlabs.zlcore.fragments.InfoFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtil;
@@ -146,6 +151,29 @@ public class WebViewActivity extends BaseActivity {
         public void setupWebview(WebView webView) {
             super.setupWebview(webView);
             webView.addJavascriptInterface(new WebViewFragment.WebAppInterface(this.getActivity()), getString(R.string.app_name).replace(" ","").toLowerCase());
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        protected boolean handleCustomLink(WebView view, WebResourceRequest request) {
+            return handleCustomLink(view.getContext(), request.getUrl().toString());
+        }
+
+        @Override
+        protected boolean handleCustomLink(WebView view, String url) {
+            return handleCustomLink(view.getContext(), url);
+        }
+
+
+        private boolean handleCustomLink(Context context, String url){
+            if(url.startsWith(ZLCoreConstanta.TELEPHONE_SCHEMA)){
+                String number = url.replace(ZLCoreConstanta.TELEPHONE_SCHEMA, "");
+                return CommonUtil.callNumber(context, number);
+            } else if(url.startsWith(ZLCoreConstanta.MAILTO_SCHEMA)){
+                MailTo mailTo = MailTo.parse(url);
+                CommonUtil.sendEmail(context, "send email", mailTo.getSubject(), mailTo.getBody(), new String[]{mailTo.getTo()}, new String[]{mailTo.getCc()});
+            }
+            return false;
         }
 
         private class WebAppInterface {

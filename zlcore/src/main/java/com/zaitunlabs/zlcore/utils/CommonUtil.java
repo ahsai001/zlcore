@@ -782,16 +782,17 @@ public class CommonUtil {
 		return new Point(width, height);
 	}
 	
-	public static boolean sendEmail(Context ctx, String feedbackTitle, String bodyEmailInHTML, String[] TO, String[] CC){
+	public static boolean sendEmail(Context ctx, String sendTitle, String title, String bodyEmailInHTML, String[] TO, String[] CC){
 			Intent email = new Intent(Intent.ACTION_SEND);
 			email.putExtra(Intent.EXTRA_EMAIL, TO);
 			if(CC != null)
 				email.putExtra(Intent.EXTRA_CC, CC);
+			email.putExtra(Intent.EXTRA_SUBJECT, title);
 			email.putExtra(Intent.EXTRA_TEXT, fromHtml(bodyEmailInHTML));
 			email.setType("message/rfc822");
 			try {
 				if(CommonUtil.isApplicationContext(ctx)){
-					PendingIntent intent = PendingIntent.getActivity(ctx, 22, Intent.createChooser(email, feedbackTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+					PendingIntent intent = PendingIntent.getActivity(ctx, 22, Intent.createChooser(email, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 					try {
 						intent.send();
 					} catch (CanceledException e) {
@@ -799,7 +800,7 @@ public class CommonUtil {
 						return false;
 					}
 				}else{
-					ctx.startActivity(Intent.createChooser(email, feedbackTitle));
+					ctx.startActivity(Intent.createChooser(email, sendTitle));
 				}
 				return true;
 			} catch (android.content.ActivityNotFoundException ex) {
@@ -2907,7 +2908,7 @@ public class CommonUtil {
 	public static boolean callNumber(Context activity, String number){
 		Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
 		if (callIntent.resolveActivity(activity.getPackageManager()) != null) {
-			activity.startActivity(callIntent);
+			activity.startActivity(Intent.createChooser(callIntent, ""));
 			return true;
 		}
 		return false;
