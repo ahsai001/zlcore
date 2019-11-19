@@ -15,13 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -77,7 +71,7 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
                 return sqLiteWrapperMap.get(getDatabaseName());
             } else {
                 if(getContext() == null) throw new RuntimeException("Please set getContext method with return context");
-                SQLiteWrapper sqLiteWrapper = new SQLiteWrapper.Builder()
+                SQLiteWrapper sqLiteWrapper = new Builder()
                         .setDatabaseName(getDatabaseName())
                         .setDatabaseVersion(getDatabaseVersion())
                         .create(getContext().getApplicationContext());
@@ -535,7 +529,30 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     }
 
 
-    //delete
+    public <T extends TableClass> boolean update(String tableName, Class<T> clazz,  ContentValues contentValues, String whereClause, String[] whereClauseArgs){
+        if(TextUtils.isEmpty(tableName)){
+            tableName = clazz.getSimpleName();
+        }
+        long affectedRows = -1;
+        try {
+            SQLiteDatabase database = getDatabase(false);
+
+            affectedRows = database.update(tableName, contentValues, whereClause, whereClauseArgs);
+
+            closeDatabase();
+
+            if(affectedRows <= 0){
+                return false;
+            }
+        } catch (SQLException e){
+            return false;
+        }
+        return true;
+    }
+
+
+
+        //delete
     private boolean delete(TableClass tableClass) {
         if(tableClass._id > 0) {
             try {
@@ -905,6 +922,9 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
     public void execSQL(String sql, String[] sqlArgs) {
         try {
             SQLiteDatabase database = getDatabase(false);
+            if(sqlArgs == null){
+                sqlArgs = new String[]{};
+            }
             database.execSQL(sql, sqlArgs);
             closeDatabase();
         } catch (SQLException e){
@@ -925,6 +945,8 @@ public final class SQLiteWrapper extends SQLiteOpenHelper {
         // make "java.lang.IllegalStateException:
         // Cannot perform this operation because the connection pool has been closed."
         // when access in multiple thread
+
+        //database connection is singleton, life cycle scope is entire application
     }
 
     private void closeCursor(Cursor cursor){
