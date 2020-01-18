@@ -2,39 +2,46 @@ package com.zaitunlabs.zlcore.utils;
 
 import android.text.TextUtils;
 
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by ahmad s on 3/8/2016.
  */
 
 public class DateStringUtil {
-    public static String convertDateToString(String toFormat, Date date, Locale locale){
+    public static String convertDateToString(String toFormat, Date date, TimeZone timeZone, Locale locale){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         SimpleDateFormat sdf = new SimpleDateFormat(toFormat, (locale == null?Locale.getDefault():locale));
+        sdf.setTimeZone(timeZone==null?TimeZone.getDefault():timeZone);
         return sdf.format(date);
     }
 
-    public static String getDateTimeInString(Date date, Locale locale){
+    public static String getDateTimeInString(Date date, TimeZone timeZone, Locale locale){
         if(date == null)return "no record";
         Calendar cal = Calendar.getInstance();
         Date today = cal.getTime();
 
+        SimpleDateFormat sdf;
         if(compareToDay(date,today, locale)==0){
             //today
-            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", (locale == null?Locale.getDefault():locale));
+            sdf = new SimpleDateFormat("h:mm a", (locale == null?Locale.getDefault():locale));
+            sdf.setTimeZone(timeZone==null?TimeZone.getDefault():timeZone);
             return sdf.format(date);
         }else if(compareToYear(date,today, locale)==0) {
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM d h:mm a", (locale == null?Locale.getDefault():locale));
+            sdf = new SimpleDateFormat("MMM d h:mm a", (locale == null?Locale.getDefault():locale));
+            sdf.setTimeZone(timeZone==null?TimeZone.getDefault():timeZone);
             return sdf.format(date);
         }else{
             //previuos year
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM d yyyy", (locale == null?Locale.getDefault():locale));
+            sdf = new SimpleDateFormat("MMM d yyyy", (locale == null?Locale.getDefault():locale));
+            sdf.setTimeZone(timeZone==null?TimeZone.getDefault():timeZone);
             return sdf.format(date);
         }
     }
@@ -146,9 +153,10 @@ public class DateStringUtil {
         return result;
     }
 
-    public static Date getDateFromString(String fromFormat, String dateString, Locale locale){
+    public static Date getDateFromString(String fromFormat, String dateString,  TimeZone timeZone, Locale locale){
         SimpleDateFormat sf = new SimpleDateFormat(fromFormat, (locale == null?Locale.getDefault():locale));
         sf.setLenient(true);
+        sf.setTimeZone(timeZone==null?TimeZone.getDefault():timeZone);
         Date date = null;
         try {
             date = sf.parse(dateString);
@@ -159,8 +167,8 @@ public class DateStringUtil {
         return date;
     }
 
-    public static String convertDate(String fromFormat, String toFormat, String dateString, Locale locale){
-        Date date = getDateFromString(fromFormat,dateString, locale);
-        return convertDateToString(toFormat, date, locale);
+    public static String convertDate(String fromFormat, String toFormat, String dateString, TimeZone originTimeZone, TimeZone destinationTimeZone, Locale originLocale, Locale destinationLocale){
+        Date date = getDateFromString(fromFormat,dateString, originTimeZone, originLocale);
+        return convertDateToString(toFormat, date, destinationTimeZone, destinationLocale);
     }
 }

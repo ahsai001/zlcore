@@ -130,6 +130,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class CommonUtil {
@@ -2539,7 +2540,7 @@ public class CommonUtil {
 		return decimalFormat.format(value);
 	}
 
-	public static String convertDate(String inputDate, String inputFormat, String outputFormat, Locale locale){
+	public static String convertDate(String inputDate, String inputFormat, String outputFormat, TimeZone originTimeZone, TimeZone destinationTimeZone, Locale originLocale, Locale destinationLocale){
         /*
 
             G 	Era designator (before christ, after christ)
@@ -2589,8 +2590,11 @@ public class CommonUtil {
 
          */
 		String outputDateString = null;
-		SimpleDateFormat input = new SimpleDateFormat(inputFormat, (locale == null?Locale.getDefault():locale));
-		SimpleDateFormat output = new SimpleDateFormat(outputFormat, (locale == null?Locale.getDefault():locale));
+		SimpleDateFormat input = new SimpleDateFormat(inputFormat, (originLocale == null?Locale.getDefault():originLocale));
+		input.setTimeZone(originTimeZone==null?TimeZone.getDefault():originTimeZone);
+		SimpleDateFormat output = new SimpleDateFormat(outputFormat, (destinationLocale == null?Locale.getDefault():destinationLocale));
+		output.setTimeZone(destinationTimeZone==null?TimeZone.getDefault():destinationTimeZone);
+
 		try {
 			Date oneWayTripDate = input.parse(inputDate);
 			outputDateString = output.format(oneWayTripDate);
