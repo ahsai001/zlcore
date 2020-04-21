@@ -74,7 +74,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         holder.bodyView.setText(body, collapseStatus, 0);
 
         //time
-        holder.timeView.setText(DateStringUtil.getDateTimeInString(info._created_at, null));
+        holder.timeView.setText(DateStringUtil.getDateTimeInString(info._created_at, null, null));
 
 
         //image

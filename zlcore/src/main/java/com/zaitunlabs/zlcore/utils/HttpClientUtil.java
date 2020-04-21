@@ -5,6 +5,8 @@ import android.net.http.SslError;
 import android.os.Build;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.util.Base64;
 import android.webkit.SslErrorHandler;
@@ -17,8 +19,14 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -34,6 +42,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -51,19 +60,19 @@ import okhttp3.Response;
 
 
 public class HttpClientUtil {
-    private static final int DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
-    private static final int DATA_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
-    private static final int DATA_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    public static int DATA_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
+    public static int DATA_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    public static int DATA_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
 
 
-    private static final int IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
-    private static final int IMAGE_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
-    private static final int IMAGE_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    public static int IMAGE_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
+    public static int IMAGE_DEFAULT_READ_TIMEOUT_MILLIS = 30 * 1000; // 30s
+    public static int IMAGE_DEFAULT_WRITE_TIMEOUT_MILLIS = 30 * 1000; // 30s
 
 
-    private static final int UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
-    private static final int UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS = 60 * 1000; // 60s
-    private static final int UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS = 60 * 1000; // 60s
+    public static int UPLOAD_DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000; // 15s
+    public static int UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS = 60 * 1000; // 60s
+    public static int UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS = 60 * 1000; // 60s
 
     private static String webview_user_agent = null;
     private static String androidId = null;
@@ -287,6 +296,22 @@ public class HttpClientUtil {
                     .readTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_READ_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .writeTimeout(isUpload ? HttpClientUtil.UPLOAD_DEFAULT_WRITE_TIMEOUT_MILLIS : HttpClientUtil.DATA_DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                     .addInterceptor(interceptor);
+
+
+            TLSSocketFactory tlsSocketFactory= null;
+            try {
+                tlsSocketFactory = new TLSSocketFactory();
+                if (tlsSocketFactory.getTrustManager()!=null) {
+                    builder.sslSocketFactory(tlsSocketFactory, tlsSocketFactory.getTrustManager());
+                }
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
+
 
             if(singletonBuilderConfig != null){
                 singletonBuilderConfig.configure(builder);
@@ -629,5 +654,87 @@ public class HttpClientUtil {
                         handler.cancel();
                     }
                 });
+    }
+
+
+
+    public static class TLSSocketFactory extends SSLSocketFactory {
+
+        private SSLSocketFactory delegate;
+        private TrustManager[] trustManagers;
+
+        public TLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+            generateTrustManagers();
+            SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, trustManagers, null);
+            delegate = context.getSocketFactory();
+        }
+
+        private void generateTrustManagers() throws KeyStoreException, NoSuchAlgorithmException {
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init((KeyStore) null);
+            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+
+            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                throw new IllegalStateException("Unexpected default trust managers:"
+                        + Arrays.toString(trustManagers));
+            }
+
+            this.trustManagers = trustManagers;
+        }
+
+
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return delegate.getDefaultCipherSuites();
+        }
+
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return delegate.getSupportedCipherSuites();
+        }
+
+        @Override
+        public Socket createSocket() throws IOException {
+            return enableTLSOnSocket(delegate.createSocket());
+        }
+
+        @Override
+        public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+            return enableTLSOnSocket(delegate.createSocket(s, host, port, autoClose));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+            return enableTLSOnSocket(delegate.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+            return enableTLSOnSocket(delegate.createSocket(host, port, localHost, localPort));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress host, int port) throws IOException {
+            return enableTLSOnSocket(delegate.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+            return enableTLSOnSocket(delegate.createSocket(address, port, localAddress, localPort));
+        }
+
+        private Socket enableTLSOnSocket(Socket socket) {
+            if(socket != null && (socket instanceof SSLSocket)) {
+                ((SSLSocket)socket).setEnabledProtocols(new String[] {"TLSv1.1", "TLSv1.2"});
+            }
+            return socket;
+        }
+
+        @Nullable
+        public X509TrustManager getTrustManager() {
+            return  (X509TrustManager) trustManagers[0];
+        }
+
     }
 }

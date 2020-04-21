@@ -220,7 +220,7 @@ public class InfoPopup extends BaseActivity {
 
             bodyView.setText(CommonUtil.getStringFragmentArgument(getArguments(),ARG_BODY,""),collapseStatus,0);
 
-            timeView.setText(DateStringUtil.getDateTimeInString((Date) CommonUtil.getSerializableFragmentArgument(getArguments(),ARG_TIME, Calendar.getInstance().getTime()), null));
+            timeView.setText(DateStringUtil.getDateTimeInString((Date) CommonUtil.getSerializableFragmentArgument(getArguments(),ARG_TIME, Calendar.getInstance().getTime()), null, null));
 
             String photo = CommonUtil.getStringFragmentArgument(getArguments(),ARG_PHOTO,"");
             if(!TextUtils.isEmpty(photo) && URLUtil.isValidUrl(photo)){

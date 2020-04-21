@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * @author upshots.org 5/27/16.
@@ -552,7 +553,7 @@ public class ViewUtil {
 
 
 
-    private static void showCustomDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Locale locale,
+    private static void showCustomDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final TimeZone timeZone, final Locale locale,
                                              @NonNull final FragmentManager fragmentManager, @NonNull final String tag,
                                              final boolean isHideKeyboardForThis, final EditText nextEditText, final boolean isShowKeyboardForNext){
 
@@ -560,7 +561,7 @@ public class ViewUtil {
         Date defaultDate = Calendar.getInstance().getTime();
         String dateStringFromEditText = editText.getText().toString();
         if(!TextUtils.isEmpty(dateStringFromEditText)){
-            defaultDate = DateStringUtil.getDateFromString(dateFormat,dateStringFromEditText, locale==null?Locale.getDefault():locale);
+            defaultDate = DateStringUtil.getDateFromString(dateFormat,dateStringFromEditText, timeZone==null?TimeZone.getDefault():timeZone,locale==null?Locale.getDefault():locale);
         }
 
         if (isHideKeyboardForThis) {
@@ -592,7 +593,7 @@ public class ViewUtil {
         }, defaultDate);
     }
 
-    public static void enableDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final Locale locale,
+    public static void enableDatePicker(@NonNull final EditText editText, @NonNull final String dateFormat, final TimeZone timeZone, final Locale locale,
                                         @NonNull final FragmentManager fragmentManager, @NonNull final String tag,
                                         final boolean isHideKeyboardForThis, final EditText nextEditText, final boolean isShowKeyboardForNext){
         editText.setOnTouchListener(new View.OnTouchListener() {
@@ -605,7 +606,7 @@ public class ViewUtil {
                 if(event.getAction() == MotionEvent.ACTION_UP){
                     if(editText.hasFocus()){
                         if(!((Boolean) v.getTag())) {
-                            showCustomDatePicker(editText, dateFormat, locale, fragmentManager, tag, isHideKeyboardForThis, nextEditText, isShowKeyboardForNext);
+                            showCustomDatePicker(editText, dateFormat, timeZone, locale, fragmentManager, tag, isHideKeyboardForThis, nextEditText, isShowKeyboardForNext);
                         }
                     }
                 }
@@ -618,7 +619,7 @@ public class ViewUtil {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     v.setTag(true);
-                    showCustomDatePicker(editText, dateFormat, locale, fragmentManager, tag, isHideKeyboardForThis, nextEditText, isShowKeyboardForNext);
+                    showCustomDatePicker(editText, dateFormat, timeZone, locale, fragmentManager, tag, isHideKeyboardForThis, nextEditText, isShowKeyboardForNext);
                 } else {
                     v.setTag(false);
                 }
