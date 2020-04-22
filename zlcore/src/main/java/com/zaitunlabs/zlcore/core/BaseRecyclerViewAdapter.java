@@ -91,7 +91,7 @@ implements SwipeDragCallback.SwipeDragInterface {
             @Override
             public void onClick(View view) {
                 if(onChildViewClickListener != null) {
-                    int position = viewHolder.getAdapterPosition();
+                    int position = viewHolder.getBindingAdapterPosition();
                     onChildViewClickListener.onClick(view, (DM)modelList.get(position), position);
                 }
             }
@@ -103,7 +103,7 @@ implements SwipeDragCallback.SwipeDragInterface {
             @Override
             public boolean onLongClick(View view) {
                 if(onChildViewClickListener != null) {
-                    int position = viewHolder.getAdapterPosition();
+                    int position = viewHolder.getBindingAdapterPosition();
                     onChildViewClickListener.onLongClick(view, (DM)modelList.get(position), position);
                     return true;
                 }
@@ -128,8 +128,8 @@ implements SwipeDragCallback.SwipeDragInterface {
 
     @Override
     public void onItemDrag(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-        int fromPosition = viewHolder.getAdapterPosition();
-        int toPosition = target.getAdapterPosition();
+        int fromPosition = viewHolder.getBindingAdapterPosition();
+        int toPosition = target.getBindingAdapterPosition();
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(modelList, i, i + 1);
@@ -144,7 +144,7 @@ implements SwipeDragCallback.SwipeDragInterface {
 
     @Override
     public void onItemSwipe(RecyclerView.ViewHolder viewHolder, int direction) {
-        final int position = viewHolder.getAdapterPosition();
+        final int position = viewHolder.getBindingAdapterPosition();
         CommonUtil.showDialog2Option(viewHolder.itemView.getContext(),
                 viewHolder.itemView.getContext().getString(R.string.zlcore_base_recyclerview_adapter_delete_confirmation),
                 viewHolder.itemView.getContext().getString(R.string.zlcore_base_recyclerview_adapter_delete_confirmation_message),

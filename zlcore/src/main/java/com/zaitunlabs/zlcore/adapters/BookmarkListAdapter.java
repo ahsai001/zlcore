@@ -75,7 +75,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void onClick(View view) {
                     if(onMoreOptionClickListener != null) {
-                        onMoreOptionClickListener.onClick(view, holder.getAdapterPosition());
+                        onMoreOptionClickListener.onClick(view, holder.getBindingAdapterPosition());
                     }
                 }
             });
@@ -84,7 +84,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void onClick(View view) {
                     if(onCardClickListener != null) {
-                        onCardClickListener.onClick(view, holder.getAdapterPosition());
+                        onCardClickListener.onClick(view, holder.getBindingAdapterPosition());
                     }
                 }
             });

@@ -92,7 +92,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
                     @Override
                     public void onClick(View view) {
                         if(onMoreOptionClickListener != null) {
-                            onMoreOptionClickListener.onClick(view, holder.getAdapterPosition());
+                            onMoreOptionClickListener.onClick(view, holder.getBindingAdapterPosition());
                         }
                     }
                 });
@@ -101,7 +101,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
             @Override
             public void onClick(View view) {
                 if(onCardClickListener != null) {
-                    onCardClickListener.onClick(view, holder.getAdapterPosition());
+                    onCardClickListener.onClick(view, holder.getBindingAdapterPosition());
                 }
             }
         });
