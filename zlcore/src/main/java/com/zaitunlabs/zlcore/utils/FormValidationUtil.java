@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -556,16 +557,19 @@ public class FormValidationUtil {
 
     public static class DateValidatorRule extends AbstractValidatorRule{
         private String dateFormat;
+        private TimeZone timeZone;
         private Locale locale;
-        public DateValidatorRule(String dateFormat, Locale locale) {
+        public DateValidatorRule(String dateFormat, TimeZone timeZone, Locale locale) {
             setErrorMessage(MESSAGE_DATE_FORMAT_IS_INVALID);
             this.dateFormat = dateFormat;
+            this.timeZone = timeZone;
             this.locale = locale;
         }
 
-        public DateValidatorRule(String errorMessage, String dateFormat, Locale locale) {
+        public DateValidatorRule(String errorMessage, String dateFormat, TimeZone timeZone, Locale locale) {
             super(errorMessage);
             this.dateFormat = dateFormat;
+            this.timeZone = timeZone;
             this.locale = locale;
         }
 
@@ -574,6 +578,9 @@ public class FormValidationUtil {
             try {
                 DateFormat df = new SimpleDateFormat(dateFormat, locale);
                 df.setLenient(false);
+                if(timeZone != null) {
+                    df.setTimeZone(timeZone);
+                }
                 df.parse(value);
                 return true;
             } catch (ParseException e) {
