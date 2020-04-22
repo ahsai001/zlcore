@@ -17,6 +17,7 @@ import android.os.Build;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
@@ -124,6 +125,7 @@ public class ViewUtil {
         return outValue.resourceId;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static int getSelectableItemBackgroundBorderLessResID(Context context){
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
@@ -134,6 +136,7 @@ public class ViewUtil {
         return ContextCompat.getDrawable(context,getSelectableItemBackgroundResID(context));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static Drawable getSelectableItemBackgroundBorderLessDrawable(Context context){
         return ContextCompat.getDrawable(context,getSelectableItemBackgroundBorderLessResID(context));
     }
@@ -144,6 +147,7 @@ public class ViewUtil {
         return layerDrawable;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static Drawable getSelectableItemBackgroundBorderLessWithDrawable(Context context, Drawable drawable){
         Drawable[] layers = {drawable, getSelectableItemBackgroundBorderLessDrawable(context)};
         LayerDrawable layerDrawable = new LayerDrawable(layers);
@@ -155,6 +159,7 @@ public class ViewUtil {
         return getSelectableItemBackgroundWithDrawable(context,colorDrawable);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static Drawable getSelectableItemBackgroundBorderLessWithColor(Context context, int color){
         ColorDrawable colorDrawable = new ColorDrawable(color);
         return getSelectableItemBackgroundBorderLessWithDrawable(context,colorDrawable);
@@ -486,6 +491,7 @@ public class ViewUtil {
             return colorStateList;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public static StateListAnimator getAnimationSelector(Animator pressedAnimator, Animator normalAnimator){
             StateListAnimator stateListAnimator = new StateListAnimator();
             stateListAnimator.addState(new int[]{STATE_PRESSED}, pressedAnimator);
@@ -530,10 +536,13 @@ public class ViewUtil {
         normalAnim.setTarget(targetView);
         normalAnim.playTogether(translateZNormalAnim, scaleXNormalAnim, scaleYNormalAnim);
 
-        StateListAnimator stateListAnimator = SelectorBuilder.getAnimationSelector(pressAnim, normalAnim);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            StateListAnimator stateListAnimator = SelectorBuilder.getAnimationSelector(pressAnim, normalAnim);
+            targetView.setStateListAnimator(stateListAnimator);
+        }
 
         targetView.setClickable(true);
-        targetView.setStateListAnimator(stateListAnimator);
     }
 
 
@@ -545,7 +554,9 @@ public class ViewUtil {
     public static void setButtonAsRounded(Button targetButton, Drawable roundedDrawable, boolean enablePushEffect){
         Drawable selectableItemBackgroundDrawable = getSelectableItemBackgroundWithDrawable(targetButton.getContext(), roundedDrawable);
         targetButton.setBackground(selectableItemBackgroundDrawable);
-        targetButton.setClipToOutline(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            targetButton.setClipToOutline(true);
+        }
         if(enablePushEffect) {
             enablePushEffectAnim(targetButton);
         }
