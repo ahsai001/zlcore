@@ -1525,7 +1525,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
         registerNewValidationRuleFactory("date", new ValidationRuleFactory() {
             @Override
             public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
-                return new FormValidationUtil.DateValidatorRule((String)valueList.get(0), (Locale)valueList.get(1));
+                return new FormValidationUtil.DateValidatorRule((String)valueList.get(0), (TimeZone) valueList.get(1), (Locale)valueList.get(2));
             }
         });
     }
