@@ -695,7 +695,14 @@ public class FormBuilderUtil implements VerticalStepperForm{
     private boolean handleCustomArgument(Context context, String argType, Object argValue, List<Class> typeList, List<Object> valueList){
         if(argumentsBuilderMap.containsKey(argType)){
             typeList.add(argumentsBuilderMap.get(argType).getType(argType));
-            valueList.add(argumentsBuilderMap.get(argType).getValue(argValue));
+
+            if(argValue == null){
+                valueList.add(null);
+            } else if(argValue instanceof String && TextUtils.isEmpty((String)argValue)) {
+                valueList.add(null);
+            } else {
+                valueList.add(argumentsBuilderMap.get(argType).getValue(argValue));
+            }
             return true;
         } else if(argType.equalsIgnoreCase("selectableitem")){
             Drawable drawable = ViewUtil.getSelectableItemBackgroundWithColor(context, Color.parseColor((String)argValue));
@@ -1382,6 +1389,18 @@ public class FormBuilderUtil implements VerticalStepperForm{
             public Object getValue(Object propValue) {
                 String[] propValueArray = ((String)propValue).split(",");
                 return new Locale(propValueArray[0], propValueArray[1]);
+            }
+        });
+
+        registerNewArgumentFactory("timezone", new ArgumentFactory() {
+            @Override
+            public Class getType(String propType) {
+                return TimeZone.class;
+            }
+
+            @Override
+            public Object getValue(Object propValue) {
+                return TimeZone.getTimeZone((String)propValue);
             }
         });
 
