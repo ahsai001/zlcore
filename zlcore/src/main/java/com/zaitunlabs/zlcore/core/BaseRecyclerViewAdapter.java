@@ -12,6 +12,7 @@ import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.listeners.SwipeDragCallback;
 import com.zaitunlabs.zlcore.utils.CommonUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,7 @@ implements SwipeDragCallback.SwipeDragInterface {
 
     public BaseRecyclerViewAdapter(List<DM> modelList) {
         this.modelList = modelList;
+        this.onChildViewClickListeners = new ArrayList<>();
     }
 
     @Override
@@ -90,9 +92,12 @@ implements SwipeDragCallback.SwipeDragInterface {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(onChildViewClickListener != null) {
+                if(onChildViewClickListeners != null) {
                     int position = viewHolder.getBindingAdapterPosition();
-                    onChildViewClickListener.onClick(view, (DM)modelList.get(position), position);
+                    DM dataModel = modelList.get(position);
+                    for (OnChildViewClickListener<DM> listener : onChildViewClickListeners) {
+                        listener.onClick(view, dataModel, position);
+                    }
                 }
             }
         });
@@ -102,10 +107,15 @@ implements SwipeDragCallback.SwipeDragInterface {
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if(onChildViewClickListener != null) {
-                    int position = viewHolder.getBindingAdapterPosition();
-                    onChildViewClickListener.onLongClick(view, (DM)modelList.get(position), position);
-                    return true;
+                if(onChildViewClickListeners != null) {
+                    if(!onChildViewClickListeners.isEmpty()) {
+                        int position = viewHolder.getBindingAdapterPosition();
+                        DM dataModel = modelList.get(position);
+                        for (OnChildViewClickListener<DM> listener : onChildViewClickListeners) {
+                            listener.onLongClick(view, dataModel, position);
+                        }
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -113,10 +123,10 @@ implements SwipeDragCallback.SwipeDragInterface {
     }
 
 
-    private OnChildViewClickListener<DM> onChildViewClickListener;
+    private List<OnChildViewClickListener<DM>> onChildViewClickListeners;
 
-    public void setOnChildViewClickListener(OnChildViewClickListener<DM> onChildViewClickListener){
-        this.onChildViewClickListener = onChildViewClickListener;
+    public void addOnChildViewClickListener(OnChildViewClickListener<DM> onChildViewClickListener){
+        this.onChildViewClickListeners.add(onChildViewClickListener);
     }
 
     public interface OnChildViewClickListener<DM> {

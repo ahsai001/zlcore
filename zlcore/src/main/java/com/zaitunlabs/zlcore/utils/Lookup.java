@@ -6,6 +6,8 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.google.gson.Gson;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -570,4 +572,25 @@ public class Lookup {
             lookup.delete();
         }
     }
+
+    public static void dump(Object src){
+        dump("", src);
+    }
+
+    public static void dump(String key, Object src){
+        Gson gson = new Gson();
+        Lookup.setS(key+"_dumped_"+src.getClass().getSimpleName(), gson.toJson(src));
+    }
+
+    public static <T> T getDumped(Class<T> type){
+        return getDumped("", type);
+    }
+
+    public static <T> T getDumped(String key, Class<T> type){
+        Gson gson = new Gson();
+        return gson.fromJson(Lookup.getS(key+"_dumped_"+type.getSimpleName(), null), type);
+    }
+
+
+
 }
