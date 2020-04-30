@@ -164,11 +164,21 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     }
 
 
-    public void openNewLink(String link){
-        if(webView != null) {
-            webView.loadUrl(link);
+    public void openNewLinkOrContent(String linkOrContent){
+        if(isWebPageFromUrl(linkOrContent)) {
+            //url content
+            //rootUrl = CommonUtil.prettifyUrl(rootUrl);
+
+            //headers.put("Accept-Encoding", "gzip");
+            if(webView != null) {
+                webView.loadUrl(linkOrContent, headerMap);
+            } else {
+                requestedUrl =  linkOrContent;
+            }
         } else {
-            requestedUrl =  link;
+            //html content
+            String encodedHtml = Base64.encodeToString(linkOrContent.getBytes(), Base64.NO_PADDING);
+            webView.loadData(encodedHtml,"text/html","base64");
         }
     }
 
@@ -325,8 +335,9 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
         currentUrl = rootUrl;
 
+        setupWebview(webView);
+
         if(!TextUtils.isEmpty(rootUrl)) {
-            setupWebview(webView);
             CookieManager cookieManager = CookieManager.getInstance();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 cookieManager.removeAllCookies(new ValueCallback<Boolean>() {
@@ -338,7 +349,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             }else{
                 cookieManager.removeAllCookie();
             }
-            if(isWebPageFromUrl()) {
+            if(isWebPageFromUrl(rootUrl)) {
                 //url content
                 //rootUrl = CommonUtil.prettifyUrl(rootUrl);
 
@@ -368,7 +379,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.setWebChromeClient(new SmartWebChromeClient());
 
-        if(isWebPageFromUrl()) {
+        if(isWebPageFromUrl(rootUrl)) {
             webView.getSettings().setLoadWithOverviewMode(true);
             webView.getSettings().setUseWideViewPort(true);
         }
@@ -880,24 +891,24 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     }
 
 
-    public boolean isWebPageFromUrl(){
-        return (isWebPageFromNetwork() || isWebPageFromAsset());
+    public boolean isWebPageFromUrl(String url){
+        return (isWebPageFromNetwork(url) || isWebPageFromAsset(url));
     }
 
-    public boolean isWebPageFromNetwork(){
-        return (rootUrl.startsWith("https://")
-                || rootUrl.startsWith("http://"));
+    public boolean isWebPageFromNetwork(String url){
+        return (url.startsWith("https://")
+                || url.startsWith("http://"));
     }
 
-    public boolean isWebPageFromAsset(){
-        return rootUrl.startsWith("file:///android_asset/");
+    public boolean isWebPageFromAsset(String url){
+        return url.startsWith("file:///android_asset/");
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if(isWebPageFromUrl()) {
+        if(isWebPageFromUrl(rootUrl)) {
             inflater.inflate(R.menu.menu_general_webview, menu);
-            if(isWebPageFromNetwork()) {
+            if(isWebPageFromNetwork(rootUrl)) {
                 if (isShowBookmark) {
                     menu.findItem(R.id.action_page_bookmark).setVisible(true);
                 } else {
@@ -911,7 +922,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 }
             }
 
-            if(isWebPageFromAsset()){
+            if(isWebPageFromAsset(rootUrl)){
                 menu.findItem(R.id.action_page_bookmark).setVisible(false);
                 menu.findItem(R.id.action_page_share).setVisible(false);
                 menu.findItem(R.id.action_page_browser).setVisible(false);
@@ -922,8 +933,8 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(isWebPageFromUrl()) {
-            if(isWebPageFromNetwork()) {
+        if(isWebPageFromUrl(rootUrl)) {
+            if(isWebPageFromNetwork(rootUrl)) {
                 if (isShowBookmark && !TextUtils.isEmpty(currentUrl)) {
                     if (BookmarkModel.findBookmark(currentUrl) == null) {
                         menu.findItem(R.id.action_page_bookmark).setTitle(getString(R.string.zlcore_menu_item_bookmark));
@@ -943,7 +954,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 }
             }
 
-            if(isWebPageFromAsset()){
+            if(isWebPageFromAsset(rootUrl)){
                 menu.findItem(R.id.action_page_bookmark).setVisible(false);
                 menu.findItem(R.id.action_page_share).setVisible(false);
                 menu.findItem(R.id.action_page_browser).setVisible(false);
