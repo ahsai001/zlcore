@@ -428,9 +428,9 @@ public class FormBuilderUtil implements VerticalStepperForm{
             return this;
         }
 
-        public WidgetBuilder setProperty(String methodName, ArgumentValueList propertyList){
+        public WidgetBuilder setProperty(String propertyKey, ArgumentValueList propertyList){
             FormPropertiesModel formPropertiesModel = new FormPropertiesModel();
-            formPropertiesModel.setPropKey(methodName);
+            formPropertiesModel.setPropKey(propertyKey);
             ArrayList<FormArgumentModel> propertiesArgModelList = new ArrayList<>();
             for(Map.Entry<String, Object> arg: propertyList.getArguments().entrySet()){
                 FormArgumentModel formArgumentModel = new FormArgumentModel();
@@ -608,7 +608,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
 
         List<Class> typeList = new ArrayList<>();
         List<Object> valueList = new ArrayList<>();
-        handleArgument(context, formWidgetModel.getData(), typeList, valueList);
+        loadArgument(context, formWidgetModel.getData(), typeList, valueList);
 
         View widgetView = widgetBuilderMap.get(widgetName).getWidgetView(context,layoutInflater,rootView, valueList);
 
@@ -710,7 +710,10 @@ public class FormBuilderUtil implements VerticalStepperForm{
             valueList.add(drawable);
             return true;
         } else if(argType.equalsIgnoreCase("selectableItemBorderLess")){
-            Drawable drawable = ViewUtil.getSelectableItemBackgroundBorderLessWithColor(context, Color.parseColor((String)argValue));
+            Drawable drawable = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                drawable = ViewUtil.getSelectableItemBackgroundBorderLessWithColor(context, Color.parseColor((String)argValue));
+            }
             typeList.add(Drawable.class);
             valueList.add(drawable);
             return true;
@@ -759,7 +762,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
         return false;
     }
 
-    private void handleArgument(Context context, List<FormArgumentModel> formArgumentModels,  List<Class> typeList, List<Object> valueList){
+    private void loadArgument(Context context, List<FormArgumentModel> formArgumentModels, List<Class> typeList, List<Object> valueList){
         if(formArgumentModels == null)return;
         for (int x = 0; x < formArgumentModels.size(); x++) {
             String argType = formArgumentModels.get(x).getArgType();
@@ -807,34 +810,57 @@ public class FormBuilderUtil implements VerticalStepperForm{
 
             List<Class> typeList = new ArrayList<>();
             List<Object> valueList = new ArrayList<>();
+            loadArgument(targetView.getContext(), formArgumentModels, typeList, valueList);
 
-            String methodName = formPropertiesModel.getPropKey();
-            if(nativeMethodBuilderMap.containsKey(methodName)){
-                methodName = nativeMethodBuilderMap.get(methodName).getRealMethod(methodName);
-            } else if(!methodName.startsWith(".")){
-                if(!methodName.startsWith("set")) {
-                    methodName = "set" + CommonUtil.toCamelCase(methodName);
-                }
-            } else {
-                methodName = methodName.replace(".","");
-            }
-
-            handleArgument(targetView.getContext(), formArgumentModels, typeList, valueList);
-
-
+            String propertyKey = formPropertiesModel.getPropKey();
+            List<String> propertyMethods = null;
             List<Integer> viewIds = null;
-            if(propertyViewSelectorBuilderMap.containsKey(widgetName+":"+methodName)){
-                viewIds = propertyViewSelectorBuilderMap.get(widgetName+":"+methodName).getViewIds();
-            }
 
-            if(viewIds != null && viewIds.size() > 0){
+            if(customPropertyBuilderMap.containsKey(widgetName+":"+propertyKey)){
+                CustomPropertyFactory customPropertyFactory = customPropertyBuilderMap.get(widgetName+":"+propertyKey);
+                viewIds = customPropertyFactory.getViewIds();
+                List<View> viewList = new ArrayList<>();
                 for (Integer viewId : viewIds){
-                    View target = targetView.findViewById(viewId);
-                    runMethod(target, widgetName, methodName, typeList, valueList);
+                    View view = targetView.findViewById(viewId);
+                    viewList.add(view);
                 }
+                customPropertyFactory.runPropertyMethod(targetView.getContext(),viewList,valueList);
+            } else if(nativePropertyBuilderMap.containsKey(widgetName+":"+propertyKey)){
+                NativePropertyFactory nativePropertyFactory = nativePropertyBuilderMap.get(widgetName+":"+propertyKey);
+                viewIds = nativePropertyFactory.getViewIds();
+                propertyMethods = nativePropertyFactory.getNativePropertyMethod(propertyKey);
+
+                for(int i=0; i<viewIds.size(); i++){
+                    View target = targetView.findViewById(viewIds.get(i));
+                    runPropertyMethod(target, widgetName, propertyMethods.get(i), typeList, valueList);
+                }
+
+            } else if(!propertyKey.startsWith(".")){
+                if(!propertyKey.startsWith("set")) {
+                    propertyKey = "set" + CommonUtil.toCamelCase(propertyKey);
+                }
+
+                runPropertyMethod(targetView, widgetName, propertyKey, typeList, valueList);
             } else {
-                runMethod(targetView, widgetName, methodName, typeList, valueList);
+                propertyKey = propertyKey.replace(".","");
+                runPropertyMethod(targetView, widgetName, propertyKey, typeList, valueList);
             }
+        }
+    }
+
+
+    private void runPropertyMethod(View object, String widgetName, String propertyMethod, List<Class> typeList, List<Object> valueList){
+        try {
+            Method method = object.getClass().getMethod(propertyMethod, typeList.toArray(new Class[typeList.size()]));
+            if (method != null) {
+                method.invoke(object, valueList.toArray(new Object[valueList.size()]));
+            }
+        } catch (IllegalAccessException e) {
+            DebugUtil.logD("formbuilder", widgetName+"-IllegalAccessException:"+propertyMethod);
+        } catch (InvocationTargetException e) {
+            DebugUtil.logD("formbuilder", widgetName+"-InvocationTargetException:"+propertyMethod);
+        } catch (NoSuchMethodException e) {
+            DebugUtil.logD("formbuilder", widgetName+"-NoSuchMethodException:"+propertyMethod);
         }
     }
 
@@ -850,7 +876,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
                     List<Class> typeList = new ArrayList<>();
                     List<Object> valueList = new ArrayList<>();
 
-                    handleArgument(targetView.getContext(), formArgumentModels, typeList, valueList);
+                    loadArgument(targetView.getContext(), formArgumentModels, typeList, valueList);
 
                     String ruleName = formValidationRuleModel.getRuleName();
                     if (validationRuleBuilderMap.containsKey(ruleName)) {
@@ -891,24 +917,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
         }
     }
 
-    private void runMethod(View object, String widgetName, String methodName, List<Class> typeList, List<Object> valueList){
-        if(customMethodBuilderMap.containsKey(widgetName+":"+methodName)){
-            customMethodBuilderMap.get(widgetName+":"+methodName).runMethod(object.getContext(), object, valueList);
-        } else {
-            try {
-                Method method = object.getClass().getMethod(methodName, typeList.toArray(new Class[typeList.size()]));
-                if (method != null) {
-                    method.invoke(object, valueList.toArray(new Object[valueList.size()]));
-                }
-            } catch (IllegalAccessException e) {
-                DebugUtil.logD("formbuilder", widgetName+"-IllegalAccessException:"+methodName);
-            } catch (InvocationTargetException e) {
-                DebugUtil.logD("formbuilder", widgetName+"-InvocationTargetException:"+methodName);
-            } catch (NoSuchMethodException e) {
-                DebugUtil.logD("formbuilder", widgetName+"-NoSuchMethodException:"+methodName);
-            }
-        }
-    }
+
 
 
 
@@ -965,7 +974,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
 
 
     private HashMap<String, WidgetFactory> widgetBuilderMap = new HashMap<>();
-    public void registerNewWidgetFactory(String widgetName, WidgetFactory widgetBuilder){
+    public void registerWidgetFactory(String widgetName, WidgetFactory widgetBuilder){
         widgetBuilderMap.put(widgetName, widgetBuilder);
     }
     public static abstract class WidgetFactory {
@@ -982,7 +991,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
 
 
     private HashMap<String, ArgumentFactory> argumentsBuilderMap = new HashMap<>();
-    public void registerNewArgumentFactory(String argName, ArgumentFactory argumentFactory){
+    public void registerArgumentFactory(String argName, ArgumentFactory argumentFactory){
         argumentsBuilderMap.put(argName, argumentFactory);
     }
     public static abstract class ArgumentFactory {
@@ -991,38 +1000,29 @@ public class FormBuilderUtil implements VerticalStepperForm{
     }
 
 
-
-
-    private HashMap<String, NativeMethodFactory> nativeMethodBuilderMap = new HashMap<>();
-    public void registerNewNativeMethodFactory(String methodName, NativeMethodFactory nativeMethodFactory){
-        nativeMethodBuilderMap.put(methodName, nativeMethodFactory);
+    private HashMap<String, NativePropertyFactory> nativePropertyBuilderMap = new HashMap<>();
+    public void registerNativePropertyFactory(String widgetName, String propertyKey, NativePropertyFactory nativePropertyFactory){
+        nativePropertyBuilderMap.put(widgetName+":"+propertyKey, nativePropertyFactory);
     }
-    public static abstract class NativeMethodFactory {
-        public abstract String getRealMethod(String methodName);
-    }
-
-
-
-    private HashMap<String, CustomMethodFactory> customMethodBuilderMap = new HashMap<>();
-    public void registerNewCustomMethodFactory(String widgetName, String methodName, CustomMethodFactory customMethodFactory){
-        customMethodBuilderMap.put(widgetName+":"+methodName, customMethodFactory);
-    }
-    public static abstract class CustomMethodFactory {
-        public abstract Object runMethod(Context context, View view, List<Object> arguments);
-    }
-
-    private HashMap<String, PropertyViewSelectorFactory> propertyViewSelectorBuilderMap = new HashMap<>();
-    public void registerNewPropertyViewSelectorFactory(String widgetName, String methodName, PropertyViewSelectorFactory propertyViewSelectorFactory){
-        propertyViewSelectorBuilderMap.put(widgetName+":"+methodName, propertyViewSelectorFactory);
-    }
-    public static abstract class PropertyViewSelectorFactory {
+    public static abstract class NativePropertyFactory {
         public abstract List<Integer> getViewIds();
+        public abstract List<String> getNativePropertyMethod(String propertyKey);
     }
 
+
+
+    private HashMap<String, CustomPropertyFactory> customPropertyBuilderMap = new HashMap<>();
+    public void registerCustomPropertyFactory(String widgetName, String propertyKey, CustomPropertyFactory customPropertyFactory){
+        customPropertyBuilderMap.put(widgetName+":"+propertyKey, customPropertyFactory);
+    }
+    public static abstract class CustomPropertyFactory {
+        public abstract List<Integer> getViewIds();
+        public abstract Object runPropertyMethod(Context context, List<View> views, List<Object> arguments);
+    }
 
 
     private HashMap<String, ValidationRuleFactory> validationRuleBuilderMap = new HashMap<>();
-    public void registerNewValidationRuleFactory(String validationRuleyName, ValidationRuleFactory validationRuleFactory){
+    public void registerValidationRuleFactory(String validationRuleyName, ValidationRuleFactory validationRuleFactory){
         validationRuleBuilderMap.put(validationRuleyName, validationRuleFactory);
     }
     public static abstract class ValidationRuleFactory {
@@ -1035,7 +1035,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
 
     private void initDefaultWidget(){
         //Widget Factory
-        registerNewWidgetFactory("edittext", new WidgetFactory() {
+        registerWidgetFactory("edittext", new WidgetFactory() {
             @Override
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, List<Object> data) {
                 TextInputLayout editTextLayout = (TextInputLayout) layoutInflater.inflate(R.layout.base_form_edittext, parentView, false);
@@ -1078,7 +1078,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
-        registerNewWidgetFactory("edittext2", new WidgetFactory() {
+        registerWidgetFactory("edittext2", new WidgetFactory() {
             @Override
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, List<Object> data) {
                 View editTextLayout = layoutInflater.inflate(R.layout.base_form_edittext_label, parentView, false);
@@ -1121,7 +1121,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
-        registerNewWidgetFactory("date", new WidgetFactory() {
+        registerWidgetFactory("date", new WidgetFactory() {
             @Override
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, final List<Object> data) {
                 View editTextLayout = layoutInflater.inflate(R.layout.base_form_edittext_label, parentView, false);
@@ -1170,7 +1170,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
         });
 
 
-        registerNewWidgetFactory("button", new WidgetFactory() {
+        registerWidgetFactory("button", new WidgetFactory() {
             @Override
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, List<Object> data) {
                 Button button = new Button(context);
@@ -1212,7 +1212,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
-        registerNewWidgetFactory("spinner", new WidgetFactory() {
+        registerWidgetFactory("spinner", new WidgetFactory() {
             @Override
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, List<Object> data) {
                 View spinnerLayout = layoutInflater.inflate(R.layout.base_form_spinner_label_leftright, parentView, false);
@@ -1261,7 +1261,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
         });
 
 
-        registerNewWidgetFactory("spinner2", new WidgetFactory() {
+        registerWidgetFactory("spinner2", new WidgetFactory() {
             @Override
             public View getWidgetView(Context context, LayoutInflater layoutInflater, ViewGroup parentView, List<Object> data) {
                 View spinnerLayout = layoutInflater.inflate(R.layout.base_form_spinner_label_updown, parentView, false);
@@ -1309,66 +1309,185 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
-        //Native Method Factory
-        registerNewNativeMethodFactory("inputtype", new NativeMethodFactory() {
+        //Native Property Factory
+        registerNativePropertyFactory("edittext", "inputtype", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setInputType";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.widget_edittext_edit);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setInputType");
+                return nativeProperties;
+            }
+        });
+        registerNativePropertyFactory("edittext2", "inputtype", new NativePropertyFactory() {
+            @Override
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setInputType");
+                return nativeProperties;
             }
         });
 
-        registerNewNativeMethodFactory("textcolor", new NativeMethodFactory() {
+        registerNativePropertyFactory("date", "inputtype", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setTextColor";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setInputType");
+                return nativeProperties;
             }
         });
 
-        registerNewNativeMethodFactory("backgroundcolor", new NativeMethodFactory() {
+        registerNativePropertyFactory("edittext2", "hintcolor", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setBackgroundColor";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_labelView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setTextColor");
+                return nativeProperties;
             }
         });
 
-        registerNewNativeMethodFactory("counter", new NativeMethodFactory() {
+        registerNativePropertyFactory("edittext2", "textcolor", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setCounterEnabled";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setTextColor");
+                return nativeProperties;
             }
         });
 
-        registerNewNativeMethodFactory("countermax", new NativeMethodFactory() {
+        registerNativePropertyFactory("edittext2", "backgroundcolor", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setCounterMaxLength";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setBackgroundColor");
+                return nativeProperties;
             }
         });
 
-        registerNewNativeMethodFactory("focus", new NativeMethodFactory() {
+        registerNativePropertyFactory("edittext2", "counter", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setFocusable";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setCounterEnabled");
+                return nativeProperties;
             }
         });
 
-        registerNewNativeMethodFactory("click", new NativeMethodFactory() {
+        registerNativePropertyFactory("edittext2", "countermax", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setClickable";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setCounterMaxLength");
+                return nativeProperties;
             }
         });
 
-        registerNewNativeMethodFactory("enabled", new NativeMethodFactory() {
+        registerNativePropertyFactory("edittext2", "focus", new NativePropertyFactory() {
             @Override
-            public String getRealMethod(String methodName) {
-                return "setEnabled";
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setFocusable");
+                return nativeProperties;
+            }
+        });
+
+        registerNativePropertyFactory("edittext2", "click", new NativePropertyFactory() {
+            @Override
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setClickable");
+                return nativeProperties;
+            }
+        });
+
+        registerNativePropertyFactory("edittext2", "enabled", new NativePropertyFactory() {
+            @Override
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setEnabled");
+                return nativeProperties;
             }
         });
 
 
         //Properties Factory
-        registerNewArgumentFactory("array", new ArgumentFactory() {
+        registerArgumentFactory("array", new ArgumentFactory() {
             @Override
             public Class getType(String propType) {
                 return ArrayList.class;
@@ -1379,7 +1498,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
                 return propValue;
             }
         });
-        registerNewArgumentFactory("locale", new ArgumentFactory() {
+        registerArgumentFactory("locale", new ArgumentFactory() {
             @Override
             public Class getType(String propType) {
                 return Locale.class;
@@ -1392,7 +1511,7 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
-        registerNewArgumentFactory("timezone", new ArgumentFactory() {
+        registerArgumentFactory("timezone", new ArgumentFactory() {
             @Override
             public Class getType(String propType) {
                 return TimeZone.class;
@@ -1404,125 +1523,81 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
-        //View selector method
-        registerNewPropertyViewSelectorFactory("edittext", "setInputType", new PropertyViewSelectorFactory() {
-            @Override
-            public List<Integer> getViewIds() {
-                List<Integer> widgetIds = new ArrayList<>();
-                widgetIds.add(R.id.widget_edittext_edit);
-                return widgetIds;
-            }
-        });
-
-        registerNewPropertyViewSelectorFactory("edittext2", "setInputType", new PropertyViewSelectorFactory() {
-            @Override
-            public List<Integer> getViewIds() {
-                List<Integer> widgetIds = new ArrayList<>();
-                widgetIds.add(R.id.base_form_edittext_edittextView);
-                return widgetIds;
-            }
-        });
-
-        registerNewPropertyViewSelectorFactory("date", "setInputType", new PropertyViewSelectorFactory() {
-            @Override
-            public List<Integer> getViewIds() {
-                List<Integer> widgetIds = new ArrayList<>();
-                widgetIds.add(R.id.base_form_edittext_edittextView);
-                return widgetIds;
-            }
-        });
-
-        registerNewPropertyViewSelectorFactory("edittext2", "setEnabled", new PropertyViewSelectorFactory() {
-            @Override
-            public List<Integer> getViewIds() {
-                List<Integer> widgetIds = new ArrayList<>();
-                widgetIds.add(R.id.base_form_edittext_edittextView);
-                return widgetIds;
-            }
-        });
-
-        registerNewPropertyViewSelectorFactory("edittext2", "setReadonly", new PropertyViewSelectorFactory() {
-            @Override
-            public List<Integer> getViewIds() {
-                List<Integer> widgetIds = new ArrayList<>();
-                widgetIds.add(R.id.base_form_edittext_edittextView);
-                return widgetIds;
-            }
-        });
-
-
-        registerNewPropertyViewSelectorFactory("spinner", "setObjectData", new PropertyViewSelectorFactory() {
-            @Override
-            public List<Integer> getViewIds() {
-                List<Integer> widgetIds = new ArrayList<>();
-                widgetIds.add(R.id.base_form_spinner_spinnerView);
-                return widgetIds;
-            }
-        });
-
-        registerNewPropertyViewSelectorFactory("spinner2", "setObjectData", new PropertyViewSelectorFactory() {
-            @Override
-            public List<Integer> getViewIds() {
-                List<Integer> widgetIds = new ArrayList<>();
-                widgetIds.add(R.id.base_form_spinner_spinnerView);
-                return widgetIds;
-            }
-        });
-
 
         //Custom Method Factory
-        registerNewCustomMethodFactory("spinner", "setObjectData", new CustomMethodFactory() {
+        registerCustomPropertyFactory("spinner", "setObjectData", new CustomPropertyFactory() {
             @Override
-            public Object runMethod(Context context, View view, List<Object> arguments) {
-                FormCommonUtil.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_spinner_spinnerView);
+                return widgetIds;
+            }
+
+            @Override
+            public Object runPropertyMethod(Context context, List<View> views, List<Object> arguments) {
+                FormCommonUtil.setSpinnerList(context, (Spinner)views.get(0),(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
                 return null;
             }
         });
-        registerNewCustomMethodFactory("spinner2", "setObjectData", new CustomMethodFactory() {
+        registerCustomPropertyFactory("spinner2", "setObjectData", new CustomPropertyFactory() {
             @Override
-            public Object runMethod(Context context, View view, List<Object> arguments) {
-                FormCommonUtil.setSpinnerList(context, (Spinner)view,(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_spinner_spinnerView);
+                return widgetIds;
+            }
+
+            @Override
+            public Object runPropertyMethod(Context context, List<View> views, List<Object> arguments) {
+                FormCommonUtil.setSpinnerList(context, (Spinner)views.get(0),(List<String>)arguments.get(0),(List<String>)arguments.get(1), null);
                 return null;
             }
         });
 
-        registerNewCustomMethodFactory("edittext2", "setReadonly", new CustomMethodFactory() {
+        registerCustomPropertyFactory("edittext2", "setReadonly", new CustomPropertyFactory() {
             @Override
-            public Object runMethod(Context context, View view, List<Object> arguments) {
-                view.setFocusable(false);
-                view.setClickable(true);
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_spinner_spinnerView);
+                return widgetIds;
+            }
+
+            @Override
+            public Object runPropertyMethod(Context context, List<View> views, List<Object> arguments) {
+                views.get(0).setFocusable(false);
+                views.get(0).setClickable(true);
                 return null;
             }
         });
 
         //validationRuleFactory
-        registerNewValidationRuleFactory("fixcount", new ValidationRuleFactory() {
+        registerValidationRuleFactory("fixcount", new ValidationRuleFactory() {
             @Override
             public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
                 return new FormValidationUtil.CountValidatorRule((int) valueList.get(0));
             }
         });
 
-        registerNewValidationRuleFactory("notempty", new ValidationRuleFactory() {
+        registerValidationRuleFactory("notempty", new ValidationRuleFactory() {
             @Override
             public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
                 return new FormValidationUtil.NotEmptyValidatorRule();
             }
         });
 
-        registerNewValidationRuleFactory("email", new ValidationRuleFactory() {
+        registerValidationRuleFactory("email", new ValidationRuleFactory() {
             @Override
             public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
                 return new FormValidationUtil.EmailValidatorRule();
             }
         });
-        registerNewValidationRuleFactory("url", new ValidationRuleFactory() {
+        registerValidationRuleFactory("url", new ValidationRuleFactory() {
             @Override
             public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
                 return new FormValidationUtil.URLValidatorRule();
             }
         });
-        registerNewValidationRuleFactory("date", new ValidationRuleFactory() {
+        registerValidationRuleFactory("date", new ValidationRuleFactory() {
             @Override
             public FormValidationUtil.AbstractValidatorRule getValidationRule(Context context, FormValidationUtil.Validator validator, List<Class> typeList, List<Object> valueList) {
                 return new FormValidationUtil.DateValidatorRule((String)valueList.get(0), (TimeZone) valueList.get(1), (Locale)valueList.get(2));

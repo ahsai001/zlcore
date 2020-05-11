@@ -67,6 +67,7 @@ public abstract class BaseFormActivityFragment extends BaseFragment {
         return swipeRefreshLayout;
     }
 
+    protected abstract void handleInit(Activity activity, FormBuilderUtil formBuilderUtil, @Nullable Bundle savedInstanceState);
     protected abstract boolean handleCustomFormCreating(Activity activity, FormBuilderUtil formBuilderUtil, String viewJson, @Nullable Bundle savedInstanceState);
     protected abstract boolean handleCustomLogic(Activity activity, FormBuilderUtil formBuilderUtil, @Nullable Bundle savedInstanceState);
     protected abstract boolean handleCustomAction(Activity activity, FormBuilderUtil formBuilderUtil, String urlQueryString, Map<String, String> keyValueMap, @Nullable Bundle savedInstanceState);
@@ -78,6 +79,8 @@ public abstract class BaseFormActivityFragment extends BaseFragment {
         CommonUtil.setWindowSofInputModeResize(getActivity());
 
         formBuilderUtil = new FormBuilderUtil(getActivity(), savedInstanceState).withParentView(formContainer);
+
+        handleInit(getActivity(), formBuilderUtil, savedInstanceState);
 
         if(!handleCustomFormCreating(getActivity(), formBuilderUtil, viewJson, savedInstanceState)){
             formBuilderUtil.withViewJson(viewJson);
