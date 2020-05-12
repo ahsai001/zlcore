@@ -1357,6 +1357,38 @@ public class FormBuilderUtil implements VerticalStepperForm{
             }
         });
 
+        registerNativePropertyFactory("date", "hintcolor", new NativePropertyFactory() {
+            @Override
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_labelView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setTextColor");
+                return nativeProperties;
+            }
+        });
+
+        registerNativePropertyFactory("date", "textcolor", new NativePropertyFactory() {
+            @Override
+            public List<Integer> getViewIds() {
+                List<Integer> widgetIds = new ArrayList<>();
+                widgetIds.add(R.id.base_form_edittext_edittextView);
+                return widgetIds;
+            }
+
+            @Override
+            public List<String> getNativePropertyMethod(String propertyKey) {
+                List<String> nativeProperties = new ArrayList<>();
+                nativeProperties.add("setTextColor");
+                return nativeProperties;
+            }
+        });
+
         registerNativePropertyFactory("edittext2", "hintcolor", new NativePropertyFactory() {
             @Override
             public List<Integer> getViewIds() {
