@@ -5,6 +5,9 @@ import android.content.Context;
 
 import androidx.multidex.MultiDex;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.zaitunlabs.zlcore.R;
 import com.zaitunlabs.zlcore.constants.ZLCoreConstanta;
 import com.zaitunlabs.zlcore.events.ReInitializeDatabaseEvent;
@@ -35,8 +38,14 @@ import org.acra.sender.ReportSenderException;
 import org.acra.sender.ReportSenderFactory;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.net.ssl.SSLContext;
+
 public class BaseApplication extends Application {
 	public static final String DATABASE_NAME = "zlcore.db";
+	public static final String TLSV_MIN = "TLSv1.2";
 	@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
@@ -57,6 +66,18 @@ public class BaseApplication extends Application {
 			configurationBuilder.setResDialogText(R.string.zlcore_crash_dialog_text);
 			configurationBuilder.setReportingInteractionMode(ReportingInteractionMode.NOTIFICATION);
 			ACRA.init(this, configurationBuilder);
+		} else {
+			try {
+				// Google Play will install latest OpenSSL
+				ProviderInstaller.installIfNeeded(getApplicationContext());
+				SSLContext sslContext;
+				sslContext = SSLContext.getInstance(TLSV_MIN);
+				sslContext.init(null, null, null);
+				sslContext.createSSLEngine();
+			} catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException
+					| NoSuchAlgorithmException | KeyManagementException e) {
+				e.printStackTrace();
+			}
 		}
 
 		ApplicationWacther.initialize(this).registerAppWatcherListener(this,
@@ -85,6 +106,8 @@ public class BaseApplication extends Application {
 		Lookup.init(this, true);
 
 		EventsUtil.register(this);
+
+
 	}
 
 	private void dbInitialize(){
