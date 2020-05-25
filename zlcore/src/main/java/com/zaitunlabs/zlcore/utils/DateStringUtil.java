@@ -16,6 +16,7 @@ import java.util.TimeZone;
 
 public class DateStringUtil {
     public static String convertDateToString(String toFormat, Date date, TimeZone timeZone, Locale locale){
+        if(date == null)return null;
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         SimpleDateFormat sdf = new SimpleDateFormat(toFormat, (locale == null?Locale.getDefault():locale));
