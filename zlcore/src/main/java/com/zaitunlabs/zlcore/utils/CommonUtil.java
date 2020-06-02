@@ -1731,6 +1731,14 @@ public class CommonUtil {
 		return true;
 	}
 
+
+
+	public static boolean isOnline(Context context) {
+		ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+		return (networkInfo != null && networkInfo.isConnected());
+	}
+
 	public static String getModelNumber(){
 		String model = "";
 		try {
@@ -2612,25 +2620,6 @@ public class CommonUtil {
 	public static String getCurrentTimeInString(String format, Locale locale){
 		SimpleDateFormat df = new SimpleDateFormat(format, (locale == null?Locale.getDefault():locale));
 		return df.format(Calendar.getInstance().getTime());
-	}
-
-
-	static boolean isWifiConn = false;
-	static boolean isMobileConn = false;
-
-	public static boolean hasNetworkConnection(Context context){
-		ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		isWifiConn = (networkInfo != null && networkInfo.isConnected());
-		networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-		isMobileConn = (networkInfo != null && networkInfo.isConnected());
-		return isWifiConn || isMobileConn;
-	}
-
-	public static boolean isOnline(Context context) {
-		ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected());
 	}
 
 	public static void showNotification(Context context, String title, String content, Class nextActivity,

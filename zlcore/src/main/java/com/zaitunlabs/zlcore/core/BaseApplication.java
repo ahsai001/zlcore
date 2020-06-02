@@ -5,6 +5,8 @@ import android.content.Context;
 
 import androidx.multidex.MultiDex;
 
+import com.ahsailabs.sqlitewrapper.Lookup;
+import com.ahsailabs.sqlitewrapper.SQLiteWrapper;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
@@ -23,9 +25,7 @@ import com.zaitunlabs.zlcore.utils.ApplicationWacther;
 import com.zaitunlabs.zlcore.utils.CommonUtil;
 import com.zaitunlabs.zlcore.utils.DebugUtil;
 import com.zaitunlabs.zlcore.utils.EventsUtil;
-import com.zaitunlabs.zlcore.utils.Lookup;
 import com.zaitunlabs.zlcore.utils.PlayServiceUtil;
-import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 import com.zaitunlabs.zlcore.utils.audio.BackSoundService;
 
 import org.acra.ACRA;

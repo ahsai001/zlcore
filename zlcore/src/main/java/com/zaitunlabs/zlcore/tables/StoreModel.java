@@ -1,10 +1,10 @@
 package com.zaitunlabs.zlcore.tables;
 
+import com.ahsailabs.sqlitewrapper.SQLiteWrapper;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.zaitunlabs.zlcore.api.APIConstant;
 import com.zaitunlabs.zlcore.core.BaseApplication;
-import com.zaitunlabs.zlcore.utils.SQLiteWrapper;
 
 import java.util.Calendar;
 import java.util.List;

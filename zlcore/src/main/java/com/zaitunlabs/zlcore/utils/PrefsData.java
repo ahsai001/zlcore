@@ -3,6 +3,8 @@ package com.zaitunlabs.zlcore.utils;
 
 import android.text.TextUtils;
 
+import com.ahsailabs.sqlitewrapper.Lookup;
+
 /**
  * Created by ahmad s on 9/5/2015.
  */
