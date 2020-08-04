@@ -61,6 +61,7 @@ import com.zaitunlabs.zlcore.utils.ViewUtil;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -83,6 +84,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private static final String ARG_SHARE_TITLE = "shareTitleRes";
     private static final String ARG_SHARE_MESSAGE = "share_message";
     private static final String ARG_HEADER_MAP = "header_map";
+    private static final String ARG_WHITELIST_DOMAIN = "whitelist_domains";
 
     public static final String QUERY_PARAM_NO_HISTORY = "nohistory";
     public static final String QUERY_PARAM_CLEAR_HISTORY = "clearhistory";
@@ -106,6 +108,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
     private String shareTitle;
     private String shareMessage;
     private HashMap<String, String> headerMap;
+    private ArrayList<String> whiteListDomains;
 
     private boolean isShowBookmark = false;
     private boolean isShowShare = false;
@@ -123,22 +126,22 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
     private ViewTreeObserver.OnScrollChangedListener onScrollChangedListener;
 
-    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage){
-        setArg(context, position,baseUrl, url,defaultMessage,-1);
+    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage, ArrayList<String> whiteListDomains){
+        setArg(context, position,baseUrl, url,defaultMessage,-1, whiteListDomains);
     }
 
-    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage, int bgColor){
+    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage, int bgColor, ArrayList<String> whiteListDomains){
         ArrayList<String> headerList = HttpClientUtil.getHeaderList(false, false, false, false);
-        setArg(context, position,baseUrl, url,defaultMessage,-1, false, headerList);
+        setArg(context, position,baseUrl, url,defaultMessage,-1, false, headerList, whiteListDomains);
     }
 
-    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList){
+    public void setArg(Context context, int position, String baseUrl, String url, String defaultMessage, int bgColor, boolean showBookmark, ArrayList<String> headerList, ArrayList<String> whiteListDomains){
         HashMap<String, String> headerMap = HttpClientUtil.getHeaderMap(context, headerList);
-        setArg(position,baseUrl, url,defaultMessage,-1, false, false, null, null, null, headerMap);
+        setArg(position,baseUrl, url,defaultMessage,-1, false, false, null, null, null, headerMap, whiteListDomains);
     }
 
     public void setArg(int position, String baseUrl, String url, String defaultMessage, int bgColor, boolean showBookmark,
-                       boolean showShare, String shareInstruction, String shareTitle, String shareMessage, HashMap<String, String> headerMap){
+                       boolean showShare, String shareInstruction, String shareTitle, String shareMessage, HashMap<String, String> headerMap, ArrayList<String> whiteListDomains){
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         b.putString(ARG_BASE_URL,baseUrl);
@@ -151,6 +154,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         b.putString(ARG_SHARE_TITLE,shareTitle);
         b.putString(ARG_SHARE_MESSAGE,shareMessage);
         b.putSerializable(ARG_HEADER_MAP, headerMap);
+        b.putStringArrayList(ARG_WHITELIST_DOMAIN, whiteListDomains);
         this.setArguments(b);
     }
 
@@ -160,6 +164,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         isShowBookmark = CommonUtil.getBooleanFragmentArgument(getArguments(),ARG_SHOW_BOOKMARK, false);
         isShowShare = CommonUtil.getBooleanFragmentArgument(getArguments(),ARG_SHOW_SHARE, false);
         headerMap = (HashMap<String, String>) CommonUtil.getSerializableFragmentArgument(getArguments(), ARG_HEADER_MAP, null);
+        whiteListDomains = CommonUtil.getStringArrayListFragmentArgument(getArguments(), ARG_WHITELIST_DOMAIN, null);
         setHasOptionsMenu(true);
     }
 
@@ -628,6 +633,11 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 return false;
             }
 
+            if (whiteListDomains != null && whiteListDomains.contains(requestUrlHost)){
+                // This is in whitelist domains, so do not override; let my WebView load the page
+                return false;
+            }
+
             isInternal = false;
             // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
             if(!handleCustomLink(view, url)){
@@ -650,6 +660,11 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
 
             if (!TextUtils.isEmpty(requestUrlHost) && !TextUtils.isEmpty(rootUrlHost) && requestUrlHost.endsWith(rootUrlHost)) {
                 // This is my web site, so do not override; let my WebView load the page
+                return false;
+            }
+
+            if (!TextUtils.isEmpty(requestUrlHost) && whiteListDomains != null && whiteListDomains.contains(requestUrlHost)){
+                // This is in whitelist domains, so do not override; let my WebView load the page
                 return false;
             }
 
