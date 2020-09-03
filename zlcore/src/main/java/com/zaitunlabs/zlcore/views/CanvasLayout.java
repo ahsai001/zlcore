@@ -59,10 +59,8 @@ public class CanvasLayout extends RelativeLayout{
 	}
 	private void init(Context context){
 		this.context = context;
-		boolean isFullScreen = CommonUtil.isActivityFullScreen(context);
-		DebugUtil.logW("SIZE", "fullscreen : "+isFullScreen);
 		widthRatio = (double) CommonUtil.getScreenWidth(context) / 100;
-		heightRatio = (double)(CommonUtil.getScreenHeight(context) - CommonUtil.getNavigationHeight(context) - (isFullScreen ? 0 : CommonUtil.getStatusBarHeight(context)))/ 100;
+		heightRatio = (double) CommonUtil.getAppHeight(context,0) / 100;
 
 		DebugUtil.logW("SIZE layout", "widthRatio : "+widthRatio);
 		DebugUtil.logW("SIZE layout", "heightRatio : " + heightRatio);

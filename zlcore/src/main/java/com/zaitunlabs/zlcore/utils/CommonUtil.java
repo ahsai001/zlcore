@@ -607,8 +607,15 @@ public class CommonUtil {
 	 * @param context context of current activity or application
 	 * @return height of application
 	 */
+	public static int appHeight = 0;
 	public static int getAppHeight(Context context) {
-		return (getScreenHeight(context) - getStatusBarHeight(context));
+		if(appHeight > 0) return appHeight;
+		boolean isFullScreen = isActivityFullScreen(context);
+		int screenHeight = getScreenHeight(context);
+		int screenHeight2 = getDisplayMetricsScreenHeight(context);
+		int navHeight = getNavigationHeight(context);
+		int statusBarHeight = getStatusBarHeight(context);
+		return screenHeight - (isFullScreen ? 0 : statusBarHeight);
 	}
 
 	public static int getStatusBarHeight(Context ctx) {
