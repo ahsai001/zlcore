@@ -236,7 +236,7 @@ public class AboutUs extends CanvasActivity {
 				leftBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			} else {
-				leftBottomMenu.setBackgroundDrawable(ViewUtil.getSelectableItemBackgroundWithColor(this,
+				leftBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			}
 		}
@@ -250,7 +250,7 @@ public class AboutUs extends CanvasActivity {
 				midleBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			} else {
-				midleBottomMenu.setBackgroundDrawable(ViewUtil.getSelectableItemBackgroundWithColor(this,
+				midleBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			}
 		}
@@ -264,7 +264,7 @@ public class AboutUs extends CanvasActivity {
 				rightBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			} else {
-				rightBottomMenu.setBackgroundDrawable(ViewUtil.getSelectableItemBackgroundWithColor(this,
+				rightBottomMenu.setBackground(ViewUtil.getSelectableItemBackgroundWithColor(this,
 						ContextCompat.getColor(this, R.color.colorAccent)));
 			}
 

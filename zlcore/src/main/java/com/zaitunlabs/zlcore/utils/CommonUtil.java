@@ -591,15 +591,15 @@ public class CommonUtil {
 	}
 
 	public static int getScreenWidth(Context context) {
-		Display display = ((Activity) context).getWindowManager()
-				.getDefaultDisplay();
-		return display.getWidth();
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		return displayMetrics.widthPixels;
 	}
 
 	public static int getScreenHeight(Context context) {
-		Display display = ((Activity) context).getWindowManager()
-				.getDefaultDisplay();
-		return display.getHeight();
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		return displayMetrics.heightPixels;
 	}
 
 	/**
@@ -622,19 +622,17 @@ public class CommonUtil {
 	}
 	
 	public static boolean isActivityFullScreen(Context ctx){
-		boolean isfullScreen = (((Activity)ctx).getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
-		return isfullScreen;
+		return (((Activity) ctx).getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
 	}
 
 	public static float getFontHeight(String text) {
-		/*
-		 * Paint tp = new Paint(); Rect bounds = new Rect(); //this will just
-		 * retrieve the bounding rect for text tp.getTextBounds(text, 0,
-		 * text.length(), bounds); int textHeight = bounds.height();
-		 * Paint.FontMetrics metrics = tp.getFontMetrics(); int totalHeight =
-		 * (int) (metrics.top - metrics.bottom);
-		 */
-		return 40;
+		Paint tp = new Paint();
+		Rect bounds = new Rect();
+		//this will just retrieve the bounding rect for text
+		tp.getTextBounds(text, 0, text.length(), bounds);
+		//int textHeight = bounds.height();
+		Paint.FontMetrics metrics = tp.getFontMetrics();
+		return (int) (metrics.top - metrics.bottom);
 	}
 
 	public static float getTextLength(String text, float fontsize, Typeface tf) {
@@ -678,7 +676,7 @@ public class CommonUtil {
 	
 	public static double getHeightRatio(Context context){
 		boolean isFullScreen = isActivityFullScreen(context);
-		return (double)((getScreenHeight(context) - (isFullScreen ? 0 : getStatusBarHeight(context)))/ 100);
+		return (double)((getScreenHeight(context) - getNavigationHeight(context) - (isFullScreen ? 0 : getStatusBarHeight(context)))/ 100);
 	}
 	
 	public static int getPercentWidthFromPixel(Context context, float pixelWidth){
@@ -1231,7 +1229,7 @@ public class CommonUtil {
 
 
 
-	public static Point getNavigationBarSize(Context context) {
+	/*public static Point getNavigationBarSize(Context context) {
 		Point appUsableSize = getAppUsableScreenSize(context);
 		Point realScreenSize = getRealScreenSize(context);
 
@@ -1281,7 +1279,7 @@ public class CommonUtil {
 
 
 		return size;
-	}
+	}*/
 
 
 
@@ -1923,7 +1921,7 @@ public class CommonUtil {
 		PopupWindow popupWindow = new PopupWindow(popupView, width==0?ViewGroup.LayoutParams.WRAP_CONTENT:width, height==0?ViewGroup.LayoutParams.WRAP_CONTENT:height);
 
 		popupWindow.setAnimationStyle(android.R.style.Animation_Toast);
-		//popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.popup_chat_background));
+		//popupWindow.setBackground(ContextCompat.getDrawable(context,R.drawable.popup_chat_background));
 
 		popupWindow.setOutsideTouchable(outsideTouchable);
 		popupWindow.setFocusable(outsideTouchable);
@@ -1955,7 +1953,7 @@ public class CommonUtil {
 		PopupWindow popupWindow = new PopupWindow(popupView, width==0?ViewGroup.LayoutParams.WRAP_CONTENT:width, height==0?ViewGroup.LayoutParams.WRAP_CONTENT:height);
 
 		popupWindow.setAnimationStyle(android.R.style.Animation_Toast);
-		//popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.popup_chat_background));
+		//popupWindow.setBackground(ContextCompat.getDrawable(context,R.drawable.popup_chat_background));
 
 		popupWindow.setOutsideTouchable(outsideTouchable);
 		popupWindow.setFocusable(outsideTouchable);

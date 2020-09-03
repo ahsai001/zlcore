@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert"></style>
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert" />
 
     <style name="AppTheme.InfoPopup" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
         <item name="windowNoTitle">true</item>

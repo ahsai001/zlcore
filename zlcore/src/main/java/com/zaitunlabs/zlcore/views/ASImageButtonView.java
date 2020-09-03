@@ -52,7 +52,7 @@ public class ASImageButtonView extends AppCompatImageView{
 		states.addState(new int[] {R.attr.state_pressed}, ContextCompat.getDrawable(getContext(),pressed));
 		states.addState(new int[] {R.attr.state_focused}, ContextCompat.getDrawable(getContext(),focused));
 		states.addState(new int[] {}, ContextCompat.getDrawable(getContext(),normal));
-		//this.setBackgroundDrawable(states);
+		//this.setBackground(states);
 		this.setImageDrawable(states);
 	}
 
@@ -87,7 +87,7 @@ public class ASImageButtonView extends AppCompatImageView{
 		states.addState(new int[] {R.attr.state_pressed},layerList);
 		states.addState(new int[] {R.attr.state_focused},layerList);
 		states.addState(new int[] {}, ContextCompat.getDrawable(getContext(),normal));
-		//this.setBackgroundDrawable(states);
+		//this.setBackground(states);
 		this.setImageDrawable(states);
 		*/
 

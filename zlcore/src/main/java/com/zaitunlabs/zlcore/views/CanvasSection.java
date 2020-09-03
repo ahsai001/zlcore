@@ -33,8 +33,6 @@ public class CanvasSection extends FrameLayout {
 	private int sectionWidthInPixel;
 	private int sectionHeightInPixel;
 
-
-
 	private boolean maintainRatio = true; //default true, jangan ikut resize jika parent resize
 	private boolean updateLayoutChildren = true; //default true. selalu update child jika resize
 
