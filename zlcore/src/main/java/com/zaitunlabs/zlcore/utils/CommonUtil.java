@@ -77,10 +77,13 @@ import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.MeasureSpec;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -610,20 +613,20 @@ public class CommonUtil {
 	public static int appHeight = 0;
 	public static int getAppHeight(Context context) {
 		if(appHeight > 0) return appHeight;
-		boolean isFullScreen = isActivityFullScreen(context);
 		int screenHeight = getScreenHeight(context);
 		int screenHeight2 = getDisplayMetricsScreenHeight(context);
 		int navHeight = getNavigationHeight(context);
 		int statusBarHeight = getStatusBarHeight(context);
-		return screenHeight - (isFullScreen ? 0 : statusBarHeight);
+		return screenHeight - navHeight - statusBarHeight;
 	}
 
-	public static int getStatusBarHeight(Context ctx) {
+	public static int getStatusBarHeight(Context context) {
+		if(isActivityFullScreen(context)) return 0;
 		int result = 0;
-		int resourceId = ctx.getResources().getIdentifier("status_bar_height",
+		int resourceId = context.getResources().getIdentifier("status_bar_height",
 				"dimen", "android");
 		if (resourceId > 0) {
-			result = ctx.getResources().getDimensionPixelSize(resourceId);
+			result = context.getResources().getDimensionPixelSize(resourceId);
 		}
 		return result;
 	}
@@ -1225,11 +1228,31 @@ public class CommonUtil {
 		return mActionBarSize;
 	}
 
+	public static int hasNavBarUseMethod = 1;
+	public static boolean hasNavBar(Context context){
+		switch (hasNavBarUseMethod){
+			case 1: return ViewConfiguration.get(context).hasPermanentMenuKey();
+			case 2: {
+				int id = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
+				return id > 0 && context.getResources().getBoolean(id);
+			}
+			case 3: {
+				boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+				boolean hasHomeKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
+
+				return (!(hasBackKey && hasHomeKey));
+			}
+		}
+		return false;
+	}
+
 	public static int getNavigationHeight(Context context){
-		Resources resources = context.getResources();
-		int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-		if (resourceId > 0) {
-			return resources.getDimensionPixelSize(resourceId);
+		if(hasNavBar(context)) {
+			Resources resources = context.getResources();
+			int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+			if (resourceId > 0) {
+				return resources.getDimensionPixelSize(resourceId);
+			}
 		}
 		return 0;
 	}
