@@ -26,6 +26,7 @@ public class ConnectivityUtil {
     }
 
 
+    //need permission android.permission.ACCESS_NETWORK_STATE
     public static class NetworkReceiver extends BroadcastReceiver {
         private NetworkListener networkListener;
 
