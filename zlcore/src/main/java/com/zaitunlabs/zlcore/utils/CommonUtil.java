@@ -2681,7 +2681,7 @@ public class CommonUtil {
 	public static void runCodeInWakeLock(Context context,String tag, Runnable runnable){
 		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 		PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, tag);
-		wl.acquire();
+		wl.acquire(10*60*1000L /*10 minutes*/);
 		runnable.run();
 		wl.release();
 	}
