@@ -15,6 +15,7 @@ import android.os.Message;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -48,9 +49,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.zaitunlabs.zlcore.R;
+import com.zaitunlabs.zlcore.customs.DataList;
 import com.zaitunlabs.zlcore.events.GeneralWebviewEvent;
 import com.zaitunlabs.zlcore.tables.BookmarkModel;
-import com.zaitunlabs.zlcore.core.BaseActivity;
 import com.zaitunlabs.zlcore.core.BaseFragment;
 import com.zaitunlabs.zlcore.utils.CommonUtil;
 import com.zaitunlabs.zlcore.utils.DebugUtil;
@@ -63,6 +64,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -191,6 +193,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         return currentUrl;
     }
 
+    public String getCurrentPageTitle(){ return  currentPageTitle;}
 
     @Nullable
     @Override
@@ -816,9 +819,10 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
             if(isSuccess) {
                 if (!title.contains("http") && !title.contains("data:text/html")) {
                     if (getActivity() != null) {
-                        ((BaseActivity) getActivity()).getSupportActionBar().setTitle(title);
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
                     }
                     currentPageTitle = title;
+                    EventBus.getDefault().post(new GeneralWebviewEvent(GeneralWebviewEvent.LOAD_RECEIVED_TITLE, new DataList<>().add(title).getArrayList()));
                 }
             }
         }

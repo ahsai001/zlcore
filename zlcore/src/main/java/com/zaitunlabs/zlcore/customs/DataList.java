@@ -11,7 +11,7 @@ public class DataList<T> {
     private List<T> arrayList;
 
     public DataList(){
-        this.arrayList = new ArrayList<>();
+        this.arrayList = new ArrayList<T>();
     }
 
     public DataList<T> add(T data){

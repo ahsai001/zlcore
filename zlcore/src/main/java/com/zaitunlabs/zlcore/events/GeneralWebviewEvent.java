@@ -8,6 +8,7 @@ public class GeneralWebviewEvent {
     public final static int LOAD_PAGE_FINISHED = 1;
     public final static int LOAD_PAGE_SUCCESS = 2;
     public final static int LOAD_PAGE_ERROR = 3;
+    public final static int LOAD_RECEIVED_TITLE = 4;
 
     private int eventType;
     private List<Object> dataList;
