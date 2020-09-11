@@ -50,8 +50,7 @@ public class NotificationUtil {
         }
     }
 
-
-    public static void onMessageReceived(Context context, Map<String, Object> data, String notifTitle, String notifBody,
+    public static void onMessageReceived(Context context, Map<String, String> remoteData, String notifTitle, String notifBody,
                                          Class homePageClass, Class messageListClass, Bundle messageListClassData,
                                          int appNameResId, int iconResId,
                                          Map<String, CustomTypeCallBackHandler> customTypeCallBackList, boolean isLoggedIn) {
@@ -59,6 +58,15 @@ public class NotificationUtil {
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "zlcore:smartFirebaseMessagingServiceTAG");
 
         wl.acquire();
+
+
+        //convert Map<String, String> to Map<String, Object>
+        Map<String, Object> data = new HashMap<>();
+        Set<Map.Entry<String, String>> entrySet = remoteData.entrySet();
+
+        for (Map.Entry<String, String> item : entrySet) {
+            data.put(item.getKey(), item.getValue());
+        }
 
         Notification notif = null;
         long infoId = -1;
