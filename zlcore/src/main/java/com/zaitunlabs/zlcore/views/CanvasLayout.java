@@ -1,11 +1,14 @@
 package com.zaitunlabs.zlcore.views;
 
 import android.content.Context;
-import android.graphics.Point;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 
@@ -38,6 +41,39 @@ public class CanvasLayout extends RelativeLayout{
 	public CanvasLayout(Context context) {
 		super(context);
 		init(context);
+	}
+
+	public void embedTo(final ViewGroup parentView, final OnLayoutReady onLayoutReady){
+		final ViewTreeObserver vto = parentView.getViewTreeObserver();
+		if(vto.isAlive()) {
+			vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+				@Override
+				public void onGlobalLayout() {
+					ViewTreeObserver vto = parentView.getViewTreeObserver();
+					if(vto.isAlive()) {
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+							vto.removeOnGlobalLayoutListener(this);
+						} else {
+							vto.removeGlobalOnLayoutListener(this);
+						}
+					}
+
+					CanvasLayout.this.setWidthRatio((double) parentView.getWidth() / 100);
+					CanvasLayout.this.setHeightRatio((double) parentView.getHeight() / 100);
+
+					CanvasLayout.this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+					parentView.addView(CanvasLayout.this);
+
+					if(onLayoutReady != null){
+						onLayoutReady.ready(CanvasLayout.this);
+					}
+				}
+			});
+		}
+	}
+
+	public interface OnLayoutReady{
+		void ready(CanvasLayout canvasLayout);
 	}
 	
 	public View getFillParentView(){
@@ -220,5 +256,14 @@ public class CanvasLayout extends RelativeLayout{
 	public int getCanvasHeight() {
 		return canvasHeight;
 	}
-	
+
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		return super.onInterceptTouchEvent(ev);
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		return super.onTouchEvent(event);
+	}
 }
