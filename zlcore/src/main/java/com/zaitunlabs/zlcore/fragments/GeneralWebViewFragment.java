@@ -346,17 +346,6 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         setupWebview(webView);
 
         if(!TextUtils.isEmpty(rootUrl)) {
-            CookieManager cookieManager = CookieManager.getInstance();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                cookieManager.removeAllCookies(new ValueCallback<Boolean>() {
-                    @Override
-                    public void onReceiveValue(Boolean aBoolean) {
-
-                    }
-                });
-            }else{
-                cookieManager.removeAllCookie();
-            }
             if(isWebPageFromUrl(rootUrl)) {
                 //url content
                 //rootUrl = CommonUtil.prettifyUrl(rootUrl);
@@ -390,6 +379,20 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
         if(isWebPageFromUrl(rootUrl)) {
             webView.getSettings().setLoadWithOverviewMode(true);
             webView.getSettings().setUseWideViewPort(true);
+
+            CookieManager cookieManager = CookieManager.getInstance();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                cookieManager.removeAllCookies(new ValueCallback<Boolean>() {
+                    @Override
+                    public void onReceiveValue(Boolean aBoolean) {
+
+                    }
+                });
+            }else{
+                cookieManager.removeAllCookie();
+            }
+
+            cookieManager.setAcceptCookie(true);
         }
 
         //enable zoom
