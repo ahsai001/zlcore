@@ -2650,31 +2650,33 @@ public class CommonUtil {
 		return df.format(Calendar.getInstance().getTime());
 	}
 
-	public static void showNotification(Context context, String title, String content, Class nextActivity,
+	public static void showNotification(Context context, String title, String content, String channelID, String channelName, Class nextActivity,
 										HashMap<String, Object> data, int appNameResId, int iconResId, boolean autocancel, boolean isHeadsUp){
-		NotificationUtil.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context,title,content,channelID, channelName, nextActivity,data,appNameResId,iconResId, autocancel, isHeadsUp);
 	}
 
-	public static void showNotification(Context context, String title, String content, Class nextActivity,
+	public static void showNotification(Context context, String title, String content, String channelID, String channelName, Class nextActivity,
 										HashMap<String, Object> data, int appNameResId, int iconResId,int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-		NotificationUtil.showNotification(context,title,content,nextActivity,data,appNameResId,iconResId,notifID,pendingIntentAction, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context,title,content,channelID, channelName, nextActivity,data,appNameResId,iconResId,notifID,pendingIntentAction, autocancel, isHeadsUp);
 	}
 
 	public static void showNotification(Context context, String title, String content, String imageUrl,
+										String channelID, String channelName,
 										int nextIntentType, Intent nextIntent,
 										int deleteIntentType, Intent deleteIntent,
 										Map<String, Object> data, int appNameResId, int iconResId, int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-		NotificationUtil.showNotification(context, title, content, imageUrl, nextIntentType, nextIntent, deleteIntentType, deleteIntent, data, appNameResId, iconResId, notifID, pendingIntentAction, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context, title, content, imageUrl, channelID, channelName, nextIntentType, nextIntent, deleteIntentType, deleteIntent, data, appNameResId, iconResId, notifID, pendingIntentAction, autocancel, isHeadsUp);
 	}
 
 	public static void showNotification(Context context, String title, String content, String imageUrl,
+										String channelID, String channelName,
 										PendingIntent nextPendingIntent,
 										PendingIntent deletePendingIntent,
 										PendingIntent fullScreenPendingIntent,
 										Uri soundUri,
 										int appNameResId, int iconResId, int notifID,
 										boolean autocancel, boolean isHeadsUp){
-		NotificationUtil.showNotification(context, title, content, imageUrl, nextPendingIntent, deletePendingIntent, fullScreenPendingIntent, soundUri, appNameResId, iconResId, notifID, autocancel, isHeadsUp);
+		NotificationUtil.showNotification(context, title, content, imageUrl, channelID, channelName, nextPendingIntent, deletePendingIntent, fullScreenPendingIntent, soundUri, appNameResId, iconResId, notifID, autocancel, isHeadsUp);
 	}
 
 
@@ -3130,7 +3132,6 @@ public class CommonUtil {
 
 		@Override
 		public void setupDialog(@NonNull Dialog dialog, int style) {
-			super.setupDialog(dialog, style);
 			rootView = LayoutInflater.from(getContext()).inflate(layoutResId, null);
 			dialog.setContentView(rootView);
 		}

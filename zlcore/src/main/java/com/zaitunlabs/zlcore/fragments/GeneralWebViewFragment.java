@@ -392,6 +392,7 @@ public abstract class GeneralWebViewFragment extends BaseFragment {
                 cookieManager.removeAllCookie();
             }
 
+            //enable session login in webview : solved always need login when open app
             cookieManager.setAcceptCookie(true);
         }
 

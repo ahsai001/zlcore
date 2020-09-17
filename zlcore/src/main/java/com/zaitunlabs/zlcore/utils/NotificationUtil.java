@@ -2,7 +2,6 @@ package com.zaitunlabs.zlcore.utils;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -57,7 +56,7 @@ public class NotificationUtil {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "zlcore:smartFirebaseMessagingServiceTAG");
 
-        wl.acquire(3*60*1000L /*3 minutes*/);
+        wl.acquire(5*60*1000L /*5 minutes*/);
 
 
         //convert Map<String, String> to Map<String, Object>
@@ -73,7 +72,7 @@ public class NotificationUtil {
 
         if(notifTitle != null || notifBody != null){
             //notification
-            notif = getNotification(context, notifTitle,notifBody, null, homePageClass, data, appNameResId, iconResId, null, true, false);
+            notif = getNotification(context, notifTitle,notifBody, null, null,null, homePageClass, data, appNameResId, iconResId, null, true, false);
         }else{
             //data wajib fcm adalah type and needlogin
             String needlogin = (String) data.get("needlogin"); //need login to notif, remind and saved, yes or no
@@ -204,7 +203,7 @@ public class NotificationUtil {
                     nextIntent.putExtra(EXTRA_INFO_ID, infoId);
                 }
 
-                notif = getNotification(context,title, body, photo,
+                notif = getNotification(context,title, body, photo, null, null,
                         nextIntentComponentType,nextIntent,
                         INTENT_COMPONENT_TYPE_SERVICE,null,
                         null, appNameResId, iconResId, null, !TextUtils.isEmpty(autocancel) && autocancel.toLowerCase().equals("yes"),
@@ -241,28 +240,36 @@ public class NotificationUtil {
         void handle(Bundle data, boolean showMessagePage, long infoId);
     }
 
-    public static void showNotification(Context context, String title, String content, Class nextActivity,
+    public static void showNotification(Context context, String title, String content,
+                                        String channelID, String channelName,
+                                        Class nextActivity,
                                         HashMap<String, Object> data, int appNameResId, int iconResId, boolean autocancel, boolean isHeadsUp){
-        showNotification(context,title,content, null, nextActivity,data,appNameResId,iconResId, NotificationUtil.getID(),null, autocancel, isHeadsUp);
+        showNotification(context,title,content, null, channelID, channelName, nextActivity,data,appNameResId,iconResId, NotificationUtil.getID(),null, autocancel, isHeadsUp);
     }
 
-    public static void showNotification(Context context, String title, String content, Class nextActivity,
+    public static void showNotification(Context context, String title, String content,
+                                        String channelID, String channelName,Class nextActivity,
                                         HashMap<String, Object> data, int appNameResId, int iconResId,int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-        showNotification(context,title,content,null, nextActivity,data,appNameResId,iconResId, notifID,pendingIntentAction, autocancel, isHeadsUp);
+        showNotification(context,title,content,null, channelID, channelName,nextActivity,data,appNameResId,iconResId, notifID,pendingIntentAction, autocancel, isHeadsUp);
     }
 
-    public static void showNotification(Context context, String title, String content,  String imageUrl, Class nextActivity,
+    public static void showNotification(Context context, String title, String content,  String imageUrl,
+                                        String channelID, String channelName,
+                                        Class nextActivity,
                                         HashMap<String, Object> data, int appNameResId, int iconResId, int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-        Notification notif = getNotification(context,title, content,imageUrl, nextActivity, data, appNameResId, iconResId, pendingIntentAction, autocancel, isHeadsUp);
+        Notification notif = getNotification(context,title, content,imageUrl, channelID, channelName, nextActivity, data, appNameResId, iconResId, pendingIntentAction, autocancel, isHeadsUp);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
         nm.notify(notifID, notif);
     }
 
     public static void showNotification(Context context, String title, String content, String imageUrl,
+                                        String channelID, String channelName,
                                                int nextIntentType, Intent nextIntent,
                                                int deleteIntentType, Intent deleteIntent,
                                                Map<String, Object> data, int appNameResId, int iconResId, int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-        Notification notif = getNotification(context, title, content, imageUrl, nextIntentType, nextIntent,
+        Notification notif = getNotification(context, title, content, imageUrl,
+                channelID, channelName,
+                nextIntentType, nextIntent,
                 deleteIntentType, deleteIntent, data, appNameResId, iconResId,
                 pendingIntentAction, autocancel, isHeadsUp);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
@@ -270,6 +277,7 @@ public class NotificationUtil {
     }
 
     public static void showNotification(Context context, String title, String content, String imageUrl,
+                                               String channelID, String channelName,
                                                PendingIntent nextPendingIntent,
                                                PendingIntent deletePendingIntent,
                                                PendingIntent fullScreenPendingIntent,
@@ -277,19 +285,23 @@ public class NotificationUtil {
                                                int appNameResId, int iconResId, int notifID,
                                                boolean autocancel, boolean isHeadsUp){
         Notification notif = getNotification(context, title, content, imageUrl,
+                channelID, channelName,
                 nextPendingIntent, deletePendingIntent, fullScreenPendingIntent,
                 soundUri, appNameResId, iconResId, autocancel, isHeadsUp);
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
         nm.notify(notifID, notif);
     }
 
-    public static Notification getNotification(Context context, String title, String content, String imageUrl, Class nextActivity,
+    public static Notification getNotification(Context context, String title, String content, String imageUrl,
+                                               String channelID, String channelName,
+                                               Class nextActivity,
                                                Map<String, Object> data, int appNameResId, int iconResId, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
         Intent nextIntent = null;
         if(nextActivity != null) {
             nextIntent = new Intent(context, nextActivity);
         }
         return getNotification(context,title,content,imageUrl,
+                channelID, channelName,
                 INTENT_COMPONENT_TYPE_ACTIVITY,nextIntent
                 ,INTENT_COMPONENT_TYPE_SERVICE,null,data,appNameResId,iconResId,pendingIntentAction,autocancel, isHeadsUp);
     }
@@ -301,6 +313,7 @@ public class NotificationUtil {
     public static final int INTENT_COMPONENT_TYPE_FOREGROUND_SERVICE = 4;
 
     public static Notification getNotification(Context context, String title, String content, String imageUrl,
+                                               String channelID, String channelName,
                                                int nextIntentType, Intent nextIntent,
                                                int deleteIntentType, Intent deleteIntent,
                                                Map<String, Object> data, int appNameResId, int iconResId, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
@@ -405,12 +418,15 @@ public class NotificationUtil {
                 }
             }
         }
-        return getNotification(context,title,content,imageUrl,nextPendingIntent,deletePendingIntent, null,
+        return getNotification(context,title,content,imageUrl,
+                channelID, channelName,
+                nextPendingIntent,deletePendingIntent, null,
                 null,appNameResId,iconResId,autocancel,isHeadsUp);
     }
 
 
     public static Notification getNotification(Context context, String title, String content, String imageUrl,
+                                               String channelID, String channelName,
                                                PendingIntent nextPendingIntent,
                                                PendingIntent deletePendingIntent,
                                                PendingIntent fullScreenPendingIntent,
@@ -424,23 +440,23 @@ public class NotificationUtil {
             iconBitMap = CommonUtil.getBitmapFromURL(imageUrl);
         }
 
-        String channelID = CommonUtil.getPackageName(context);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String name = context.getString(R.string.app_name);
-            String description = context.getString(R.string.app_name);
-            int importance = NotificationManager.IMPORTANCE_HIGH; //Important for heads-up notification
-            NotificationChannel channel = new NotificationChannel(channelID, name, importance);
-            channel.setDescription(description);
-            channel.setShowBadge(true);
-            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+        if(TextUtils.isEmpty(channelID)){
+            channelID = CommonUtil.getPackageName(context);
         }
+        if(TextUtils.isEmpty(channelName)){
+            channelName = context.getString(R.string.app_name);
+        }
+
+        String description = channelName;
+
+        getNotificationChannel(context, channelID, channelName, description,
+                NotificationManagerCompat.IMPORTANCE_HIGH,isHeadsUp,true,
+                true, true);
 
 
         String notifTitle = TextUtils.isEmpty(title) ? context.getString(appNameResId) : title;
         String notifText = TextUtils.isEmpty(content) ? context.getString(appNameResId) : content;
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,channelID);
 
         builder.setContentTitle(notifTitle).setContentText(notifText);
@@ -499,6 +515,29 @@ public class NotificationUtil {
             notification = builder.getNotification();
         }
         return notification;
+    }
+
+    public static NotificationChannel getNotificationChannel(Context context, String channelID, String channelName,
+                                                             String description, int importance, boolean isHeadsUp,
+                                                             boolean isEnableLights, boolean isEnableVibrate, boolean isShowBadge){
+        NotificationChannel channel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            channel = notificationManager.getNotificationChannel(channelID);
+
+            if(channel == null)
+                if(isHeadsUp) {
+                    importance = NotificationManagerCompat.IMPORTANCE_HIGH; //Important for heads-up notification
+                }
+                channel = new NotificationChannel(channelID, channelName, importance);
+                channel.setDescription(description);
+                channel.enableLights(isEnableLights);
+                channel.enableVibration(isEnableVibrate);
+                channel.setShowBadge(isShowBadge);
+                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                notificationManager.createNotificationChannel(channel);
+            }
+        return channel;
     }
 
     public static void handleIntentFromNotification(final Intent intent, CallBackIntentFromNotification callBackIntentFromNotification ){
