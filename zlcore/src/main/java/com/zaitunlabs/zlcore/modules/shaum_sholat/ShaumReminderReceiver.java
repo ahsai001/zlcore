@@ -21,7 +21,7 @@ public class ShaumReminderReceiver extends BroadcastReceiver {
            public void run() {
                String shaumDay = CommonUtil.getStringIntent(intent, ShaumSholatReminderService.PARAM_SHAUM_DAY, null);
                if(!TextUtils.isEmpty(shaumDay)) {
-                   CommonUtil.showNotification(context, context.getString(R.string.app_name),
+                   CommonUtil.showNotification(context, context.getString(R.string.app_name), null, null,
                            String.format(context.getString(R.string.zlcore_shaum_reminder_notification),shaumDay), null, null, R.string.app_name, R.mipmap.icon, false, false);
                }
            }

@@ -61,7 +61,7 @@ public class SholatReminderReceiver extends BroadcastReceiver {
 
                long time = Prefs.with(context).getLong(prefCode,-1);
                if(time+(reminderIntervalTime*60*1000) >= Calendar.getInstance().getTimeInMillis()) {
-                   CommonUtil.showNotification(context, context.getString(R.string.app_name), contentOfNotif, null, null, R.string.app_name, R.mipmap.icon, false, false);
+                   CommonUtil.showNotification(context, context.getString(R.string.app_name), contentOfNotif, null, null, null, null, R.string.app_name, R.mipmap.icon, false, false);
                }
            }
        });
