@@ -461,11 +461,17 @@ public class NotificationUtil {
 
         builder.setContentTitle(notifTitle).setContentText(notifText);
 
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),iconResId));
+        builder.setSmallIcon(iconResId);
+
         if(iconBitMap != null) {
+            builder.setLargeIcon(iconBitMap);
+
             NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
             bigPictureStyle.setBigContentTitle(title);
             bigPictureStyle.setSummaryText(CommonUtil.fromHtml(notifText).toString());
             bigPictureStyle.bigPicture(iconBitMap);
+            bigPictureStyle.bigLargeIcon(null);
             builder.setStyle(bigPictureStyle);
         } else {
             /*
@@ -505,8 +511,7 @@ public class NotificationUtil {
             builder.setFullScreenIntent(fullScreenPendingIntent, true);
         }
 
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),iconResId));
-        builder.setSmallIcon(iconResId);
+
 
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
