@@ -203,11 +203,11 @@ public class NotificationUtil {
                     nextIntent.putExtra(EXTRA_INFO_ID, infoId);
                 }
 
-                notif = getNotification(context,title, body, photo, null, null,
+                notif = getNotificationBuilder(context,title, body, photo, null, null,
                         nextIntentComponentType,nextIntent,
                         INTENT_COMPONENT_TYPE_SERVICE,null,
                         null, appNameResId, iconResId, null, !TextUtils.isEmpty(autocancel) && autocancel.toLowerCase().equals("yes"),
-                        !TextUtils.isEmpty(isHeadsUp) && isHeadsUp.toLowerCase().equals("yes"));
+                        !TextUtils.isEmpty(isHeadsUp) && isHeadsUp.toLowerCase().equals("yes")).build();
             }
         }
 
@@ -267,11 +267,11 @@ public class NotificationUtil {
                                                int nextIntentType, Intent nextIntent,
                                                int deleteIntentType, Intent deleteIntent,
                                                Map<String, Object> data, int appNameResId, int iconResId, int notifID, String pendingIntentAction, boolean autocancel, boolean isHeadsUp){
-        Notification notif = getNotification(context, title, content, imageUrl,
+        Notification notif = getNotificationBuilder(context, title, content, imageUrl,
                 channelID, channelName,
                 nextIntentType, nextIntent,
                 deleteIntentType, deleteIntent, data, appNameResId, iconResId,
-                pendingIntentAction, autocancel, isHeadsUp);
+                pendingIntentAction, autocancel, isHeadsUp).build();
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
         nm.notify(notifID, notif);
     }
@@ -284,10 +284,10 @@ public class NotificationUtil {
                                                Uri soundUri,
                                                int appNameResId, int iconResId, int notifID,
                                                boolean autocancel, boolean isHeadsUp){
-        Notification notif = getNotification(context, title, content, imageUrl,
+        Notification notif = getNotificationBuilder(context, title, content, imageUrl,
                 channelID, channelName,
                 nextPendingIntent, deletePendingIntent, fullScreenPendingIntent,
-                soundUri, appNameResId, iconResId, autocancel, isHeadsUp);
+                soundUri, appNameResId, iconResId, autocancel, isHeadsUp).build();
         NotificationManagerCompat nm = NotificationManagerCompat.from(context);
         nm.notify(notifID, notif);
     }
@@ -300,10 +300,10 @@ public class NotificationUtil {
         if(nextActivity != null) {
             nextIntent = new Intent(context, nextActivity);
         }
-        return getNotification(context,title,content,imageUrl,
+        return getNotificationBuilder(context,title,content,imageUrl,
                 channelID, channelName,
                 INTENT_COMPONENT_TYPE_ACTIVITY,nextIntent
-                ,INTENT_COMPONENT_TYPE_SERVICE,null,data,appNameResId,iconResId,pendingIntentAction,autocancel, isHeadsUp);
+                ,INTENT_COMPONENT_TYPE_SERVICE,null,data,appNameResId,iconResId,pendingIntentAction,autocancel, isHeadsUp).build();
     }
 
 
@@ -312,7 +312,7 @@ public class NotificationUtil {
     public static final int INTENT_COMPONENT_TYPE_BROADCAST = 3;
     public static final int INTENT_COMPONENT_TYPE_FOREGROUND_SERVICE = 4;
 
-    public static Notification getNotification(Context context, String title, String content, String imageUrl,
+    public static NotificationCompat.Builder getNotificationBuilder(Context context, String title, String content, String imageUrl,
                                                String channelID, String channelName,
                                                int nextIntentType, Intent nextIntent,
                                                int deleteIntentType, Intent deleteIntent,
@@ -418,14 +418,18 @@ public class NotificationUtil {
                 }
             }
         }
-        return getNotification(context,title,content,imageUrl,
+
+
+        NotificationCompat.Builder builder = getNotificationBuilder(context,title,content,imageUrl,
                 channelID, channelName,
                 nextPendingIntent,deletePendingIntent, null,
                 null,appNameResId,iconResId,autocancel,isHeadsUp);
+
+        return builder;
     }
 
 
-    public static Notification getNotification(Context context, String title, String content, String imageUrl,
+    public static NotificationCompat.Builder getNotificationBuilder(Context context, String title, String content, String imageUrl,
                                                String channelID, String channelName,
                                                PendingIntent nextPendingIntent,
                                                PendingIntent deletePendingIntent,
@@ -433,8 +437,6 @@ public class NotificationUtil {
                                                Uri soundUri,
                                                int appNameResId, int iconResId,
                                                boolean autocancel, boolean isHeadsUp){
-        Notification notification = null;
-
         Bitmap iconBitMap = null;
         if (!TextUtils.isEmpty(imageUrl)) {
             iconBitMap = CommonUtil.getBitmapFromURL(imageUrl);
@@ -511,15 +513,7 @@ public class NotificationUtil {
             builder.setFullScreenIntent(fullScreenPendingIntent, true);
         }
 
-
-
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            notification = builder.build();
-        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
-            notification = builder.getNotification();
-        }
-        return notification;
+        return builder;
     }
 
     public static NotificationChannel getNotificationChannel(Context context, String channelID, String channelName,

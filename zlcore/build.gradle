@@ -5,8 +5,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 65
-        versionName "1.10.86.197"
+        versionCode 66
+        versionName "1.10.87.200"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -103,9 +103,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-places:17.0.0'
 
 
-    implementation 'com.github.ahsai001.SQLiteWrapper:Core:0.3.13.8'
-    implementation 'com.github.ahsai001.SQLiteWrapper:Annotation:0.3.13.8'
-    annotationProcessor 'com.github.ahsai001.SQLiteWrapper:Processor:0.3.13.8'
+    implementation 'com.github.ahsai001.SQLiteWrapper:Core:0.5.14.10'
+    implementation 'com.github.ahsai001.SQLiteWrapper:Annotation:0.5.14.10'
+    annotationProcessor 'com.github.ahsai001.SQLiteWrapper:Processor:0.5.14.10'
 
     testImplementation 'junit:junit:4.12'
 }
