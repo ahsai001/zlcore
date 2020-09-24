@@ -26,6 +26,7 @@ import android.util.Log;
 
 import com.zaitunlabs.zlcore.utils.Base64;
 
+import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -72,6 +73,8 @@ public class SPrefs implements SharedPreferences {
 	private static final String PROVIDER = "BC";
 	private static SharedPreferences sFile;
 	private static byte[] sKey;
+	private static String keyAlias = null;
+	private static boolean forceSymetric = false;
 	private static boolean sLoggingEnabled = false;
 	private static final String TAG = SPrefs.class.getName();
 	/**
@@ -86,7 +89,7 @@ public class SPrefs implements SharedPreferences {
 			SPrefs.sFile = PreferenceManager
 					.getDefaultSharedPreferences(context);
 		}
-		// Initialize encryption/decryption key
+		// Initialize encryption/decryption key for AES
 		try {
 			final String key = SPrefs.generateAesKeyName(context);
 			String value = SPrefs.sFile.getString(key, null);
@@ -101,6 +104,19 @@ public class SPrefs implements SharedPreferences {
 			}
 			throw new IllegalStateException(e);
 		}
+
+		SPrefs.forceSymetric = forceSymetric;
+
+		// initialize for RSA
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			keyAlias = context.getPackageName();
+			try {
+				KeyStoreHelper.createKeys(context, keyAlias);
+			} catch (Exception e) {
+				//Probably will never happen.
+				throw new RuntimeException(e);
+			}
+		}
 	}
 	private static String encode(byte[] input) {
 		return Base64.encodeToString(input, Base64.NO_PADDING | Base64.NO_WRAP);
@@ -111,8 +127,8 @@ public class SPrefs implements SharedPreferences {
 	private static String generateAesKeyName(Context context)
 			throws InvalidKeySpecException, NoSuchAlgorithmException,
             NoSuchProviderException {
-		final char[] password = context.getPackageName().toCharArray();
-		final byte[] salt = getDeviceSerialNumber(context).getBytes();
+		final char[] password = bitshiftEntireString(context.getPackageName()).toCharArray();
+		final byte[] salt = bitshiftEntireString(getDeviceSerialNumber(context)).getBytes();
 		SecretKey key;
 		try {
 			// TODO: what if there's an OS upgrade and now supports the primary
@@ -128,6 +144,21 @@ public class SPrefs implements SharedPreferences {
 		}
 		return SPrefs.encode(key.getEncoded());
 	}
+
+
+	/**
+	 * Bitshift the entire string to obfuscate it further
+	 * and make it harder to guess the string.
+	 */
+	public static String bitshiftEntireString(String str) {
+		StringBuilder msg = new StringBuilder(str);
+		int userKey = 6;
+		for (int i = 0; i < msg.length(); i ++) {
+			msg.setCharAt(i, (char) (msg.charAt(i) + userKey));
+		}
+		return msg.toString();
+	}
+
 	/**
 	 * Derive a secure key based on the passphraseOrPin
 	 *
@@ -199,38 +230,49 @@ public class SPrefs implements SharedPreferences {
 		}
 		return SPrefs.encode(generator.generateKey().getEncoded());
 	}
-	private static String encrypt(String cleartext) {
-		if (cleartext == null || cleartext.length() == 0) {
-			return cleartext;
+	private static String encrypt(String plainText) {
+		if (plainText == null || plainText.length() == 0) {
+			return plainText;
 		}
-		try {
-			final Cipher cipher = Cipher.getInstance(AES_KEY_ALG, PROVIDER);
-			cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(
-					SPrefs.sKey, AES_KEY_ALG));
-			return SPrefs.encode(cipher.doFinal(cleartext
-					.getBytes("UTF-8")));
-		} catch (Exception e) {
-			if (sLoggingEnabled) {
-				Log.w(TAG, "encrypt", e);
+
+		if (!forceSymetric && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			return KeyStoreHelper.encrypt(keyAlias, plainText);
+		} else {
+			forceSymetric = false;
+			try {
+				final Cipher cipher = Cipher.getInstance(AES_KEY_ALG, PROVIDER);
+				cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(
+						SPrefs.sKey, AES_KEY_ALG));
+				return SPrefs.encode(cipher.doFinal(plainText
+						.getBytes("UTF-8")));
+			} catch (Exception e) {
+				if (sLoggingEnabled) {
+					Log.w(TAG, "encrypt", e);
+				}
+				return null;
 			}
-			return null;
 		}
 	}
 	private static String decrypt(String ciphertext) {
 		if (ciphertext == null || ciphertext.length() == 0) {
 			return ciphertext;
 		}
-		try {
-			final Cipher cipher = Cipher.getInstance(AES_KEY_ALG, PROVIDER);
-			cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(
-					SPrefs.sKey, AES_KEY_ALG));
-			return new String(cipher.doFinal(SPrefs
-					.decode(ciphertext)), "UTF-8");
-		} catch (Exception e) {
-			if (sLoggingEnabled) {
-				Log.w(TAG, "decrypt", e);
+		if (!forceSymetric && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			return KeyStoreHelper.decrypt(keyAlias, ciphertext);
+		} else {
+			forceSymetric = false;
+			try {
+				final Cipher cipher = Cipher.getInstance(AES_KEY_ALG, PROVIDER);
+				cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(
+						SPrefs.sKey, AES_KEY_ALG));
+				return new String(cipher.doFinal(SPrefs
+						.decode(ciphertext)), "UTF-8");
+			} catch (Exception e) {
+				if (sLoggingEnabled) {
+					Log.w(TAG, "decrypt", e);
+				}
+				return null;
 			}
-			return null;
 		}
 	}
 	@Override
@@ -269,7 +311,7 @@ public class SPrefs implements SharedPreferences {
 				SPrefs.encrypt(key), null);
 		return (nonEncryptedValue != null) ? nonEncryptedValue : defaultValue;
 	}
-	
+
 	@Override
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public Set<String> getStringSet(String key, Set<String> defaultValues) {
@@ -285,7 +327,7 @@ public class SPrefs implements SharedPreferences {
 		}
 		return decryptedSet;
 	}
-	
+
 	@Override
 	public int getInt(String key, int defaultValue) {
 		final String encryptedValue = SPrefs.sFile.getString(
@@ -347,6 +389,11 @@ public class SPrefs implements SharedPreferences {
 	public Editor edit() {
 		return new Editor();
 	}
+
+	public void forceSymetric() {
+		forceSymetric = true;
+	}
+
 	/**
 	 * Wrapper for Android's {@link SharedPreferences.Editor}.
 	 * <p>

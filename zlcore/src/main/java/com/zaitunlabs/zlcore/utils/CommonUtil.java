@@ -800,7 +800,7 @@ public class CommonUtil {
 			email.putExtra(Intent.EXTRA_TEXT, fromHtml(bodyEmailInHTML));
 			email.setType("message/rfc822");
 			try {
-				if(CommonUtil.isApplicationContext(ctx)){
+				if(isApplicationContext(ctx)){
 					PendingIntent intent = PendingIntent.getActivity(ctx, 22, Intent.createChooser(email, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 					try {
 						intent.send();
@@ -847,7 +847,7 @@ public class CommonUtil {
 			sendTitle = context.getString(R.string.zlcore_common_utils_send_email);
 		try {
 			
-			if(CommonUtil.isApplicationContext(context)){
+			if(isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -875,7 +875,7 @@ public class CommonUtil {
 		if(shareTitle == null)
 			shareTitle = context.getString(R.string.zlcore_common_utils_default_share_title);
 		try{
-			if(CommonUtil.isApplicationContext(context)){
+			if(isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(shareIntent, shareTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -908,7 +908,7 @@ public class CommonUtil {
 		if(sendTitle == null)
 			sendTitle = context.getString(R.string.zlcore_common_utils_send_email);
 		try{
-			if(CommonUtil.isApplicationContext(context)){
+			if(isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -975,7 +975,7 @@ public class CommonUtil {
 		i.setData(Uri.parse(link));
 
 		try{
-			if(CommonUtil.isApplicationContext(context)){
+			if(isApplicationContext(context)){
 				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(i, "open link with :").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
 				try {
 					intent.send();
@@ -1770,7 +1770,7 @@ public class CommonUtil {
 	public static String getModelNumber(){
 		String model = "";
 		try {
-			model = CommonUtil.urlEncode(Build.MODEL);
+			model = urlEncode(Build.MODEL);
 		} catch (UnsupportedEncodingException e) {
 			model = Build.MODEL;
 		}
@@ -1784,7 +1784,7 @@ public class CommonUtil {
 	public static String getOSVersion(){
 		String osVersion = "";
 		try {
-			osVersion = CommonUtil.urlEncode(Build.VERSION.RELEASE);
+			osVersion = urlEncode(Build.VERSION.RELEASE);
 		} catch (UnsupportedEncodingException e) {
 			////e.printStackTrace();
 		}
@@ -1794,7 +1794,7 @@ public class CommonUtil {
 	public static String getUserAgent(){
 		String userAgent = "";
 		try {
-			userAgent = CommonUtil.urlEncode(System.getProperty("http.agent"));
+			userAgent = urlEncode(System.getProperty("http.agent"));
 		} catch (UnsupportedEncodingException e) {
 			////e.printStackTrace();
 		}
@@ -2073,7 +2073,7 @@ public class CommonUtil {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final Calendar c = Calendar.getInstance();
-			Date defaultDate = (Date) CommonUtil.getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_DATE, null);
+			Date defaultDate = (Date) getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_DATE, null);
 			if(defaultDate != null){
 				c.setTime(defaultDate);
 			}
@@ -2136,7 +2136,7 @@ public class CommonUtil {
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final Calendar c = Calendar.getInstance();
-			Date defaultTime = (Date) CommonUtil.getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_TIME, null);
+			Date defaultTime = (Date) getSerializableFragmentArgument(getArguments(), ARG_DEFAULT_TIME, null);
 			if(defaultTime != null){
 				c.setTime(defaultTime);
 			}
@@ -2224,7 +2224,7 @@ public class CommonUtil {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			listenerFragmentTag = CommonUtil.getStringFragmentArgument(getArguments(), ARG_LISTENER_FRAGMENT_TAG, null);
+			listenerFragmentTag = getStringFragmentArgument(getArguments(), ARG_LISTENER_FRAGMENT_TAG, null);
 			if(!TextUtils.isEmpty(listenerFragmentTag)){
 				//set new target
 				Fragment listenerFragment = getFragmentManager().findFragmentByTag(listenerFragmentTag);
@@ -2235,15 +2235,15 @@ public class CommonUtil {
 		@NonNull
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			title = CommonUtil.getStringFragmentArgument(getArguments(), ARG_TITLE, null);
-			message = CommonUtil.getStringFragmentArgument(getArguments(), ARG_MESSAGE, null);
-			strOption1 = CommonUtil.getStringFragmentArgument(getArguments(), ARG_STR_OPTION1, null);
-			strOption2 = CommonUtil.getStringFragmentArgument(getArguments(), ARG_STR_OPTION2, null);
-			strOption3 = CommonUtil.getStringFragmentArgument(getArguments(), ARG_STR_OPTION3, null);
-			dismissByOption1 = CommonUtil.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION1, true);
-			dismissByOption2 = CommonUtil.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION2, true);
-			dismissByOption3 = CommonUtil.getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION3, true);
-			requestCode = CommonUtil.getIntFragmentArgument(getArguments(), ARG_REQUEST_CODE, 0);
+			title = getStringFragmentArgument(getArguments(), ARG_TITLE, null);
+			message = getStringFragmentArgument(getArguments(), ARG_MESSAGE, null);
+			strOption1 = getStringFragmentArgument(getArguments(), ARG_STR_OPTION1, null);
+			strOption2 = getStringFragmentArgument(getArguments(), ARG_STR_OPTION2, null);
+			strOption3 = getStringFragmentArgument(getArguments(), ARG_STR_OPTION3, null);
+			dismissByOption1 = getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION1, true);
+			dismissByOption2 = getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION2, true);
+			dismissByOption3 = getBooleanFragmentArgument(getArguments(), ARG_DISMISS_OPTION3, true);
+			requestCode = getIntFragmentArgument(getArguments(), ARG_REQUEST_CODE, 0);
 
 			androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity(),
 					com.zaitunlabs.zlcore.R.style.AppCompatAlertDialogStyle);
@@ -2913,7 +2913,7 @@ public class CommonUtil {
 		String prettyUrl = url;
 		if (!Patterns.WEB_URL.matcher(url).matches()) {
 			try {
-				prettyUrl = CommonUtil.urlEncode(url);
+				prettyUrl = urlEncode(url);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -3344,22 +3344,37 @@ public class CommonUtil {
 	private static boolean isDevModeEnabled = false;
 	public void switchMode(Context context){
 		isDevModeEnabled = !isDevModeEnabled;
-		CommonUtil.showToast(context, isDevModeEnabled?"Dev Mode Enabled":"Dev Mode Disabled");
+		showToast(context, isDevModeEnabled?"Dev Mode Enabled":"Dev Mode Disabled");
 	}
 
 	public static void showToast(Context context, String userMessage, String devMessage){
-		CommonUtil.showToast(context, isDevModeEnabled?devMessage:userMessage);
+		showToast(context, isDevModeEnabled?devMessage:userMessage);
 	}
 
 	public static void showSnackBar(Context context, String userMessage, String devMessage){
-		CommonUtil.showSnackBar(context, isDevModeEnabled?devMessage:userMessage);
+		showSnackBar(context, isDevModeEnabled?devMessage:userMessage);
 	}
 
 	public static void showInfo(Context context, String title, String userMessage, String devMessage){
-		CommonUtil.showInfo(context, title, isDevModeEnabled?devMessage:userMessage);
+		showInfo(context, title, isDevModeEnabled?devMessage:userMessage);
 	}
 
 	public static void showGlobalInfo(Context context, String title, String userMessage, String devMessage){
-		CommonUtil.showGlobalInfo(context, title, isDevModeEnabled?devMessage:userMessage);
+		showGlobalInfo(context, title, isDevModeEnabled?devMessage:userMessage);
+	}
+
+
+
+	public static void handleIntent(Context context, Intent intent, String title){
+		List<ResolveInfo> possibleActivitiesList = context.getPackageManager()
+				.queryIntentActivities(intent, PackageManager.MATCH_ALL);
+		if (possibleActivitiesList.size() > 1) {
+			Intent chooser = Intent.createChooser(intent, title);
+			context.startActivity(chooser);
+		} else if (intent.resolveActivity(context.getPackageManager()) != null) {
+			context.startActivity(intent);
+		} else {
+			showToast(context, "Sorry, there is no application can handle this");
+		}
 	}
 }

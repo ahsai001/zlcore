@@ -47,6 +47,11 @@ public class Prefs {
 		return singleton;
 	}
 
+	public Prefs forceSymetric(){
+		preferences.forceSymetric();
+		return this;
+	}
+
 	public void save(String key, boolean value) {
 		editor.putBoolean(key, value).apply();
 	}
