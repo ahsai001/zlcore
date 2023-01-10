@@ -29,6 +29,7 @@
             android:label="@string/zlcore_title_activity_info_popup"
             android:launchMode="singleTask"
             android:noHistory="true"
+            android:exported="true"
             android:theme="@style/AppTheme.InfoPopup" />
         <activity
             android:name=".activities.ReminderPopup"
@@ -36,40 +37,48 @@
             android:label="@string/zlcore_title_activity_reminder_popup"
             android:launchMode="standard"
             android:noHistory="true"
+            android:exported="true"
             android:theme="@style/AppTheme.ReminderPopup" />
         <activity
+            android:exported="false"
             android:name=".modules.version_history.VersionChangeHistoryCanvas"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".modules.about.AboutUs"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".core.WebViewActivity"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".services.FCMIntentService"
             android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
+            android:exported="true" />
         <service
             android:name=".services.FCMLoginIntentService"
             android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
+            android:exported="true" />
 
         <!-- for application backsound -->
-        <service android:name=".utils.audio.BackSoundService" />
-        <service android:name=".utils.audio.AudioService" />
+        <service android:name=".utils.audio.BackSoundService"
+            android:exported="false"/>
+        <service android:name=".utils.audio.AudioService"
+            android:exported="false"/>
 
-        <receiver android:name=".utils.audio.StopPlayerReceiver" />
+        <receiver android:name=".utils.audio.StopPlayerReceiver"
+            android:exported="true"/>
 
         <!-- modules sholat dan shaum -->
         <service android:name=".modules.shaum_sholat.ShaumSholatReminderService"
             android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false"/>
+            android:exported="true"/>
 
         <receiver
             android:name=".modules.shaum_sholat.ManageShaumSholatReminderReceiver"
             android:directBootAware="true"
+            android:exported="true"
             tools:ignore="UnusedAttribute">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -78,32 +87,39 @@
                 <action android:name="android.intent.action.REBOOT"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".modules.shaum_sholat.SholatReminderReceiver" />
-        <receiver android:name=".modules.shaum_sholat.ShaumReminderReceiver" />
+        <receiver android:name=".modules.shaum_sholat.SholatReminderReceiver"
+            android:exported="true"/>
+        <receiver android:name=".modules.shaum_sholat.ShaumReminderReceiver"
+            android:exported="true"/>
 
         <service android:name=".services.DataIntentService"
             android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false"/>
+            android:exported="true"/>
 
         <activity
             android:name=".activities.MessageListActivity"
             android:label="@string/zlcore_module_message_list_title"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.AppListActivity"
             android:label="@string/zlcore_title_activity_app_list"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.StoreActivity"
             android:label="@string/zlcore_title_activity_store"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".modules.version_history.VersionChangeHistoryActivity"
             android:label="@string/zlcore_title_activity_version_change_history"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.BookmarkListActivity"
             android:label="@string/zlcore_title_activity_bookmark_list"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
