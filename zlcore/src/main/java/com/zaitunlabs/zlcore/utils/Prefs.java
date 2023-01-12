@@ -44,6 +44,7 @@ public class Prefs {
 		if (singleton == null) {
 			singleton = new Builder(context).build();
 		}
+		singleton.forceSymetric();
 		return singleton;
 	}
 

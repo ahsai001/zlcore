@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.crypto.Cipher;
@@ -202,7 +203,7 @@ public class SPrefs implements SharedPreferences {
 		try {
 			String deviceSerial = (String) Build.class.getField("SERIAL").get(
 					null);
-			if (TextUtils.isEmpty(deviceSerial)) {
+			if (TextUtils.isEmpty(deviceSerial) || Objects.equals(deviceSerial, "unknown")) {
 				deviceSerial = Settings.Secure.getString(
 						context.getContentResolver(),
 						Settings.Secure.ANDROID_ID);
@@ -343,8 +344,9 @@ public class SPrefs implements SharedPreferences {
 	}
 	@Override
 	public long getLong(String key, long defaultValue) {
+		String xFile = SPrefs.encrypt(key);
 		final String encryptedValue = SPrefs.sFile.getString(
-				SPrefs.encrypt(key), null);
+				xFile, null);
 		if (encryptedValue == null) {
 			return defaultValue;
 		}
@@ -412,7 +414,8 @@ public class SPrefs implements SharedPreferences {
 		}
 		@Override
 		public SharedPreferences.Editor putString(String key, String value) {
-			mEditor.putString(SPrefs.encrypt(key),
+			String xFile = SPrefs.encrypt(key);
+			mEditor.putString(xFile,
 					SPrefs.encrypt(value));
 			return this;
 		}

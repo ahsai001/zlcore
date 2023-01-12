@@ -189,7 +189,7 @@ public class ShaumSholatReminderService extends JobIntentService {
                 }
             });
             helper.init();
-            helper.start();
+            helper.getLastLocation();
         }else{
             //WakefulBroadcastReceiver.completeWakefulIntent(intent);
         }

@@ -110,7 +110,7 @@ public class KeyStoreHelper {
                                     KeyProperties.DIGEST_SHA512)
                             // Only permit the private key to be used if the user authenticated
                             // within the last five minutes.
-                            .setUserAuthenticationRequired(requireAuth)
+                            //.setUserAuthenticationRequired(requireAuth)
                             .build());
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
             DebugUtil.logD(TAG, "Public Key is: " + keyPair.getPublic().toString());
