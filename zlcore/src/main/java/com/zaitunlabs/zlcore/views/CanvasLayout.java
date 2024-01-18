@@ -95,7 +95,7 @@ public class CanvasLayout extends RelativeLayout{
 	}
 	private void init(Context context){
 		this.context = context;
-		widthRatio = (double) CommonUtil.getScreenWidth(context) / 100;
+		widthRatio = (double) CommonUtil.getUsableScreenWidth(context) / 100;
 		heightRatio = (double) CommonUtil.getAppHeight(context) / 100;
 
 		DebugUtil.logW("SIZE layout", "widthRatio : "+widthRatio);

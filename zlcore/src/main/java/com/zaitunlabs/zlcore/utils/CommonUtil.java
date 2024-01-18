@@ -19,6 +19,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -76,11 +77,11 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.Surface;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewConfiguration;
@@ -116,7 +117,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -593,15 +593,27 @@ public class CommonUtil {
 		return retval;
 	}
 
-	public static int getScreenWidth(Context context) {
+	public static int getUsableScreenWidth(Context context) {
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		return displayMetrics.widthPixels;
 	}
 
-	public static int getScreenHeight(Context context) {
+	public static int getUsableScreenHeight(Context context) {
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		return displayMetrics.heightPixels;
+	}
+
+	public static int getRealScreenWidth(Context context) {
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		((Activity)context).getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+		return displayMetrics.widthPixels;
+	}
+
+	public static int getRealScreenHeight(Context context) {
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		((Activity)context).getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
 		return displayMetrics.heightPixels;
 	}
 
@@ -613,11 +625,83 @@ public class CommonUtil {
 	public static int appHeight = 0;
 	public static int getAppHeight(Context context) {
 		if(appHeight > 0) return appHeight;
-		int screenHeight = getScreenHeight(context);
-		int screenHeight2 = getDisplayMetricsScreenHeight(context);
+		int screenHeight = getRealScreenHeight(context);
+		int screenHeight2 = getUsableScreenHeight(context);
 		int navHeight = getNavigationHeight(context);
 		int statusBarHeight = getStatusBarHeight(context);
+		if(isScreenLandscape(context)){
+			navHeight = 0;
+		}
 		return screenHeight - navHeight - statusBarHeight;
+	}
+
+	private static boolean isScreenLandscape(Context context){
+		int orientation = getScreenOrientation(context);
+		return orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE || orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+	}
+
+
+	private static int getScreenOrientation(Context context) {
+		int rotation = ((Activity)context).getWindowManager().getDefaultDisplay().getRotation();
+		DisplayMetrics dm = new DisplayMetrics();
+		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int width = dm.widthPixels;
+		int height = dm.heightPixels;
+		int orientation;
+		// if the device's natural orientation is portrait:
+		if ((rotation == Surface.ROTATION_0
+				|| rotation == Surface.ROTATION_180) && height > width ||
+				(rotation == Surface.ROTATION_90
+						|| rotation == Surface.ROTATION_270) && width > height) {
+			switch(rotation) {
+				case Surface.ROTATION_0:
+					orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+					break;
+				case Surface.ROTATION_90:
+					orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+					break;
+				case Surface.ROTATION_180:
+					orientation =
+							ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+					break;
+				case Surface.ROTATION_270:
+					orientation =
+							ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+					break;
+				default:
+					Log.e("common utils", "Unknown screen orientation. Defaulting to " +
+							"portrait.");
+					orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+					break;
+			}
+		}
+		// if the device's natural orientation is landscape or if the device
+		// is square:
+		else {
+			switch(rotation) {
+				case Surface.ROTATION_0:
+					orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+					break;
+				case Surface.ROTATION_90:
+					orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+					break;
+				case Surface.ROTATION_180:
+					orientation =
+							ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+					break;
+				case Surface.ROTATION_270:
+					orientation =
+							ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+					break;
+				default:
+					Log.e("common utils", "Unknown screen orientation. Defaulting to " +
+							"landscape.");
+					orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+					break;
+			}
+		}
+
+		return orientation;
 	}
 
 	public static int getStatusBarHeight(Context context) {
@@ -654,14 +738,14 @@ public class CommonUtil {
 
 	public static int getHeightSPercent(Context ctx, float percent) {
 		float pixel = 0;
-		int screenheight = getScreenHeight(ctx);
+		int screenheight = getUsableScreenHeight(ctx);
 		pixel = (screenheight * percent) / 100;
 		return (int) pixel;
 	}
 
 	public static int getWidthSPercent(Context ctx, float percent) {
 		float pixel = 0;
-		int screenwidth = getScreenWidth(ctx);
+		int screenwidth = getUsableScreenWidth(ctx);
 		pixel = (screenwidth * percent) / 100;
 		return (int) pixel;
 	}
@@ -681,12 +765,12 @@ public class CommonUtil {
 
 	
 	public static double getWidthRatio(Context context){
-		return (double)(getScreenWidth(context) / 100);
+		return (double)(getUsableScreenWidth(context) / 100);
 	}
 	
 	public static double getHeightRatio(Context context){
 		boolean isFullScreen = isActivityFullScreen(context);
-		return (double)((getScreenHeight(context) - getNavigationHeight(context) - (isFullScreen ? 0 : getStatusBarHeight(context)))/ 100);
+		return (double)((getUsableScreenHeight(context) - 0 /*getNavigationHeight(context)*/ - (isFullScreen ? 0 : getStatusBarHeight(context)))/ 100);
 	}
 	
 	public static int getPercentWidthFromPixel(Context context, float pixelWidth){
@@ -1228,7 +1312,7 @@ public class CommonUtil {
 		return mActionBarSize;
 	}
 
-	public static int hasNavBarUseMethod = 1;
+	public static int hasNavBarUseMethod = 2;
 	public static boolean hasNavBar(Context context){
 		switch (hasNavBarUseMethod){
 			case 1: return ViewConfiguration.get(context).hasPermanentMenuKey();
@@ -2873,11 +2957,11 @@ public class CommonUtil {
 
 	public static void showDeviceSpecs(Context context){
 		String data = "";
-		data += "screenHeight in pixel : " + getScreenHeight(context) + "\n";
-		data += "screenHeight in dip : " + getDipFromPixel(context, getScreenHeight(context)) + "\n";
+		data += "screenHeight in pixel : " + getUsableScreenHeight(context) + "\n";
+		data += "screenHeight in dip : " + getDipFromPixel(context, getUsableScreenHeight(context)) + "\n";
 
-		data += "screenWidth in pixel : " + getScreenWidth(context) + "\n";
-		data += "screenWidth in dip : " +getDipFromPixel(context, getScreenWidth(context)) + "\n";
+		data += "screenWidth in pixel : " + getUsableScreenWidth(context) + "\n";
+		data += "screenWidth in dip : " +getDipFromPixel(context, getUsableScreenWidth(context)) + "\n";
 
 		data += "statusBar in pixel : " + getStatusBarHeight(context) + "\n";
 		data += "statusBar in dip : " + getDipFromPixel(context, getStatusBarHeight(context)) + "\n";

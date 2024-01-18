@@ -16,6 +16,7 @@ package com.zaitunlabs.zlcore.utils;
  * limitations under the License.
  */
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import java.util.Map;
 import java.util.Set;
@@ -28,24 +29,42 @@ import java.util.Set;
 public class Prefs {
 	private static final String TAG = "Prefs";
 	static Prefs singleton = null;
-	//static SharedPreferences preferences;
-	//static SharedPreferences.Editor editor;
+	static Prefs sharedSingleton = null;
 	
-	static SPrefs preferences;
-	static SPrefs.Editor editor;
+	 SPrefs preferences;
 
-	Prefs(Context context) {
-		//preferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-		preferences = new SPrefs(context);
-		editor = preferences.edit();
+	 SPrefs.Editor editor;
+
+	 SharedPreferences sharedPreferences;
+	 SharedPreferences.Editor sharedEditor;
+
+	Prefs(Context context, boolean isSecure) {
+		if(isSecure) {
+			preferences = new SPrefs(context);
+			editor = preferences.edit();
+		} else {
+			sharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+			sharedEditor = sharedPreferences.edit();
+		}
 	}
 
 	public static Prefs with(Context context) {
-		if (singleton == null) {
-			singleton = new Builder(context).build();
+		return with(context, true);
+	}
+
+	public static Prefs with(Context context, boolean isSecure) {
+		if(isSecure) {
+			if (singleton == null) {
+				singleton = new Builder(context, true).build();
+			}
+			singleton.forceSymetric();
+			return singleton;
+		} else {
+			if (sharedSingleton == null) {
+				sharedSingleton = new Builder(context, false).build();
+			}
+			return sharedSingleton;
 		}
-		singleton.forceSymetric();
-		return singleton;
 	}
 
 	public Prefs forceSymetric(){
@@ -54,71 +73,145 @@ public class Prefs {
 	}
 
 	public void save(String key, boolean value) {
-		editor.putBoolean(key, value).apply();
+		if(editor != null) {
+			editor.putBoolean(key, value).apply();
+		}
+
+		if(sharedEditor != null) {
+			sharedEditor.putBoolean(key, value).apply();
+		}
+
 	}
 
 	public void save(String key, String value) {
-		editor.putString(key, value).apply();
+		if(editor != null) {
+			editor.putString(key, value).apply();
+		}
+
+		if(sharedEditor != null) {
+			sharedEditor.putString(key, value).apply();
+		}
 	}
 
 	public void save(String key, int value) {
-		editor.putInt(key, value).apply();
+		if(editor != null) {
+			editor.putInt(key, value).apply();
+		}
+
+		if(sharedEditor != null) {
+			sharedEditor.putInt(key, value).apply();
+		}
 	}
 
 	public void save(String key, float value) {
-		editor.putFloat(key, value).apply();
+		if(editor != null) {
+			editor.putFloat(key, value).apply();
+		}
+
+		if(sharedEditor != null) {
+			sharedEditor.putFloat(key, value).apply();
+		}
 	}
 
 	public void save(String key, long value) {
-		editor.putLong(key, value).apply();
+		if(editor != null) {
+			editor.putLong(key, value).apply();
+		}
+
+		if(sharedEditor != null) {
+			sharedEditor.putLong(key, value).apply();
+		}
 	}
 
 	public void save(String key, Set<String> value) {
-		//editor.putStringSet(key, value).apply();
+		if(editor != null) {
+			editor.putStringSet(key, value).apply();
+		}
+
+		if(sharedEditor != null) {
+			sharedEditor.putStringSet(key, value).apply();
+		}
 	}
 
 	public boolean getBoolean(String key, boolean defValue) {
-		return preferences.getBoolean(key, defValue);
+		if(preferences != null) {
+			return preferences.getBoolean(key, defValue);
+		} else {
+			return sharedPreferences.getBoolean(key, defValue);
+		}
 	}
 
 	public String getString(String key, String defValue) {
-		return preferences.getString(key, defValue);
+		if(preferences != null) {
+			return preferences.getString(key, defValue);
+		} else {
+			return sharedPreferences.getString(key, defValue);
+		}
 	}
 
 	public int getInt(String key, int defValue) {
-		return preferences.getInt(key, defValue);
+		if(preferences != null) {
+			return preferences.getInt(key, defValue);
+		} else {
+			return sharedPreferences.getInt(key, defValue);
+		}
 	}
 
 	public float getFloat(String key, float defValue) {
-		return preferences.getFloat(key, defValue);
+		if(preferences != null) {
+			return preferences.getFloat(key, defValue);
+		} else {
+			return sharedPreferences.getFloat(key, defValue);
+		}
 	}
 
 	public long getLong(String key, long defValue) {
-		return preferences.getLong(key, defValue);
+		if(preferences != null) {
+			return preferences.getLong(key, defValue);
+		} else {
+			return sharedPreferences.getLong(key, defValue);
+		}
 	}
 
 	public Set<String> getStringSet(String key, Set<String> defValue) {
-		//return preferences.getStringSet(key, defValue);
-		return null;
+		if(preferences != null) {
+			return preferences.getStringSet(key, defValue);
+		} else {
+			return sharedPreferences.getStringSet(key, defValue);
+		}
 	}
 
 	public Map<String, ?> getAll() {
-		return preferences.getAll();
+		if(preferences != null) {
+			return preferences.getAll();
+		} else {
+			return sharedPreferences.getAll();
+		}
 	}
 
 	public void remove(String key) {
-		editor.remove(key).apply();
+		if(editor != null) {
+			editor.remove(key).apply();
+		}
+
+		if(sharedEditor != null) {
+			sharedEditor.remove(key).apply();
+		}
+
 	}
 
 	private static class Builder {
 		private final Context context;
+		private final boolean isSecure;
 
-		public Builder(Context context) {
+		public Builder(Context context, boolean isSecure) {
 			if (context == null) {
 				throw new IllegalArgumentException("Context must not be null.");
 			}
 			this.context = context.getApplicationContext();
+			this.isSecure = isSecure;
 		}
+
 
 		/**
 		 * Method that creates an instance of Prefs
@@ -126,7 +219,7 @@ public class Prefs {
 		 * @return an instance of Prefs
 		 */
 		public Prefs build() {
-			return new Prefs(context);
+			return new Prefs(context, isSecure);
 		}
 	}
 }
