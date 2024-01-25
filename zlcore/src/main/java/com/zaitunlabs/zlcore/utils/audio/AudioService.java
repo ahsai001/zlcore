@@ -265,7 +265,7 @@ public class AudioService extends Service {
 		Notification notification = new Notification(CommonUtil.getIDResource(
 				this, "drawable", "icon"), text, System.currentTimeMillis());
 		PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0,
-				new Intent(this, StopPlayerReceiver.class), 0);
+				new Intent(this, StopPlayerReceiver.class), PendingIntent.FLAG_IMMUTABLE);
 		String title = (String) getText(getResources().getIdentifier(
 				"app_name", "string", getPackageName()));
 		//notification.setLatestEventInfo(this, title, text, contentIntent);

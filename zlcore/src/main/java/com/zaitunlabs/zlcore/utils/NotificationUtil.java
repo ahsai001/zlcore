@@ -383,14 +383,14 @@ public class NotificationUtil {
             }
 
             if(nextIntentType == INTENT_COMPONENT_TYPE_ACTIVITY) {
-                nextPendingIntent = PendingIntent.getActivity(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                nextPendingIntent = PendingIntent.getActivity(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
             } else if(nextIntentType == INTENT_COMPONENT_TYPE_SERVICE){
-                nextPendingIntent = PendingIntent.getService(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                nextPendingIntent = PendingIntent.getService(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
             } else if(nextIntentType == INTENT_COMPONENT_TYPE_BROADCAST){
-                nextPendingIntent = PendingIntent.getBroadcast(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                nextPendingIntent = PendingIntent.getBroadcast(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
             } else if(nextIntentType == INTENT_COMPONENT_TYPE_FOREGROUND_SERVICE){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    nextPendingIntent = PendingIntent.getForegroundService(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    nextPendingIntent = PendingIntent.getForegroundService(context, 131, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
                 }
             }
         }
@@ -407,14 +407,14 @@ public class NotificationUtil {
             }
 
             if(deleteIntentType == INTENT_COMPONENT_TYPE_ACTIVITY) {
-                deletePendingIntent = PendingIntent.getActivity(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                deletePendingIntent = PendingIntent.getActivity(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
             } else if(deleteIntentType == INTENT_COMPONENT_TYPE_SERVICE){
-                deletePendingIntent = PendingIntent.getService(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                deletePendingIntent = PendingIntent.getService(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
             } else if(deleteIntentType == INTENT_COMPONENT_TYPE_BROADCAST){
-                deletePendingIntent = PendingIntent.getBroadcast(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                deletePendingIntent = PendingIntent.getBroadcast(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
             } else if(deleteIntentType == INTENT_COMPONENT_TYPE_FOREGROUND_SERVICE){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    deletePendingIntent = PendingIntent.getForegroundService(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    deletePendingIntent = PendingIntent.getForegroundService(context, 132, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
                 }
             }
         }

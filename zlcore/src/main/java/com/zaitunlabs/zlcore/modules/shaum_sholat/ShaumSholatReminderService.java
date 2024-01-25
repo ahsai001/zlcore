@@ -200,7 +200,7 @@ public class ShaumSholatReminderService extends JobIntentService {
 
         Intent reminderIntent = new Intent(this, receiver);
         reminderIntent.setAction(ZLCoreConstanta.ACTION_MANAGE_SHAUM_SHOLAT_REMINDER+ IntegerIDUtil.getID(this));
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 212, reminderIntent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 212, reminderIntent, PendingIntent.FLAG_IMMUTABLE);
 
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time, alarmIntent);
     }
@@ -215,7 +215,7 @@ public class ShaumSholatReminderService extends JobIntentService {
         reminderIntent.putExtra(PARAM_SHOLAT_CODE, code);
         reminderIntent.putExtra(PARAM_PREFS_SHOLAT_CODE, prefCode);
         reminderIntent.setAction("com.zaitunlabs.zlcore.sholat_reminder_alarm"+code);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 335, reminderIntent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 335, reminderIntent, PendingIntent.FLAG_IMMUTABLE);
 
         alarmMgr.cancel(alarmIntent);
 
@@ -238,7 +238,7 @@ public class ShaumSholatReminderService extends JobIntentService {
             Intent reminderIntent = new Intent(this, ShaumReminderReceiver.class);
             reminderIntent.putExtra(PARAM_SHAUM_DAY, dayOfShaum);
             reminderIntent.setAction("com.zaitunlabs.zlcore.shaum_reminder_alarm");
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 445, reminderIntent, 0);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 445, reminderIntent, PendingIntent.FLAG_IMMUTABLE);
 
             alarmMgr.cancel(alarmIntent);
 

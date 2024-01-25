@@ -885,7 +885,7 @@ public class CommonUtil {
 			email.setType("message/rfc822");
 			try {
 				if(isApplicationContext(ctx)){
-					PendingIntent intent = PendingIntent.getActivity(ctx, 22, Intent.createChooser(email, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+					PendingIntent intent = PendingIntent.getActivity(ctx, 22, Intent.createChooser(email, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PendingIntent.FLAG_IMMUTABLE);
 					try {
 						intent.send();
 					} catch (CanceledException e) {
@@ -932,7 +932,7 @@ public class CommonUtil {
 		try {
 			
 			if(isApplicationContext(context)){
-				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PendingIntent.FLAG_IMMUTABLE);
 				try {
 					intent.send();
 				} catch (CanceledException e) {
@@ -960,7 +960,7 @@ public class CommonUtil {
 			shareTitle = context.getString(R.string.zlcore_common_utils_default_share_title);
 		try{
 			if(isApplicationContext(context)){
-				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(shareIntent, shareTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(shareIntent, shareTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PendingIntent.FLAG_IMMUTABLE);
 				try {
 					intent.send();
 				} catch (CanceledException e) {
@@ -993,7 +993,7 @@ public class CommonUtil {
 			sendTitle = context.getString(R.string.zlcore_common_utils_send_email);
 		try{
 			if(isApplicationContext(context)){
-				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(emailIntent, sendTitle).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PendingIntent.FLAG_IMMUTABLE);
 				try {
 					intent.send();
 				} catch (CanceledException e) {
@@ -1060,7 +1060,7 @@ public class CommonUtil {
 
 		try{
 			if(isApplicationContext(context)){
-				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(i, "open link with :").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+				PendingIntent intent = PendingIntent.getActivity(context, 22, Intent.createChooser(i, "open link with :").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), PendingIntent.FLAG_IMMUTABLE);
 				try {
 					intent.send();
 				} catch (CanceledException e) {
